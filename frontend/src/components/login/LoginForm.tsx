@@ -1,6 +1,7 @@
 // Formulário do login (docs/design/telas/componentes/Form.dc.html).
-import { AlertCircle, ChevronRight, Eye, EyeOff, Lock, Play, User } from 'lucide-react'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { AlertCircle, ArrowLeft, ChevronRight, Eye, EyeOff, Lock, Play, Sparkles, Sprout, User } from 'lucide-react'
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import type { ModoDemo } from '@/api/types'
 import { Logo } from '@/components/Logo'
 import { Spinner } from '@/components/Spinner'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,92 @@ interface LoginFormProps {
   erro: { titulo: string; detalhe: string } | null
   superficie: 'branco' | 'areia'
   onEntrar: (username: string, password: string) => void
-  onDemo: () => void
+  onDemo: (modo: ModoDemo) => void
+  /** Modo de demonstração que está entrando (mostra carregando na opção). */
+  modoCarregando?: ModoDemo | null
+}
+
+const OPCOES_DEMO: { modo: ModoDemo; titulo: string; descricao: string; Icone: typeof Sparkles }[] = [
+  {
+    modo: 'exemplo',
+    titulo: 'Ver com dados de exemplo',
+    // O seed gera 12 meses (spec 7); o texto não promete "três meses" (spec 16).
+    descricao: 'Um ano de receitas e despesas para explorar o painel.',
+    Icone: Sparkles,
+  },
+  { modo: 'vazio', titulo: 'Começar do zero', descricao: 'Uma conta vazia para lançar suas primeiras transações.', Icone: Sprout },
+]
+
+/** Escolha do modo de demonstração, expandida no próprio cartão do login (ADR-018). */
+function EscolhaDemo({
+  carregando,
+  modoCarregando,
+  onEscolher,
+  onVoltar,
+}: {
+  carregando: boolean
+  modoCarregando?: ModoDemo | null
+  onEscolher: (modo: ModoDemo) => void
+  onVoltar: () => void
+}) {
+  const primeira = useRef<HTMLButtonElement>(null)
+  useEffect(() => primeira.current?.focus(), [])
+
+  return (
+    <div role="group" aria-labelledby="titulo-escolha-demo" className="flex flex-col gap-3">
+      <p id="titulo-escolha-demo" className="m-0 text-[15px] font-bold">
+        Como você quer entrar na demonstração?
+      </p>
+      <div className="grid grid-cols-1 gap-3">
+        {OPCOES_DEMO.map(({ modo, titulo, descricao, Icone }, i) => {
+          const principal = i === 0
+          const esta = modoCarregando === modo
+          return (
+            <button
+              key={modo}
+              ref={principal ? primeira : undefined}
+              type="button"
+              onClick={() => !carregando && onEscolher(modo)}
+              disabled={carregando && !esta}
+              aria-busy={esta}
+              className={cn(
+                'flex min-h-[76px] items-center gap-3.5 rounded-demo py-3 pr-4 pl-3 text-left text-tinta disabled:opacity-55',
+                principal
+                  ? 'border-[2.5px] border-tinta bg-amarelo-papo shadow-cartum'
+                  : 'border-[1.5px] border-borda-botao bg-branco hover:bg-fundo-app',
+                carregando ? 'cursor-progress' : 'cursor-pointer',
+                principal && !carregando && 'active:translate-y-0.5 active:shadow-[0_2px_0_var(--jnc-tinta)]',
+              )}
+            >
+              <span
+                aria-hidden="true"
+                className={cn('flex size-11 shrink-0 items-center justify-center rounded-full', principal ? 'bg-tinta text-amarelo-papo' : 'bg-verde-ativo-bg text-verde-ativo-tx')}
+              >
+                {esta ? <Spinner /> : <Icone className="size-5" />}
+              </span>
+              <span className="flex flex-1 flex-col gap-0.5">
+                <span className="text-base leading-tight font-extrabold">{titulo}</span>
+                <span className={cn('text-[13px] leading-[1.35] font-semibold', principal ? 'text-demo-tx' : 'text-texto-2')}>
+                  {esta ? 'Entrando…' : descricao}
+                </span>
+              </span>
+              {!esta && <ChevronRight className="size-5 shrink-0" aria-hidden="true" />}
+            </button>
+          )
+        })}
+      </div>
+      <p className="m-0 text-xs font-medium text-texto-2">Os dados de demonstração são recriados a cada entrada.</p>
+      <button
+        type="button"
+        onClick={onVoltar}
+        disabled={carregando}
+        className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 self-start rounded-[10px] border-0 bg-transparent px-2 text-sm font-semibold text-tinta hover:bg-fundo-app disabled:opacity-55"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Voltar
+      </button>
+    </div>
+  )
 }
 
 function Campo({
@@ -57,7 +143,14 @@ function Campo({
 const classeInput =
   'h-full min-w-0 flex-1 border-0 bg-transparent text-base font-medium text-tinta outline-none placeholder:text-texto-2/80 disabled:cursor-progress'
 
-export function LoginForm({ estado, erro, superficie, onEntrar, onDemo }: LoginFormProps) {
+export function LoginForm({ estado, erro, superficie, onEntrar, onDemo, modoCarregando = null }: LoginFormProps) {
+  const [escolhendo, setEscolhendo] = useState(false)
+  const botaoDemo = useRef<HTMLButtonElement>(null)
+  const voltar = () => {
+    setEscolhendo(false)
+    // Devolve o foco ao botão que abriu a escolha, depois que ele volta a existir.
+    requestAnimationFrame(() => botaoDemo.current?.focus())
+  }
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [mostrar, setMostrar] = useState(false)
@@ -161,25 +254,30 @@ export function LoginForm({ estado, erro, superficie, onEntrar, onDemo }: LoginF
         <span aria-hidden="true" className={cn('h-px flex-1', areia ? 'bg-divisor-areia' : 'bg-divisor-claro')} />
       </div>
 
-      {/* Único elemento com traço cartunesco na interface (decisoes-de-design, princípio 2). */}
-      <button
-        type="button"
-        onClick={() => !carregando && onDemo()}
-        disabled={carregando}
-        className={cn(
-          'flex min-h-17 items-center gap-3.5 rounded-demo border-[2.5px] border-tinta bg-amarelo-papo py-2.5 pr-4 pl-3 text-left text-tinta shadow-cartum',
-          carregando ? 'cursor-progress opacity-55' : 'cursor-pointer active:translate-y-0.5 active:shadow-[0_2px_0_var(--jnc-tinta)]',
-        )}
-      >
-        <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-tinta">
-          <Play className="size-[18px] fill-amarelo-papo text-amarelo-papo" />
-        </span>
-        <span className="flex flex-1 flex-col gap-0.5">
-          <span className="text-[17px] leading-tight font-extrabold">Entrar como demonstração</span>
-          <span className="text-[13px] leading-[1.3] font-semibold text-demo-tx">Explore com dados de exemplo, sem cadastro</span>
-        </span>
-        <ChevronRight className="size-5 shrink-0" aria-hidden="true" />
-      </button>
+      {escolhendo ? (
+        <EscolhaDemo carregando={carregando} modoCarregando={modoCarregando} onEscolher={onDemo} onVoltar={voltar} />
+      ) : (
+        /* Único elemento com traço cartunesco na interface (decisoes-de-design, princípio 2). */
+        <button
+          ref={botaoDemo}
+          type="button"
+          onClick={() => !carregando && setEscolhendo(true)}
+          disabled={carregando}
+          className={cn(
+            'flex min-h-17 items-center gap-3.5 rounded-demo border-[2.5px] border-tinta bg-amarelo-papo py-2.5 pr-4 pl-3 text-left text-tinta shadow-cartum',
+            carregando ? 'cursor-progress opacity-55' : 'cursor-pointer active:translate-y-0.5 active:shadow-[0_2px_0_var(--jnc-tinta)]',
+          )}
+        >
+          <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-tinta">
+            <Play className="size-[18px] fill-amarelo-papo text-amarelo-papo" />
+          </span>
+          <span className="flex flex-1 flex-col gap-0.5">
+            <span className="text-[17px] leading-tight font-extrabold">Entrar como demonstração</span>
+            <span className="text-[13px] leading-[1.3] font-semibold text-demo-tx">Explore com dados de exemplo ou comece do zero</span>
+          </span>
+          <ChevronRight className="size-5 shrink-0" aria-hidden="true" />
+        </button>
+      )}
     </form>
   )
 }

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
@@ -46,16 +46,57 @@ describe('LoginPage', () => {
     expect(screen.getByRole('button', { name: 'Ocultar senha' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('entra como demonstração e redireciona para o dashboard', async () => {
+  it('"Entrar como demonstração" abre a escolha com foco na primeira opção', async () => {
+    mockFetch([])
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
+    const escolha = screen.getByRole('group', { name: 'Como você quer entrar na demonstração?' })
+    const exemplo = within(escolha).getByRole('button', { name: /Ver com dados de exemplo/ })
+    expect(exemplo).toHaveFocus()
+    expect(within(escolha).getByRole('button', { name: /Começar do zero/ })).toBeInTheDocument()
+    expect(screen.getByText('Os dados de demonstração são recriados a cada entrada.')).toBeInTheDocument()
+  })
+
+  it.each([
+    ['Ver com dados de exemplo', 'exemplo'],
+    ['Começar do zero', 'vazio'],
+  ])('a opção "%s" entra no modo %s e redireciona para o painel', async (rotulo, modo) => {
     const fetchMock = mockFetch([
-      { metodo: 'POST', caminho: '/api/auth/demo/', corpo: { id: 1, username: 'demo' } },
+      { metodo: 'POST', caminho: '/api/auth/demo/', corpo: { id: 1, username: modo === 'vazio' ? 'demo-vazio' : 'demo' } },
     ])
     renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
-
     await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
-
+    await userEvent.click(screen.getByRole('button', { name: new RegExp(rotulo) }))
     expect(await screen.findByText('Página inicial')).toBeInTheDocument()
-    expect(chamadas(fetchMock, 'POST', '/api/auth/demo/')).toHaveLength(1)
+    const [[, init]] = chamadas(fetchMock, 'POST', '/api/auth/demo/')
+    expect(JSON.parse(String(init?.body))).toEqual({ modo })
+  })
+
+  it('"Voltar" fecha a escolha e devolve o foco ao botão de demonstração', async () => {
+    mockFetch([])
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Voltar' }))
+    expect(screen.queryByRole('group', { name: /demonstração/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Entrar como demonstração/ })).toHaveFocus()
+  })
+
+  it('é navegável por teclado e mostra carregando na opção escolhida', async () => {
+    let liberar: (r: Response) => void = () => {}
+    document.cookie = 'csrftoken=teste; path=/'
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => (liberar = resolve))))
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    screen.getByRole('button', { name: /Entrar como demonstração/ }).focus()
+    await userEvent.keyboard('{Enter}')
+    await userEvent.tab()
+    expect(screen.getByRole('button', { name: /Começar do zero/ })).toHaveFocus()
+    await userEvent.keyboard('{Enter}')
+    const zero = await screen.findByRole('button', { name: /Começar do zero/ })
+    expect(zero).toHaveAttribute('aria-busy', 'true')
+    expect(zero).toHaveTextContent('Entrando…')
+    expect(screen.getByRole('button', { name: /Ver com dados de exemplo/ })).toBeDisabled()
+    expect(personagensNaTela()).toContain('papo-animado')
+    liberar(new Response(null, { status: 401 }))
   })
 
   it('faz login com usuário e senha', async () => {
@@ -97,12 +138,13 @@ describe('LoginPage', () => {
         metodo: 'POST',
         caminho: '/api/auth/demo/',
         status: 503,
-        corpo: { detail: 'Usuário de demonstração não encontrado. Rode: python manage.py seed_demo' },
+        corpo: { detail: 'Demonstração indisponível.' },
       },
     ])
     renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
     await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
-    expect(await screen.findByRole('alert')).toHaveTextContent('seed_demo')
+    await userEvent.click(screen.getByRole('button', { name: /Ver com dados de exemplo/ }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Demonstração indisponível')
   })
 
   it('redireciona para o dashboard quem já está logado', async () => {

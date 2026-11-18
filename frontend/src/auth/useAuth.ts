@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError } from '@/api/client'
 import { authApi } from '@/api/endpoints'
-import type { Usuario } from '@/api/types'
+import type { ModoDemo, Usuario } from '@/api/types'
 
 export const CHAVE_USUARIO = ['auth', 'me'] as const
 
@@ -33,7 +33,7 @@ export function useLogin() {
 export function useLoginDemo() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: () => authApi.demo(),
+    mutationFn: (modo: ModoDemo) => authApi.demo(modo),
     onSuccess: (usuario) => queryClient.setQueryData(CHAVE_USUARIO, usuario),
   })
 }

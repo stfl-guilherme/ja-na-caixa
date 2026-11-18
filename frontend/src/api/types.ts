@@ -2,6 +2,9 @@
 
 export type Tipo = 'RECEITA' | 'DESPESA'
 
+/** Modos do login de demonstração (spec, seção 7; ADR-018). */
+export type ModoDemo = 'exemplo' | 'vazio'
+
 export interface Usuario {
   id: number
   username: string

@@ -43,10 +43,11 @@ export default function LoginPage() {
         demo.reset()
         login.mutate({ username, password }, { onSuccess: irParaPainel })
       }}
-      onDemo={() => {
+      onDemo={(modo) => {
         login.reset()
-        demo.mutate(undefined, { onSuccess: irParaPainel })
+        demo.mutate(modo, { onSuccess: irParaPainel })
       }}
+      modoCarregando={demo.isPending ? demo.variables : null}
     />
   )
   const rodape = <footer className="text-[13px] font-medium text-texto-2">Projeto acadêmico — AMF</footer>

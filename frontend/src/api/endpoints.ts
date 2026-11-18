@@ -4,6 +4,7 @@ import type {
   CategoriaInput,
   FiltrosTransacao,
   ListaTransacoes,
+  ModoDemo,
   Resumo,
   ResumoAnual,
   Tipo,
@@ -16,7 +17,7 @@ export const authApi = {
   me: () => api<Usuario>('/auth/me/'),
   login: (username: string, password: string) =>
     api<Usuario>('/auth/login/', { method: 'POST', body: { username, password } }),
-  demo: () => api<Usuario>('/auth/demo/', { method: 'POST' }),
+  demo: (modo: ModoDemo = 'exemplo') => api<Usuario>('/auth/demo/', { method: 'POST', body: { modo } }),
   logout: () => api<void>('/auth/logout/', { method: 'POST' }),
 }
 

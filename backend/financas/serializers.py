@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from financas.models import Categoria
+from financas.models import Categoria, Transacao
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -38,4 +38,47 @@ class CategoriaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Não é possível alterar o tipo de uma categoria que já tem transações."
             )
+        return valor
+
+
+class TransacaoSerializer(serializers.ModelSerializer):
+    categoria = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.none())
+    categoria_nome = serializers.CharField(source="categoria.nome", read_only=True)
+    categoria_cor = serializers.CharField(source="categoria.cor", read_only=True)
+    tipo = serializers.CharField(source="categoria.tipo", read_only=True)
+
+    class Meta:
+        model = Transacao
+        fields = [
+            "id",
+            "categoria",
+            "categoria_nome",
+            "categoria_cor",
+            "tipo",
+            "descricao",
+            "valor",
+            "data",
+            "observacao",
+            "criado_em",
+            "atualizado_em",
+        ]
+        read_only_fields = ["id", "criado_em", "atualizado_em"]
+        extra_kwargs = {"observacao": {"required": False, "allow_blank": True}}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request is not None and request.user.is_authenticated:
+            # Só categorias do usuário são aceitas; as demais viram 400.
+            self.fields["categoria"].queryset = Categoria.objects.filter(usuario=request.user)
+
+    def validate_descricao(self, valor: str) -> str:
+        valor = valor.strip()
+        if not valor:
+            raise serializers.ValidationError("Informe a descrição.")
+        return valor
+
+    def validate_valor(self, valor):
+        if valor <= 0:
+            raise serializers.ValidationError("O valor deve ser maior que zero.")
         return valor

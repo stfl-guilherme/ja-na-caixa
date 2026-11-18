@@ -6,6 +6,7 @@ from financas import views, views_auth
 router = DefaultRouter(trailing_slash=True)
 router.include_root_view = False
 router.register("categorias", views.CategoriaViewSet, basename="categoria")
+router.register("transacoes", views.TransacaoViewSet, basename="transacao")
 
 urlpatterns = [
     path("auth/csrf/", views_auth.CsrfView.as_view(), name="auth-csrf"),

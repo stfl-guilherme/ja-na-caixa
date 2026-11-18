@@ -1,9 +1,10 @@
 from django.db.models import Count, ProtectedError
 from rest_framework import status, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from financas.models import Categoria, TipoCategoria
-from financas.serializers import CategoriaSerializer
+from financas.models import Categoria, TipoCategoria, Transacao
+from financas.serializers import CategoriaSerializer, TransacaoSerializer
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -36,3 +37,17 @@ class CategoriaViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_409_CONFLICT,
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TransacaoPagination(PageNumberPagination):
+    page_size = 20
+
+
+class TransacaoViewSet(viewsets.ModelViewSet):
+    serializer_class = TransacaoSerializer
+    pagination_class = TransacaoPagination
+
+    def get_queryset(self):
+        return Transacao.objects.filter(categoria__usuario=self.request.user).select_related(
+            "categoria"
+        )

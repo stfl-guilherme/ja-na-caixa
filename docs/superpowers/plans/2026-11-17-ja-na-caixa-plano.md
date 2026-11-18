@@ -41,7 +41,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste de spec nº 8 verde.
 - **Commit:** `feat(api): adicionar login de demonstração`
 
-### [ ] B6 — CRUD de categorias
+### [x] B6 — CRUD de categorias
 - **Arquivos:** `financas/serializers.py`, `financas/views.py`, `financas/urls.py`, `financas/tests/test_categorias.py`.
 - **Teste primeiro:** CRUD feliz; filtro `?tipo=`; duplicado (case-insensitive) → `400`; cor inválida → `400`; excluir com transações → `409 {"detail", "transacoes": N}` sem excluir; mudar `tipo` com transações → `400`; isolamento (B recebe `404` e não vê dados de A); sem login → `401`.
 - **Pronto quando:** testes de spec nº 2, 3, 4, 5 (categorias) e 7 verdes.

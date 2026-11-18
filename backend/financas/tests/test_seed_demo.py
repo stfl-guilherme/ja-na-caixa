@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 from django.contrib.auth.models import User
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.utils import timezone
 
 from financas.models import Categoria, Transacao
@@ -76,3 +76,29 @@ class TestSeedDemo:
         call_command("seed_demo")
         assert api_client.post("/api/auth/demo/").status_code == 200
         assert api_client.get("/api/resumo/").status_code == 200
+
+
+@pytest.mark.django_db
+class TestSeedDemoModos:
+    def test_modo_vazio_cria_demo_vazio_sem_dados(self):
+        call_command("seed_demo", "--modo", "vazio")
+        vazio = User.objects.get(username="demo-vazio")
+        assert not vazio.has_usable_password()
+        assert not Categoria.objects.filter(usuario=vazio).exists()
+        assert not User.objects.filter(username="demo").exists()
+
+    def test_modo_vazio_com_reset_apaga_o_que_foi_lancado(self):
+        call_command("seed_demo", "--modo", "vazio")
+        vazio = User.objects.get(username="demo-vazio")
+        criar_transacao(criar_categoria(vazio, nome="Lançada"))
+        call_command("seed_demo", "--modo", "vazio", "--reset")
+        assert not Categoria.objects.filter(usuario=vazio).exists()
+        assert not Transacao.objects.filter(categoria__usuario=vazio).exists()
+
+    def test_modo_exemplo_e_o_padrao(self):
+        call_command("seed_demo", "--modo", "exemplo")
+        assert Categoria.objects.filter(usuario__username="demo").count() == 8
+
+    def test_modo_invalido(self):
+        with pytest.raises(CommandError):
+            call_command("seed_demo", "--modo", "cheio")

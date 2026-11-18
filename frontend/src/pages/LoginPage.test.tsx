@@ -69,4 +69,10 @@ describe('LoginPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Entrar como demonstração' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('seed_demo')
   })
+
+  it('redireciona para o dashboard quem já está logado', async () => {
+    mockFetch([{ caminho: '/api/auth/me/', corpo: { id: 1, username: 'demo' } }])
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    expect(await screen.findByText('Página inicial')).toBeInTheDocument()
+  })
 })

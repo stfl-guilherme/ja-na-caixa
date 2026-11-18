@@ -1,7 +1,7 @@
 import { Sparkles } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useLogin, useLoginDemo } from '@/auth/useAuth'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { useLogin, useLoginDemo, useUsuario } from '@/auth/useAuth'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Field } from '@/components/ui/field'
@@ -10,6 +10,7 @@ import { mensagemDeErro } from '@/lib/erros'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const { data: usuario } = useUsuario()
   const login = useLogin()
   const demo = useLoginDemo()
   const [username, setUsername] = useState('')
@@ -28,6 +29,8 @@ export default function LoginPage() {
 
   const erro = login.error ?? demo.error
   const ocupado = login.isPending || demo.isPending
+
+  if (usuario) return <Navigate to="/" replace />
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-50 via-background to-emerald-50 px-4 py-10">

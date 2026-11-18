@@ -63,6 +63,21 @@ npm run dev
 
 Acesse `http://localhost:5173` e clique em **Entrar como demonstração** (detalhes abaixo). O Vite faz proxy de `/api` para o Django, então os dois servidores precisam estar rodando.
 
+### Abrir no celular (mesma rede Wi-Fi)
+
+Com o backend rodando (terminal 1), no lugar do `npm run dev`:
+
+```bash
+cd frontend
+npm run celular
+```
+
+O comando gera o build e mostra o endereço da rede, por exemplo `Network: http://192.168.1.106:5173/`. Abra esse endereço no celular, conectado **ao mesmo Wi-Fi** do computador. O IP pode mudar de uma rede para outra; não é preciso configurar nada no Django (ADR-020).
+
+- Se não abrir, libere a porta 5173 no firewall do computador (no Ubuntu: `sudo ufw allow 5173/tcp`).
+- Mudanças no código só aparecem no celular depois de rodar `npm run celular` de novo. Para recarregamento automático (mais lento no celular), use `npm run dev:rede`.
+- Use só em rede confiável: o app fica visível para todos da rede.
+
 ### Como usar a demonstração
 
 Na tela de login, **Entrar como demonstração** abre duas opções no próprio cartão:

@@ -63,6 +63,7 @@ Requisitos da avaliação que esta spec atende:
 
 - Em desenvolvimento, o Vite faz **proxy** de `/api` para `http://localhost:8000`. O navegador enxerga uma única origem, então não é necessário configurar CORS e o cookie de sessão funciona normalmente. Decisão registrada em ADR-002.
 - Autenticação por **sessão do Django** com proteção CSRF (sem JWT).
+- **Acesso pelo celular na rede local (ADR-020):** `npm run celular` gera o build de produção e o serve com `vite preview --host`, na porta 5173 de todas as interfaces; o Vite mostra o endereço da rede (ex.: `http://192.168.1.106:5173`). O proxy de `/api` reescreve os cabeçalhos `Host` e `Origin` para `localhost`, então o Django aceita a requisição **com qualquer IP**, sem configurar `ALLOWED_HOSTS` nem `CSRF_TRUSTED_ORIGINS` a cada rede. O Django continua escutando só em `127.0.0.1:8000`. `npm run dev:rede` faz o mesmo com o servidor de desenvolvimento (mais lento no celular).
 
 ### Estrutura do repositório
 

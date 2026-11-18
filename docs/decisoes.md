@@ -189,3 +189,20 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Decisão:** uma seção abaixo da outra, cada uma com título (h2) e uma linha de descrição em linguagem simples, na ordem: Resumo do mês → Como seu saldo evoluiu → Entradas e saídas por dia → Para onde foi o dinheiro → Seu ano até agora → Últimas transações. Gráficos em largura total, com altura mínima de 280px no desktop, eixos e unidades rotulados e tooltip. Seletor de mês fixo no topo ao rolar.
 - **Alternativas descartadas:** manter o bento com legendas maiores (continuava sem ordem de leitura); abas por gráfico (esconde informação e exige cliques).
 - **Consequências:** a página fica mais longa e rola; os componentes de gráfico são reaproveitados; as regras dos personagens (bordas, máximo de 2) continuam valendo.
+
+## ADR-020 — Abrir o app no celular pela rede local
+
+- **Status:** Aceita — 18/11/2026. Complementa o ADR-002.
+- **Contexto:** Na apresentação e nos testes, o autor quer abrir o app no celular, na mesma rede Wi-Fi do computador. O IP do computador muda a cada rede. Dois problemas apareceram na prática:
+  1. O Django recusa o `Host` com o IP da rede (`ALLOWED_HOSTS`) e o CSRF recusa a `Origin` `http://<ip>:5173` (`CSRF_TRUSTED_ORIGINS`).
+  2. O servidor de desenvolvimento do Vite manda centenas de módulos separados, sem compilar para navegadores mais antigos: no celular a tela ficou branca, carregando sem terminar.
+- **Decisão:**
+  - O proxy de `/api` do Vite reescreve `Host` (`changeOrigin`) e `Origin` para `localhost`. Para o Django, toda requisição vem de `localhost:5173`, qualquer que seja o IP usado no navegador. O proxy já é a "mesma origem" do ADR-002; só passa a se apresentar sempre do mesmo jeito.
+  - Script `npm run celular`: `build` + `vite preview --host` na porta 5173 (pacote de produção, rápido no celular). O `preview` usa o mesmo proxy.
+  - Script `npm run dev:rede`: servidor de desenvolvimento com `--host`, para quem quiser recarregamento automático em outro computador da rede.
+  - O Django continua em `127.0.0.1:8000`: só o Vite fica exposto na rede.
+- **Alternativas descartadas:**
+  - *IP fixo ou variável de ambiente com o IP:* teria de ser trocado a cada rede.
+  - *`ALLOWED_HOSTS = ["*"]` e confiar em qualquer origem:* afrouxaria o Django em vez de só ajustar o proxy local.
+  - *Expor o Django direto na rede:* duas portas abertas e CORS entre origens (descartado no ADR-002).
+- **Consequências:** a proteção CSRF continua ativa (o token ainda é exigido). Os modos `--host` expõem o app a todos da rede: usar só em rede confiável, como o resto do projeto, que é local (seção 2). Em `npm run celular`, mudanças no código só aparecem depois de rodar o script de novo.

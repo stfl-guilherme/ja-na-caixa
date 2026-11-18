@@ -29,7 +29,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** `CheckConstraint valor > 0`, `on_delete=PROTECT`, índice `(categoria, data)`.
 - **Commit:** `feat(financas): adicionar modelo Transacao`
 
-### [ ] B4 — Autenticação por sessão
+### [x] B4 — Autenticação por sessão
 - **Arquivos:** `financas/authentication.py`, `financas/views_auth.py`, `financas/urls.py`, `config/urls.py`, `financas/tests/test_auth.py`.
 - **Teste primeiro:** `csrf` → `204` e cookie `csrftoken`; login válido → `200 {id, username}`; inválido → `400`; `me` sem login → `401`; `me` logado → `200`; logout → `204` e `me` volta a `401`.
 - **Pronto quando:** testes de spec nº 7 (parcial) verdes.

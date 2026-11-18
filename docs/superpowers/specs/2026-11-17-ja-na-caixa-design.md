@@ -92,10 +92,10 @@ ja-na-caixa/
 | Backend | Python 3.12, Django 5, Django REST Framework | Autor já domina Django; DRF padroniza CRUD e validação |
 | Banco | SQLite | Projeto local; zero configuração |
 | Frontend | React + TypeScript + Vite | Exigência de portfólio; tipagem do contrato da API |
-| UI | Tailwind CSS + componentes no padrão shadcn/ui (escritos no projeto, ADR-007) + sonner (toasts) | Visual polido; componentes copiáveis |
+| UI | Tailwind CSS + componentes no padrão shadcn/ui (escritos no projeto, ADR-007); aviso de sucesso próprio com o Papo joinha (o `sonner` saiu do projeto) | Visual polido; componentes copiáveis |
 | Estado do servidor | TanStack Query | Loading, erro e cache sem código manual repetido |
 | Rotas | React Router | Navegação entre páginas da SPA |
-| Gráficos | SVG próprio (novo design, ADR-014); Recharts continua instalado | Os gráficos do design (linha, barras espelhadas, treemap, barras anuais) são desenhados à mão em SVG com escalas próprias |
+| Gráficos | SVG próprio (novo design, ADR-014) | Os gráficos do design (linha, barras espelhadas, treemap, barras anuais) são desenhados à mão em SVG com escalas próprias; o Recharts saiu do projeto por não ter mais uso |
 | Testes backend | pytest + pytest-django | |
 | Testes frontend | Vitest + React Testing Library | |
 

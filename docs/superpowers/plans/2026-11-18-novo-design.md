@@ -86,7 +86,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** menu lateral ≥ 720px, barra inferior + FAB < 720px.
 - **Commit:** `feat(frontend): adicionar layout com menu lateral, barra inferior e mês global`
 
-### [ ] NF7 — Painel: cartões de métrica
+### [x] NF7 — Painel: cartões de métrica
 - **Arquivos:** `frontend/src/components/painel/MetricCard.tsx` (+ teste), `frontend/src/hooks/useContagem.ts`.
 - **Teste primeiro:** valor com sinal e cor; comparação com o mês anterior (texto + seta); **Despesas: aumento vermelho, queda verde**; cartão é link para `/transacoes?mes=…&tipo=…`; contagem animada termina no valor exato e não anima com `prefers-reduced-motion`.
 - **Commit:** `feat(frontend): adicionar cartões de métrica do painel`

@@ -132,7 +132,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** tabela paginada, filtros (mês, categoria, tipo, busca), modal criar/editar, confirmação ao excluir.
 - **Commit:** `feat(frontend): adicionar tela de transações`
 
-### [ ] F10 — Dashboard
+### [x] F10 — Dashboard
 - **Arquivos:** `src/pages/DashboardPage.tsx`, `src/components/GraficoDespesas.tsx`, testes.
 - **Teste primeiro:** cards exibem receitas, despesas e saldo formatados vindos de `/api/resumo/`; lista as 5 últimas transações.
 - **Pronto quando:** seletor de mês, cards, gráfico (Recharts, só despesas), últimas transações.

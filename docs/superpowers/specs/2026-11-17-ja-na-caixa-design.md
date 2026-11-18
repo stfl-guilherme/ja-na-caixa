@@ -1,4 +1,6 @@
-# Spec de Design — Controle Financeiro Pessoal
+# Spec de Design — JáNaCaixa
+
+> Controle financeiro pessoal. Nome na interface: **JáNaCaixa**; slug: `ja-na-caixa`.
 
 | Campo | Valor |
 |---|---|
@@ -7,7 +9,7 @@
 | Modalidade | Individual (autorizado pela professora) |
 | Data da spec | 17/11/2026 |
 | Apresentação | 24/11/2026 |
-| Status | Rascunho para revisão (ver `docs/ia/registro-uso-ia.md`) |
+| Status | Revisada na Fase 1 (17/11/2026). Ver seção 14 e `docs/ia/registro-uso-ia.md` |
 
 ---
 
@@ -65,7 +67,7 @@ Requisitos da avaliação que esta spec atende:
 ### Estrutura do repositório
 
 ```
-controle-financeiro/
+ja-na-caixa/
 ├── backend/
 │   ├── config/              # settings, urls, wsgi
 │   ├── financas/            # app: models, serializers, views, tests
@@ -79,6 +81,7 @@ controle-financeiro/
 │   │   └── lib/             # formatação de moeda/data
 │   └── package.json
 ├── docs/
+├── scripts/git-hooks/    # hook commit-msg versionado
 └── README.md
 ```
 
@@ -89,14 +92,14 @@ controle-financeiro/
 | Backend | Python 3.12, Django 5, Django REST Framework | Autor já domina Django; DRF padroniza CRUD e validação |
 | Banco | SQLite | Projeto local; zero configuração |
 | Frontend | React + TypeScript + Vite | Exigência de portfólio; tipagem do contrato da API |
-| UI | Tailwind CSS + shadcn/ui + componentes do 21st.dev | Visual polido; componentes copiáveis |
+| UI | Tailwind CSS + componentes no padrão shadcn/ui (escritos no projeto, ADR-007) + sonner (toasts) | Visual polido; componentes copiáveis |
 | Estado do servidor | TanStack Query | Loading, erro e cache sem código manual repetido |
 | Rotas | React Router | Navegação entre páginas da SPA |
 | Gráficos | Recharts | Base dos gráficos do shadcn |
 | Testes backend | pytest + pytest-django | |
 | Testes frontend | Vitest + React Testing Library | |
 
-> Licenças: cada componente do 21st.dev usado deve ter licença verificada e anotada no README.
+> Licenças: cada componente externo usado deve ter licença verificada e anotada no README. Componentes do 21st.dev só entram se instaláveis pela CLI do shadcn (ver ADR-007).
 
 ## 5. Modelo de dados
 
@@ -121,11 +124,11 @@ Transacao                │
 | usuario | FK → User | `on_delete=CASCADE` |
 | nome | CharField(50) | obrigatório; único por usuário, sem diferenciar maiúsculas |
 | tipo | CharField(7) | `RECEITA` ou `DESPESA` |
-| cor | CharField(7) | hexadecimal `#RRGGBB`; padrão `#64748B` |
+| cor | CharField(7) | hexadecimal `#RRGGBB` (validado por regex); padrão `#64748B` |
 | criado_em | DateTimeField | `auto_now_add` |
 
 Restrições:
-- `UniqueConstraint(Lower("nome"), "usuario", name="categoria_nome_unico_por_usuario")`.
+- `UniqueConstraint(Lower("nome"), "usuario", name="categoria_nome_unico_por_usuario")`. A API valida antes de salvar e responde `400` (`{"nome": [...]}`), nunca `500`.
 - **O `tipo` não pode ser alterado se a categoria já tiver transações.** Senão, todas as transações antigas mudariam de sinal retroativamente.
 
 ### 5.2 Transacao
@@ -157,11 +160,13 @@ Base: `/api/`. Todas as rotas, exceto `auth/csrf`, `auth/login` e `auth/demo`, e
 
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/api/auth/csrf/` | Define o cookie `csrftoken` |
-| POST | `/api/auth/login/` | `{username, password}` → `200 {id, username}` ou `400` |
-| POST | `/api/auth/demo/` | Autentica no usuário `demo`; `404` se `DEMO_ENABLED=False` |
-| POST | `/api/auth/logout/` | Encerra a sessão |
-| GET | `/api/auth/me/` | Usuário atual ou `401` |
+| GET | `/api/auth/csrf/` | Define o cookie `csrftoken`; `204` |
+| POST | `/api/auth/login/` | `{username, password}` → `200 {id, username}` ou `400 {"detail": "Usuário ou senha inválidos."}` |
+| POST | `/api/auth/demo/` | Autentica no usuário `demo` → `200 {id, username}`; `404` se `DEMO_ENABLED=False`; `503` se o `demo` não existir (rodar `seed_demo`) |
+| POST | `/api/auth/logout/` | Encerra a sessão; `204` |
+| GET | `/api/auth/me/` | `200 {id, username}` ou `401` |
+
+O DRF responde `403` para requisições sem autenticação quando só a sessão está configurada. A API usa uma autenticação de sessão que define o header `WWW-Authenticate`, para que a resposta seja `401` como especificado (ADR-008).
 
 ### 6.2 Categorias
 
@@ -185,9 +190,13 @@ Base: `/api/`. Todas as rotas, exceto `auth/csrf`, `auth/login` e `auth/demo`, e
 
 Validação: `categoria` deve pertencer ao usuário logado (`400` caso contrário).
 
+Filtros: `mes` no formato `AAAA-MM` (inválido → `400 {"mes": [...]}`); `categoria` = id; `tipo` = `RECEITA`/`DESPESA` (tipo da categoria); `busca` = trecho da descrição, sem diferenciar maiúsculas.
+
+Resposta paginada: `{"count", "next", "previous", "results"}`. Cada transação traz, além dos campos do modelo, os campos somente leitura `categoria_nome`, `categoria_cor` e `tipo` (derivados da categoria).
+
 ### 6.4 Resumo (dashboard)
 
-`GET /api/resumo/?mes=AAAA-MM`
+`GET /api/resumo/?mes=AAAA-MM` (sem `mes`, usa o mês atual; `mes` inválido → `400`)
 
 ```json
 {
@@ -201,6 +210,8 @@ Validação: `categoria` deve pertencer ao usuário logado (`400` caso contrári
 }
 ```
 
+`por_categoria` lista as categorias, dos dois tipos, que têm transações no mês, em ordem decrescente de total. O gráfico do dashboard usa só as de tipo `DESPESA`.
+
 ### 6.5 Convenções
 - Valores monetários trafegam como **string** decimal (`"1234.56"`), que é o padrão do DRF. O frontend **não soma dinheiro**: todo total vem do backend.
 - Objeto de outro usuário retorna **`404`**, não `403`, para não revelar que o objeto existe.
@@ -211,7 +222,7 @@ Validação: `categoria` deve pertencer ao usuário logado (`400` caso contrári
 - Comando `python manage.py seed_demo` cria o usuário `demo`, cerca de 8 categorias e cerca de 60 transações distribuídas nos últimos 3 meses.
 - `--reset` apaga e recria os dados do `demo`.
 - Setting `DEMO_ENABLED` (padrão `True` em desenvolvimento) liga ou desliga `/api/auth/demo/`.
-- A senha do `demo` **não** fica no frontend. O backend autentica direto no endpoint.
+- A senha do `demo` **não** fica no frontend. O backend autentica direto no endpoint. O `demo` é criado com senha inutilizável (`set_unusable_password`), então só entra pelo botão (ADR-009).
 
 ## 8. Telas
 
@@ -223,6 +234,8 @@ Validação: `categoria` deve pertencer ao usuário logado (`400` caso contrári
 | `/categorias` | Categorias | Lista com cor e tipo; modal criar/editar; exclusão bloqueada com mensagem quando há transações |
 
 Regras de interface:
+- Cabeçalho e tela de login exibem o texto **"JáNaCaixa"** como espaço reservado para logo/mascote (fora do escopo da IA).
+- Somente tema claro (ADR-010).
 - Rotas protegidas: sem sessão (`/auth/me` → 401), redireciona para `/login`.
 - Toda tela tem estados de **carregando** (skeleton), **vazio** (mensagem + ação) e **erro** (toast).
 - Erros de validação do backend aparecem no campo correspondente do formulário.
@@ -289,7 +302,27 @@ Regras de interface:
 | Componentes do 21st.dev com dependências pesadas ou licença restritiva | Média | Médio | Usar só componentes avulsos; checar licença antes |
 | Código gerado por IA sem revisão | Média | Alto | TDD + revisão de cada tarefa registrada no log de IA |
 
-## 13. Questões em aberto
+## 13. Questões resolvidas
 
-- Nome final do projeto (provisório: `controle-financeiro`).
-- Tema escuro: incluir ou não? (sugestão: só se sobrar tempo no dia 6).
+| Questão | Resolução |
+|---|---|
+| Nome final do projeto | **JáNaCaixa** (`ja-na-caixa`). |
+| Tema escuro | Fora do escopo do MVP (ADR-010). |
+
+## 14. Revisão da spec (Fase 1)
+
+A skill `brainstorming` do Superpowers não estava instalada no ambiente. A revisão seguiu o mesmo roteiro manualmente (ADR-006). Perguntas feitas e respondidas com base na spec e nos ADRs:
+
+| # | Pergunta | Resposta |
+|---|---|---|
+| 1 | Qual o nome do projeto? | JáNaCaixa, conforme `CLAUDE.md`. Arquivo da spec renomeado. |
+| 2 | Que status HTTP a API devolve sem login, já que o DRF usa `403` com sessão? | `401`, como a spec pede; via `authenticate_header` (ADR-008). |
+| 3 | Como o `demo` entra sem senha no front? | O backend faz `login()` direto; o `demo` tem senha inutilizável (ADR-009). |
+| 4 | O que acontece se `/auth/demo` for chamado antes do `seed_demo`? | `503` com mensagem pedindo para rodar o comando. |
+| 5 | Nome duplicado: quem valida? | O serializer, com `400`; a constraint do banco é a última barreira. |
+| 6 | `mes` inválido nos filtros? | `400` no campo `mes`. |
+| 7 | `por_categoria` inclui receitas? | Sim, os dois tipos; o gráfico filtra despesas. |
+| 8 | Como mostrar nome e cor da categoria na tabela de transações sem outra requisição? | Campos somente leitura `categoria_nome`, `categoria_cor`, `tipo`. |
+| 9 | Como usar shadcn/ui se a CLI baixa de fora do npm? | Componentes no padrão shadcn escritos no projeto, dependências do npm (ADR-007). |
+| 10 | Tema escuro? | Não (ADR-010). |
+| 11 | Logo e mascote? | Texto "JáNaCaixa" como espaço reservado. |

@@ -1,8 +1,8 @@
-# Controle Financeiro Pessoal
+# JáNaCaixa
 
 > 🚧 Em desenvolvimento — Trabalho de G2 de Engenharia de Software (AMF).
 
-Sistema web local para registrar receitas e despesas, organizá-las em categorias e acompanhar o saldo mensal.
+Controle financeiro pessoal: sistema web local para registrar receitas e despesas, organizá-las em categorias e acompanhar o saldo mensal.
 
 ## Funcionalidades (planejadas)
 
@@ -58,7 +58,7 @@ cd frontend && npm test
 
 | Documento | Conteúdo |
 |---|---|
-| [Spec de design](docs/superpowers/specs/2026-11-17-controle-financeiro-design.md) | Escopo, modelo de dados, API, telas, testes, cronograma |
+| [Spec de design](docs/superpowers/specs/2026-11-17-ja-na-caixa-design.md) | Escopo, modelo de dados, API, telas, testes, cronograma |
 | [Decisões (ADR)](docs/decisoes.md) | Escolhas de arquitetura e por quê |
 | [Plano de implementação](docs/superpowers/plans/) | Tarefas geradas a partir da spec |
 | [Registro de uso de IA](docs/ia/registro-uso-ia.md) | Ferramentas, skills e revisão humana em cada etapa |

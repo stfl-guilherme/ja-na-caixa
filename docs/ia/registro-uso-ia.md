@@ -27,7 +27,7 @@ Este projeto foi desenvolvido com assistência de IA, com autorização da profe
 
 | Data | Ferramenta / Skill | Objetivo | Artefato | Revisão humana |
 |---|---|---|---|---|
-| 17/11/2026 | Claude (claude.ai), sem skill | Definir escopo, stack e decisões; rascunhar spec | `docs/superpowers/specs/2026-11-17-controle-financeiro-design.md`, `docs/decisoes.md` | Escolhi a opção de arquitetura B; rejeitei a sugestão de não ter login; troquei o login fictício pelo botão de demonstração |
+| 17/11/2026 | Claude (claude.ai), sem skill | Definir escopo, stack e decisões; rascunhar spec | `docs/superpowers/specs/2026-11-17-ja-na-caixa-design.md`, `docs/decisoes.md` | Escolhi a opção de arquitetura B; rejeitei a sugestão de não ter login; troquei o login fictício pelo botão de demonstração |
 | | | | | |
 
 ## Observação de transparência

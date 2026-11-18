@@ -49,3 +49,39 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Contexto:** `float` gera erro de arredondamento (`0.1 + 0.2 = 0.30000000000000004`).
 - **Decisão:** `DecimalField(max_digits=12, decimal_places=2)` com `CheckConstraint valor > 0`. O sinal vem do tipo da categoria. A API trafega valores como string; o front não faz somas monetárias.
 - **Consequências:** Todo total (dashboard, resumo) é calculado no backend.
+
+## ADR-006 — Fluxo do Superpowers executado manualmente
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** O prompt inicial pede as skills `brainstorming`, `writing-plans`, `executing-plans`, `test-driven-development`, `requesting-code-review` e `verification-before-completion`, do plugin Superpowers. O plugin não está instalado no ambiente, e instalá-lo exigiria rede fora dos registries pip/npm.
+- **Decisão:** Seguir o mesmo roteiro manualmente: revisão da spec com perguntas e respostas registradas (seção 14 da spec), plano com tarefas pequenas, TDD por tarefa (teste falhando → implementação → suíte completa → commit), revisão de código ao fim de cada camada e verificação com saída real dos comandos.
+- **Consequências:** O `registro-uso-ia.md` registra a skill prevista e a substituição feita em cada fase.
+
+## ADR-007 — Componentes no padrão shadcn/ui escritos no projeto
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** A CLI do shadcn (`npx shadcn add`) baixa os componentes de `ui.shadcn.com`, fora dos registries de pacotes permitidos para execução autônoma.
+- **Decisão:** Os componentes (Button, Input, Card, Dialog, Select, Table etc.) são escritos em `frontend/src/components/ui/` seguindo o padrão do shadcn/ui (Tailwind + `class-variance-authority` + primitivos do Radix instalados via npm). Toasts com `sonner`. Nenhum componente do 21st.dev é usado.
+- **Alternativas descartadas:** rodar a CLI do shadcn (exige rede fora do npm); biblioteca pronta como MUI (foge da stack definida).
+- **Consequências:** Mais código próprio, mas sem dependência de rede externa. A seção "Créditos de componentes" do README registra a inspiração no shadcn/ui (MIT).
+
+## ADR-008 — `401` para requisições sem autenticação
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** A spec exige `401` sem login. O `SessionAuthentication` do DRF não define `authenticate_header`, então o DRF responde `403`.
+- **Decisão:** Classe `SessaoAuthentication` (subclasse de `SessionAuthentication`) que retorna `Session` em `authenticate_header`, fazendo o DRF responder `401`.
+- **Consequências:** O front trata `401` como "sem sessão" e redireciona para `/login`. `403` fica reservado para falha de CSRF.
+
+## ADR-009 — Usuário `demo` com senha inutilizável
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** A spec diz que a senha do `demo` não fica no front e que o backend autentica direto.
+- **Decisão:** `seed_demo` cria o `demo` com `set_unusable_password()`. O endpoint `/api/auth/demo/` usa `django.contrib.auth.login()` com o backend padrão. Se o `demo` não existir, responde `503`.
+- **Consequências:** Não há senha do `demo` para vazar; ele não entra pelo formulário normal.
+
+## ADR-010 — Somente tema claro
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** Questão em aberto da spec. O cronograma tem 6 dias e a ordem de corte já prevê cortes.
+- **Decisão:** Somente tema claro no MVP.
+- **Consequências:** Menos variantes de estilo para testar; pode entrar depois da apresentação.

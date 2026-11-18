@@ -19,6 +19,13 @@ def intervalo_do_mes(mes: str) -> tuple[date, date]:
     return inicio, fim
 
 
+def mes_anterior(mes: str) -> str:
+    """'AAAA-MM' do mês anterior; janeiro volta para dezembro do ano anterior."""
+    inicio, _ = intervalo_do_mes(mes)
+    ano, numero = (inicio.year - 1, 12) if inicio.month == 1 else (inicio.year, inicio.month - 1)
+    return f"{ano:04d}-{numero:02d}"
+
+
 def filtrar_transacoes(queryset, params):
     mes = params.get("mes")
     if mes:

@@ -18,7 +18,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; campos antigos do resumo inalterados.
 - **Commit:** `feat(api): adicionar série diária ao resumo do mês`
 
-### [ ] NB2 — Totais do mês anterior no resumo
+### [x] NB2 — Totais do mês anterior no resumo
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/filters.py`, `backend/financas/tests/test_resumo.py`.
 - **Teste primeiro:** `mes_anterior` de `2026-11` é `2026-10` com os totais certos; **virada de ano**: `2026-01` → `2025-12`; mês anterior vazio → zeros; isolamento.
 - **Pronto quando:** testes verdes.

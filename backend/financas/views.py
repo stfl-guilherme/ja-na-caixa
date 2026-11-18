@@ -9,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from financas.filters import filtrar_transacoes, intervalo_do_mes
+from financas.filters import filtrar_transacoes, intervalo_do_mes, mes_anterior
 from financas.models import Categoria, TipoCategoria, Transacao
 from financas.serializers import CategoriaSerializer, TransacaoSerializer
 
@@ -106,9 +106,35 @@ class ResumoView(APIView):
                 "despesas": _dinheiro(despesas),
                 "saldo": _dinheiro(receitas - despesas),
                 "por_categoria": [{**i, "total": _dinheiro(i["total"])} for i in itens],
+                "mes_anterior": _totais_do_mes(request.user, mes_anterior(mes)),
                 "serie_diaria": _serie_diaria(transacoes, inicio, fim),
             }
         )
+
+
+def _somar_por_tipo(transacoes) -> tuple[Decimal, Decimal]:
+    """(receitas, despesas) somadas em Decimal no Python (ADR-005)."""
+    receitas = despesas = Decimal("0")
+    for valor, tipo in transacoes.values_list("valor", "categoria__tipo"):
+        if tipo == TipoCategoria.RECEITA:
+            receitas += valor
+        else:
+            despesas += valor
+    return receitas, despesas
+
+
+def _totais(receitas: Decimal, despesas: Decimal) -> dict:
+    return {
+        "receitas": _dinheiro(receitas),
+        "despesas": _dinheiro(despesas),
+        "saldo": _dinheiro(receitas - despesas),
+    }
+
+
+def _totais_do_mes(usuario, mes: str) -> dict:
+    inicio, fim = intervalo_do_mes(mes)
+    transacoes = Transacao.objects.filter(categoria__usuario=usuario, data__gte=inicio, data__lt=fim)
+    return {"mes": mes, **_totais(*_somar_por_tipo(transacoes))}
 
 
 def _serie_diaria(transacoes, inicio, fim) -> list[dict]:

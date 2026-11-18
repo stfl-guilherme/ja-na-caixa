@@ -119,3 +119,43 @@ class TestSerieDiaria:
         criar_transacao(criar_categoria(outro_usuario), valor="50.00", data=date(2026, 11, 3))
         serie = cliente_logado.get(URL, {"mes": "2026-11"}).json()["serie_diaria"]
         assert all(d["despesas"] == "0.00" for d in serie)
+
+
+@pytest.mark.django_db
+class TestMesAnterior:
+    def test_totais_do_mes_anterior(self, cliente_logado, usuario):
+        salario = criar_categoria(usuario, nome="Salário", tipo="RECEITA")
+        mercado = criar_categoria(usuario, nome="Mercado", tipo="DESPESA")
+        criar_transacao(salario, valor="6420.00", data=date(2026, 10, 1))
+        criar_transacao(mercado, valor="4000.50", data=date(2026, 10, 15))
+        criar_transacao(mercado, valor="105.10", data=date(2026, 10, 31))
+        criar_transacao(mercado, valor="1.00", data=date(2026, 9, 30))  # dois meses antes
+        criar_transacao(mercado, valor="2.00", data=date(2026, 11, 1))  # mês atual
+
+        anterior = cliente_logado.get(URL, {"mes": "2026-11"}).json()["mes_anterior"]
+
+        assert anterior == {"mes": "2026-10", "receitas": "6420.00", "despesas": "4105.60", "saldo": "2314.40"}
+
+    def test_virada_de_ano(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario)
+        criar_transacao(mercado, valor="300.00", data=date(2025, 12, 31))
+        criar_transacao(mercado, valor="7.00", data=date(2026, 1, 2))
+        anterior = cliente_logado.get(URL, {"mes": "2026-01"}).json()["mes_anterior"]
+        assert anterior == {"mes": "2025-12", "receitas": "0.00", "despesas": "300.00", "saldo": "-300.00"}
+
+    def test_mes_anterior_vazio(self, cliente_logado):
+        anterior = cliente_logado.get(URL, {"mes": "2026-11"}).json()["mes_anterior"]
+        assert anterior == {"mes": "2026-10", "receitas": "0.00", "despesas": "0.00", "saldo": "0.00"}
+
+    def test_precisao_decimal(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario)
+        criar_transacao(mercado, valor="0.10", data=date(2026, 10, 3))
+        criar_transacao(mercado, valor="0.20", data=date(2026, 10, 4))
+        anterior = cliente_logado.get(URL, {"mes": "2026-11"}).json()["mes_anterior"]
+        assert anterior["despesas"] == "0.30"
+
+    def test_isolamento(self, cliente_logado, outro_usuario):
+        criar_transacao(criar_categoria(outro_usuario), valor="50.00", data=date(2026, 10, 3))
+        anterior = cliente_logado.get(URL, {"mes": "2026-11"}).json()["mes_anterior"]
+        assert anterior["despesas"] == "0.00"
+

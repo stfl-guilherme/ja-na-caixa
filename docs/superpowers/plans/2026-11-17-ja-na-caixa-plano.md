@@ -84,7 +84,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** `npm run build`, `npm run lint`, `npm test` verdes.
 - **Commit:** `chore(frontend): criar projeto React com Vite, Tailwind e Vitest`
 
-### [ ] F2 — Utilitários de moeda e data
+### [x] F2 — Utilitários de moeda e data
 - **Arquivos:** `src/lib/format.ts`, `src/lib/format.test.ts`.
 - **Teste primeiro:** `formatarMoeda("1234.5")` → `R$ 1.234,50`; `parseValorBR("1.234,56")` → `"1234.56"`; entradas inválidas (`""`, `"abc"`, `"1,2,3"`, `"-5"`, `"0"`) → `null`; `mesAtual()`, `formatarMes("2026-11")`, `formatarData("2026-11-17")` → `17/11/2026`.
 - **Pronto quando:** testes de spec do front nº 1 e 2 verdes.

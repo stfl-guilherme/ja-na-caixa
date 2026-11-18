@@ -50,7 +50,27 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 
 
 class TransacaoPagination(PageNumberPagination):
+    """Paginação com os totais do filtro inteiro (spec 6.3), calculados no backend."""
+
     page_size = 20
+
+    def paginate_queryset(self, queryset, request, view=None):
+        self.filtrado = queryset
+        return super().paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        resposta = super().get_paginated_response(data)
+        datas_da_pagina = sorted({t.data for t in self.page.object_list}, reverse=True)
+        saldo_por_dia = {d: Decimal("0") for d in datas_da_pagina}
+        for valor, tipo, dia in self.filtrado.filter(data__in=datas_da_pagina).values_list(
+            "valor", "categoria__tipo", "data"
+        ):
+            saldo_por_dia[dia] += valor if tipo == TipoCategoria.RECEITA else -valor
+        resposta.data["totais"] = _totais(*_somar_por_tipo(self.filtrado))
+        resposta.data["totais_por_dia"] = [
+            {"data": d.isoformat(), "saldo": _dinheiro(saldo_por_dia[d])} for d in datas_da_pagina
+        ]
+        return resposta
 
 
 class TransacaoViewSet(viewsets.ModelViewSet):

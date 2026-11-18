@@ -167,3 +167,61 @@ class TestFiltrosTransacoes:
         pagina2 = cliente_logado.get(URL, {"page": 2}).json()
         assert len(pagina2["results"]) == 5
         assert pagina2["previous"] is not None
+
+
+@pytest.mark.django_db
+class TestTotaisDaListagem:
+    def test_totais_somam_todas_as_paginas(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario, nome="Mercado", tipo="DESPESA")
+        salario = criar_categoria(usuario, nome="Salário", tipo="RECEITA")
+        for dia in range(1, 25):
+            criar_transacao(mercado, valor="10.05", data=date(2026, 11, dia))
+        criar_transacao(salario, valor="5200.00", data=date(2026, 11, 1))
+
+        corpo = cliente_logado.get(URL, {"mes": "2026-11"}).json()
+
+        assert len(corpo["results"]) == 20
+        assert corpo["count"] == 25
+        assert corpo["totais"] == {"receitas": "5200.00", "despesas": "241.20", "saldo": "4958.80"}
+
+    def test_totais_respeitam_filtros(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario, nome="Mercado", tipo="DESPESA")
+        lazer = criar_categoria(usuario, nome="Lazer", tipo="DESPESA")
+        salario = criar_categoria(usuario, nome="Salário", tipo="RECEITA")
+        criar_transacao(mercado, valor="100.00", descricao="Feira", data=date(2026, 11, 2))
+        criar_transacao(lazer, valor="50.00", descricao="Cinema", data=date(2026, 11, 3))
+        criar_transacao(salario, valor="900.00", descricao="Salário", data=date(2026, 11, 4))
+        criar_transacao(mercado, valor="7.00", descricao="Feira", data=date(2026, 10, 4))
+
+        def totais(**filtros):
+            return cliente_logado.get(URL, {"mes": "2026-11", **filtros}).json()["totais"]
+
+        assert totais(tipo="DESPESA") == {"receitas": "0.00", "despesas": "150.00", "saldo": "-150.00"}
+        assert totais(categoria=lazer.pk)["despesas"] == "50.00"
+        assert totais(busca="feira")["despesas"] == "100.00"
+        assert totais(busca="nada disso") == {"receitas": "0.00", "despesas": "0.00", "saldo": "0.00"}
+
+    def test_totais_por_dia_da_pagina(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario, nome="Mercado", tipo="DESPESA")
+        salario = criar_categoria(usuario, nome="Salário", tipo="RECEITA")
+        criar_transacao(salario, valor="100.00", data=date(2026, 11, 17))
+        criar_transacao(mercado, valor="0.10", data=date(2026, 11, 17))
+        criar_transacao(mercado, valor="0.20", data=date(2026, 11, 17))
+        criar_transacao(mercado, valor="49.90", data=date(2026, 11, 15))
+        for _ in range(20):  # 16 cabem na página 1; 4 vão para a página 2
+            criar_transacao(mercado, valor="1.00", data=date(2026, 11, 14))
+
+        pagina1 = cliente_logado.get(URL, {"mes": "2026-11"}).json()
+        datas_da_pagina = sorted({t["data"] for t in pagina1["results"]}, reverse=True)
+
+        assert [d["data"] for d in pagina1["totais_por_dia"]] == datas_da_pagina
+        assert pagina1["totais_por_dia"][0] == {"data": "2026-11-17", "saldo": "99.70"}
+        assert pagina1["totais_por_dia"][1] == {"data": "2026-11-15", "saldo": "-49.90"}
+        # O dia 14 tem 20 transações divididas entre as páginas; o total do dia considera todas.
+        assert pagina1["totais_por_dia"][2] == {"data": "2026-11-14", "saldo": "-20.00"}
+
+    def test_isolamento(self, cliente_logado, usuario, outro_usuario):
+        criar_transacao(criar_categoria(outro_usuario), valor="50.00", data=date(2026, 11, 3))
+        corpo = cliente_logado.get(URL, {"mes": "2026-11"}).json()
+        assert corpo["totais"]["despesas"] == "0.00"
+        assert corpo["totais_por_dia"] == []

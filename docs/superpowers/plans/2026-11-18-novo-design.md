@@ -36,7 +36,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; rota `GET /api/resumo/anual/` antes de qualquer rota que pudesse capturá-la.
 - **Commit:** `feat(api): adicionar endpoint de resumo anual`
 
-### [ ] NB5 — Totais na listagem de transações
+### [x] NB5 — Totais na listagem de transações
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/tests/test_transacoes.py`.
 - **Teste primeiro:** `totais` soma **todas as páginas** do filtro (25 transações, página 1 com 20 itens, totais das 25); respeita `tipo`, `categoria`, `busca` e `mes`; `totais_por_dia` traz só as datas da página atual, em ordem decrescente, com o saldo do dia; precisão decimal; isolamento.
 - **Pronto quando:** testes verdes; formato paginado anterior (`count`, `next`, `previous`, `results`) inalterado.

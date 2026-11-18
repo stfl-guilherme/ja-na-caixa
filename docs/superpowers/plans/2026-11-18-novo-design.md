@@ -91,7 +91,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Teste primeiro:** valor com sinal e cor; comparação com o mês anterior (texto + seta); **Despesas: aumento vermelho, queda verde**; cartão é link para `/transacoes?mes=…&tipo=…`; contagem animada termina no valor exato e não anima com `prefers-reduced-motion`.
 - **Commit:** `feat(frontend): adicionar cartões de métrica do painel`
 
-### [ ] NF8 — Painel: gráficos
+### [x] NF8 — Painel: gráficos
 - **Arquivos:** `frontend/src/components/painel/SaldoLineChart.tsx`, `FluxoEspelhadoChart.tsx`, `AnoBarChart.tsx`, `CategoriasTreemap.tsx`, `frontend/src/lib/squarify.ts` (+ testes).
 - **Teste primeiro:** `squarify` cobre a área total sem sobreposição; `textoSobre` escolhe branco/tinta pelo contraste; cada gráfico tem `role="img"` com `aria-label` e tabela equivalente escondida; tooltip do saldo responde às setas do teclado; treemap mostra só despesas e a tabela das 5 maiores.
 - **Commit:** `feat(frontend): adicionar gráficos do painel em SVG`

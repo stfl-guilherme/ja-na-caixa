@@ -9,7 +9,7 @@
 | Modalidade | Individual (autorizado pela professora) |
 | Data da spec | 17/11/2026 |
 | Apresentação | 24/11/2026 |
-| Status | Revisada na Fase 1 (17/11/2026) e ampliada para o novo design (18/11/2026). Ver seções 14 e 15 e `docs/ia/registro-uso-ia.md` |
+| Status | Revisada na Fase 1 (17/11/2026), ampliada para o novo design (18/11/2026) e para os modos de demonstração e o Painel em seções (18/11/2026). Ver seções 14, 15 e 16 e `docs/ia/registro-uso-ia.md` |
 
 ---
 
@@ -162,7 +162,7 @@ Base: `/api/`. Todas as rotas, exceto `auth/csrf`, `auth/login` e `auth/demo`, e
 |---|---|---|
 | GET | `/api/auth/csrf/` | Define o cookie `csrftoken`; `204` |
 | POST | `/api/auth/login/` | `{username, password}` → `200 {id, username}` ou `400 {"detail": "Usuário ou senha inválidos."}` |
-| POST | `/api/auth/demo/` | Autentica no usuário `demo` → `200 {id, username}`; `404` se `DEMO_ENABLED=False`; `503` se o `demo` não existir (rodar `seed_demo`) |
+| POST | `/api/auth/demo/` | Corpo opcional `{"modo": "vazio" \| "exemplo"}` (padrão `"exemplo"`). Recria os dados do usuário de demonstração do modo e autentica nele → `200 {id, username}`; `400 {"modo": [...]}` se o modo for inválido; `404` se `DEMO_ENABLED=False` (ver seção 7) |
 | POST | `/api/auth/logout/` | Encerra a sessão; `204` |
 | GET | `/api/auth/me/` | `200 {id, username}` ou `401` |
 
@@ -261,11 +261,21 @@ Totais da listagem (novo design, seção 15), calculados no backend sobre **toda
 
 ## 7. Usuário de demonstração
 
-- Comando `python manage.py seed_demo` cria o usuário `demo`, 8 categorias e cerca de 240 transações (20 por mês) distribuídas nos **últimos 12 meses**, incluindo o mês atual até hoje. Doze meses são necessários para o gráfico "Ano em resumo" e para a comparação com o mês anterior também em janeiro.
+Há **dois** usuários de demonstração, separados, um por modo (ADR-018):
+
+| Modo | Usuário | Dados após cada entrada |
+|---|---|---|
+| `exemplo` (padrão) | `demo` | Apaga as categorias e transações do `demo` e roda o seed de novo: 8 categorias e cerca de 240 transações (20 por mês) nos **últimos 12 meses**, incluindo o mês atual até hoje, com datas relativas ao mês atual |
+| `vazio` | `demo-vazio` | Apaga todas as categorias e transações do `demo-vazio`: a conta começa sem nada |
+
+- **A cada login de demonstração, os dados daquele usuário são recriados.** Sair e entrar de novo apaga o que foi lançado (efeito colateral aceito, ADR-018).
+- Os dois usuários são criados pelo próprio endpoint se ainda não existirem, com senha inutilizável (`set_unusable_password`, ADR-009): só entram pelo botão de demonstração, nunca pelo formulário. Não há mais o `503` por falta de `seed_demo`.
+- Um usuário de demonstração nunca vê os dados do outro (isolamento normal da seção 6.5).
+- `POST /api/auth/demo/` sem corpo ou sem `modo` usa `exemplo`, para não quebrar chamadas existentes. `modo` diferente de `vazio`/`exemplo` → `400 {"modo": ["Use \"vazio\" ou \"exemplo\"."]}`.
+- Setting `DEMO_ENABLED` (padrão `True` em desenvolvimento) liga ou desliga `/api/auth/demo/` nos dois modos (`404` quando desligado; o modo nem é validado).
+- Comando `python manage.py seed_demo [--modo exemplo|vazio] [--reset]`: cria o usuário do modo (padrão `exemplo`). Sem `--reset`, não mexe em dados existentes; com `--reset`, recria como no login. Continua útil para preparar o banco antes da apresentação, mas não é mais obrigatório.
 - As cores das categorias do `demo` são da paleta fixa de 10 cores do design (`--jnc-cat-*`, ver `frontend/src/styles/tokens.css`). O cenário é parecido com `docs/design/dados-exemplo.json` (salário, freelance, moradia, mercado etc.), sem copiá-lo.
-- `--reset` apaga e recria os dados do `demo`.
-- Setting `DEMO_ENABLED` (padrão `True` em desenvolvimento) liga ou desliga `/api/auth/demo/`.
-- A senha do `demo` **não** fica no frontend. O backend autentica direto no endpoint. O `demo` é criado com senha inutilizável (`set_unusable_password`), então só entra pelo botão (ADR-009).
+- A senha dos usuários de demonstração **não** fica no frontend. O backend autentica direto no endpoint.
 
 ## 8. Telas
 
@@ -273,8 +283,8 @@ O visual segue `docs/design/decisoes-de-design.md` (fonte da verdade do design) 
 
 | Rota | Tela | Conteúdo |
 |---|---|---|
-| `/login` | Login | Cena de praia + cartão (desktop) ou cena no topo sobre areia (mobile < 720px); formulário usuário/senha; botão "Entrar como demonstração"; estados padrão, carregando e erro |
-| `/` | Painel | Cartões Receitas / Despesas / Saldo com comparação ao mês anterior (clicáveis: abrem Transações filtrada); "Saldo do mês" (linha do saldo acumulado); "Últimas transações" (5); "Entradas e saídas por dia" (barras espelhadas); "Para onde foi o dinheiro" (treemap de despesas + 5 maiores); "Ano em resumo" (barras dos 12 meses); estado vazio; estado de saldo negativo |
+| `/login` | Login | Cena de praia + cartão (desktop) ou cena no topo sobre areia (mobile < 720px); formulário usuário/senha; botão "Entrar como demonstração", que expande no mesmo cartão uma escolha entre "Ver com dados de exemplo" (destacada) e "Começar do zero", com "Voltar"; estados padrão, carregando (na opção escolhida) e erro |
+| `/` | Painel | Fluxo vertical de seções, cada uma com título (h2) e descrição: "Resumo de [mês]" (cartões Receitas / Despesas / Saldo, clicáveis); "Como seu saldo evoluiu" (linha do saldo acumulado); "Entradas e saídas por dia" (barras espelhadas); "Para onde foi o dinheiro" (treemap + tabela das maiores categorias); "Seu ano até agora" (barras dos 12 meses); "Últimas transações" (5). Estado vazio (com guia de 2 passos quando não há categorias) e estado de saldo negativo |
 | `/transacoes` | Transações | Filtros (tipo em botões segmentados, categoria, busca) com totais do filtro; tabela (desktop) ou lista agrupada por dia (mobile); paginação (20/página); modal criar/editar; confirmação ao excluir; estados carregando, vazio e toast |
 | `/categorias` | Categorias | Seções Receitas e Despesas com total do mês; cartões com quantidade e total do mês; modal com 10 cores fixas; tipo bloqueado quando há transações; diálogo informativo quando a exclusão é bloqueada |
 
@@ -287,6 +297,8 @@ Regras de interface:
 - Erros de validação do backend aparecem no campo correspondente do formulário.
 - Moeda sempre `Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"})`, com 2 casas, sinal explícito (`+ R$ 5.200,00` / `− R$ 1.450,00`, com o caractere U+2212) e seta; a cor nunca é o único sinal.
 - Valor no modal com máscara de centavos (o usuário digita só números); data no formato `dd/mm/aaaa` com máscara. Ambos convertidos para o formato da API (`"1234.56"`, `"AAAA-MM-DD"`) antes do envio.
+- Painel em seções (ADR-019): uma abaixo da outra, espaçamento ≥ 48px; gráficos com altura ≥ 280px no desktop, eixos e unidades (R$, dias, meses) sempre rotulados, tooltip ao passar o mouse; barra superior com o seletor de mês fixa ao rolar.
+- Onboarding do modo vazio: sem nenhuma categoria, o Painel mostra os passos "1. Crie uma categoria · 2. Lance sua primeira transação", com o passo atual destacado e um botão para ele. No modal "Nova transação", o usuário escolhe primeiro o tipo (receita ou despesa); sem categorias daquele tipo, o select dá lugar a "Você ainda não tem categorias de [receita/despesa]" + "Criar categoria", que abre o modal de categoria já com o tipo e, ao salvar, volta para a transação com a categoria selecionada.
 - Comparação com o mês anterior: em **Despesas**, subir é ruim (vermelho) e cair é bom (verde); em Receitas e Saldo, o contrário. Sempre com texto ("gastou mais", "sobrou menos").
 - Animação só na entrada do Painel (≈900ms), nada em loop, desligada com `prefers-reduced-motion`.
 - Acessibilidade: WCAG AA, foco visível, alvos ≥ 44px (campos 48px), `aria-label` com resumo em cada gráfico e tabela equivalente escondida visualmente.
@@ -302,7 +314,7 @@ Regras de interface:
 5. **Isolamento:** o usuário B recebe `404` ao acessar, editar ou excluir objetos do A, e as listagens do B não contêm dados do A.
 6. Criar transação com categoria de outro usuário → `400`.
 7. Rotas sem login → `401`.
-8. Login demo funciona; com `DEMO_ENABLED=False` → `404`.
+8. Login demo funciona nos dois modos; `vazio` deixa `demo-vazio` sem dados e apaga o que foi criado antes; `exemplo` recria o seed do `demo`; os dois não veem dados um do outro; sem `modo` usa `exemplo`; modo inválido → `400`; com `DEMO_ENABLED=False` → `404`.
 9. Filtro `mes` retorna apenas transações do mês.
 10. Resumo calcula com precisão decimal (ex.: `0.10 + 0.20 == 0.30`).
 11. Série diária: um item por dia do mês, saldo acumulado correto, mês sem transações com zeros, precisão decimal, isolamento.
@@ -320,6 +332,9 @@ Regras de interface:
 6. Comparação com o mês anterior: em Despesas, aumento é vermelho e queda é verde.
 7. Máscaras de valor (centavos) e data (`dd/mm/aaaa`) e mensagens de validação do modal.
 8. Seletor de mês global: trocar o mês numa tela vale para as outras.
+9. Login: a escolha de demonstração abre com foco na primeira opção, envia o `modo` escolhido, mostra carregando na opção e fecha com "Voltar".
+10. Onboarding: Painel sem categorias mostra os 2 passos; modal de transação sem categoria do tipo oferece "Criar categoria" e volta com ela selecionada.
+11. Painel: títulos das seções presentes; eixos com rótulo; gráficos com `aria-label`.
 
 ## 10. Critérios de aceite
 
@@ -376,7 +391,7 @@ A skill `brainstorming` do Superpowers não estava instalada no ambiente. A revi
 | 1 | Qual o nome do projeto? | JáNaCaixa, conforme `CLAUDE.md`. Arquivo da spec renomeado. |
 | 2 | Que status HTTP a API devolve sem login, já que o DRF usa `403` com sessão? | `401`, como a spec pede; via `authenticate_header` (ADR-008). |
 | 3 | Como o `demo` entra sem senha no front? | O backend faz `login()` direto; o `demo` tem senha inutilizável (ADR-009). |
-| 4 | O que acontece se `/auth/demo` for chamado antes do `seed_demo`? | `503` com mensagem pedindo para rodar o comando. |
+| 4 | O que acontece se `/auth/demo` for chamado antes do `seed_demo`? | `503` com mensagem pedindo para rodar o comando. *(Substituído na seção 16: o endpoint cria o usuário.)* |
 | 5 | Nome duplicado: quem valida? | O serializer, com `400`; a constraint do banco é a última barreira. |
 | 6 | `mes` inválido nos filtros? | `400` no campo `mes`. |
 | 7 | `por_categoria` inclui receitas? | Sim, os dois tipos; o gráfico filtra despesas. |
@@ -401,4 +416,15 @@ O design visual aprovado (`docs/design/`) pede dados que a API da seção 6 não
 | 8 | O seed tinha 3 meses e cores fora da paleta. | Seed com 12 meses e cores da paleta (seção 7). |
 | 9 | Fontes Baloo 2 e Plus Jakarta Sans vêm do Google Fonts nas telas exportadas. | Instaladas via npm (`@fontsource`), sem depender de rede em tempo de execução (ADR-015). |
 | 10 | O mascote estava fora do escopo da IA. | Continua: o autor forneceu os PNGs; a IA só os posiciona conforme a seção 6 de `decisoes-de-design.md` (ADR-013). |
+
+## 16. Modos de demonstração e Painel em seções (18/11/2026)
+
+| # | Pergunta | Resposta |
+|---|---|---|
+| 1 | Por que dois usuários e não um com os dados trocados? | Assim um modo nunca apaga os dados do outro no meio de uma apresentação, e o isolamento entre usuários continua valendo (ADR-018). |
+| 2 | O `seed_demo` ainda é necessário? | Não. O endpoint cria o usuário do modo se ele não existir. O comando continua existindo, com `--modo`. |
+| 3 | O botão antigo (sem corpo) continua funcionando? | Sim: sem `modo`, usa `exemplo`. |
+| 4 | O texto da opção de exemplo diz "Três meses de receitas e despesas"? | O seed gera 12 meses (seção 7). O texto passa a ser "Um ano de receitas e despesas para explorar o painel.", para não prometer algo diferente do que aparece. |
+| 5 | Como o modal sabe de que tipo é a categoria a criar? | O modal ganha uma escolha de tipo (Despesa/Receita) antes da categoria; o select só lista as categorias desse tipo. O tipo continua vindo da categoria na API (ADR-004): a escolha só filtra a lista. |
+| 6 | O bento sai? | Sim, substituído pelo fluxo vertical (ADR-019); os componentes de gráfico são reaproveitados com mais altura e eixos rotulados. |
 

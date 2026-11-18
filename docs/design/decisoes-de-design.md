@@ -77,7 +77,7 @@ Dois componentes foram avaliados como referência visual para o painel. Nenhum f
 | Elemento | Decisão | Motivo |
 |---|---|---|
 | Linha de receita (Analytics Bento) | Usado como **saldo acumulado por dia** | Gráfico mais útil para quem controla o mês |
-| Ondas espelhadas desktop × mobile | Usado como **receitas acima × despesas abaixo, por dia**; animação contínua removida | Animação em loop faz dado financeiro parecer instável |
+| Ondas espelhadas desktop × mobile | Usado como **receitas acima × despesas abaixo, por dia**, desenhado como **barras espelhadas** (não curvas); animação contínua removida | Animação em loop faz dado financeiro parecer instável; curvas sugerem valores entre os dias que não existem |
 | Treemap por categoria | Usado para **despesas por categoria**, com a cor de cada categoria e contraste automático do texto | Lê melhor que pizza com muitas categorias |
 | Radar de sazonalidade | **Descartado**, substituído por barras dos 12 meses | O componente suaviza a forma (ajuste de Fourier), então o desenho não representa os valores reais. Inaceitável em dados financeiros. |
 | Contagem animada dos números | Usada com formatação **BRL e 2 casas** | O original arredondava para inteiro, sumindo com os centavos |
@@ -87,9 +87,22 @@ Dois componentes foram avaliados como referência visual para o painel. Nenhum f
 
 Créditos e licenças dos componentes de referência: ver README.
 
+### Iteração do Painel: de bento para fluxo vertical (18/11/2026)
+| # | Tentativa | Resultado | Decisão |
+|---|---|---|---|
+| 1 | Painel em bento (grid de 12 colunas): cartões no topo e gráficos lado a lado, em alturas diferentes (`docs/design/telas/app/painel/Painel.dc.html`) | Considerado difícil de entender: sem ordem clara de leitura, gráficos baixos e significado dependente de conhecer cada gráfico. O gráfico de entradas e saídas, pensado a partir das ondas espelhadas em curvas, ainda lembrava a referência | Rejeitado |
+| 2 | Fluxo vertical: uma seção abaixo da outra, cada uma com título e uma frase em linguagem simples ("Quanto entrou, quanto saiu e quanto sobrou."), gráficos em largura total com eixos e unidades rotulados; o gráfico espelhado em curvas vira **barras espelhadas** (receitas para cima em verde, despesas para baixo em vermelho-coral) | Lê como um relatório, de cima para baixo | **Aprovado** (ADR-019). O seletor de mês fica fixo no topo ao rolar. |
+
+### Escolha da demonstração no login (18/11/2026)
+O botão "Entrar como demonstração" deixa de entrar direto: ele expande, **no mesmo cartão do login**, duas opções em cartões grandes e clicáveis (empilhadas no celular):
+1. **"Ver com dados de exemplo"** — opção destacada (é a principal da apresentação), no amarelo do Papo com o traço cartunesco, que continua exclusivo da demonstração.
+2. **"Começar do zero"** — cartão branco com contorno simples.
+
+Abaixo, em texto pequeno: "Os dados de demonstração são recriados a cada entrada." e um botão "Voltar". O foco vai para a primeira opção ao abrir. A cena de praia e o Papo continuam iguais (ADR-018).
+
 ### Telas
 - **Layout:** menu lateral (desktop) / barra inferior (mobile), seletor de mês global, ação "+ Nova transação" sempre acessível.
-- **Painel (bento):** 3 cartões de métrica, saldo acumulado, entradas × saídas por dia, treemap de despesas + top 5, ano em resumo, últimas transações.
+- **Painel (seções verticais, ADR-019):** resumo do mês (3 cartões), saldo acumulado, entradas × saídas por dia em barras espelhadas, treemap de despesas + maiores categorias, ano até agora, últimas transações. *(A primeira versão em bento foi substituída; ver iteração acima.)*
 - **Transações:** filtros, tabela (desktop) ou cartões agrupados por dia (mobile), modal de criar/editar, confirmação de exclusão.
 - **Categorias:** seções Receitas e Despesas, modal com 10 cores pré-aprovadas em contraste, tipo bloqueado quando há transações.
 

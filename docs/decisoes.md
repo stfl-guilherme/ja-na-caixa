@@ -164,3 +164,28 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
   - *Cartão do usuário:* o design mostra nome completo e login; a API só tem `username`. O cartão mostra as iniciais e o `username`.
   - *Limite de 2 personagens:* nos estados vazios com coadjuvante, a página pede ao layout para esconder o Papo do menu (`useOcultarPapoDoMenu`), como registrado em `decisoes-de-design.md`, seção 6.
 - **Consequências:** o plano (NF6) inclui o modal completo; a NF10 só monta a tela de Transações em volta dele.
+
+## ADR-018 — Dois modos de demonstração, com dados recriados a cada entrada
+
+- **Status:** Aceita — 18/11/2026. Complementa o ADR-003 e o ADR-009.
+- **Contexto:** O botão "Entrar como demonstração" só mostrava a conta cheia de dados. Na apresentação também é preciso mostrar o começo do uso (cadastrar a primeira categoria e a primeira transação). Além disso, quem usa a demonstração altera os dados, e a próxima pessoa encontra um cenário diferente do esperado.
+- **Decisão:**
+  - `POST /api/auth/demo/` recebe `{"modo": "vazio" | "exemplo"}`; sem `modo`, vale `exemplo` (compatível com o botão antigo). Modo inválido → `400`. `DEMO_ENABLED=False` → `404`.
+  - Dois usuários separados: `demo` (modo `exemplo`) e `demo-vazio` (modo `vazio`), ambos com senha inutilizável e criados pelo endpoint se não existirem.
+  - **A cada entrada, os dados daquele usuário são recriados:** `vazio` apaga todas as categorias e transações do `demo-vazio`; `exemplo` apaga as do `demo` e roda o seed de novo, com datas relativas ao mês atual.
+  - `seed_demo` ganha `--modo` e reutiliza a mesma função de recriação.
+- **Por que recriar a cada entrada:** a demonstração fica **previsível**. Quem clica sempre vê o mesmo cenário, com datas no mês atual (o painel nunca abre num mês vazio só porque o seed foi rodado semanas antes), e nenhum teste anterior polui a apresentação.
+- **Efeito colateral aceito:** sair e entrar de novo **apaga o que foi lançado** na demonstração. A tela de login avisa: "Os dados de demonstração são recriados a cada entrada." Quem quiser guardar dados usa um usuário próprio (`createsuperuser`).
+- **Alternativas descartadas:**
+  - *Um só usuário, alternando os dados:* um modo apagaria os dados do outro.
+  - *Recriar só pelo comando `seed_demo`:* as datas envelhecem e o estado depende do que a última pessoa fez.
+  - *Usuário temporário por sessão:* mais previsível ainda, mas acumula usuários no banco e exige limpeza periódica.
+- **Consequências:** o `503` "rode o `seed_demo`" deixa de existir; dois logins simultâneos no mesmo modo compartilham os mesmos dados (aceitável num sistema local).
+
+## ADR-019 — Painel em fluxo vertical de seções
+
+- **Status:** Aceita — 18/11/2026. Substitui a organização em bento do ADR-013 / `Painel.dc.html`.
+- **Contexto:** Na revisão do novo design, o Painel em bento (12 colunas, gráficos lado a lado e em alturas diferentes) foi considerado difícil de entender: não ficava claro por onde começar a ler, os gráficos eram baixos (200px) e o significado de cada um dependia de conhecer o gráfico.
+- **Decisão:** uma seção abaixo da outra, cada uma com título (h2) e uma linha de descrição em linguagem simples, na ordem: Resumo do mês → Como seu saldo evoluiu → Entradas e saídas por dia → Para onde foi o dinheiro → Seu ano até agora → Últimas transações. Gráficos em largura total, com altura mínima de 280px no desktop, eixos e unidades rotulados e tooltip. Seletor de mês fixo no topo ao rolar.
+- **Alternativas descartadas:** manter o bento com legendas maiores (continuava sem ordem de leitura); abas por gráfico (esconde informação e exige cliques).
+- **Consequências:** a página fica mais longa e rola; os componentes de gráfico são reaproveitados; as regras dos personagens (bordas, máximo de 2) continuam valendo.

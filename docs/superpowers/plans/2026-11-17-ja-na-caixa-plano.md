@@ -145,7 +145,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Polimento e documentação
 
-### [ ] P1 — Polimento
+### [x] P1 — Polimento
 - **Arquivos:** páginas e componentes.
 - **Teste primeiro:** não se aplica (ajustes visuais); suítes completas devem continuar verdes.
 - **Pronto quando:** responsivo a partir de 375 px; estados carregando/vazio/erro em todas as telas.

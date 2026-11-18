@@ -179,7 +179,7 @@ export default function TransacoesPage() {
               <TableRow>
                 <TableHead>Data</TableHead>
                 <TableHead>Descrição</TableHead>
-                <TableHead>Categoria</TableHead>
+                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
                 <TableHead className="w-24 text-right">
                   <span className="sr-only">Ações</span>
@@ -189,12 +189,15 @@ export default function TransacoesPage() {
             <TableBody>
               {data.results.map((t) => (
                 <TableRow key={t.id}>
-                  <TableCell className="whitespace-nowrap text-muted-foreground">{formatarData(t.data)}</TableCell>
-                  <TableCell className="max-w-56">
+                  <TableCell className="whitespace-nowrap text-xs text-muted-foreground sm:text-sm">{formatarData(t.data)}</TableCell>
+                  <TableCell className="max-w-40 sm:max-w-56">
                     <p className="truncate font-medium">{t.descricao}</p>
                     {t.observacao && <p className="truncate text-xs text-muted-foreground">{t.observacao}</p>}
+                    <p className="truncate text-xs text-muted-foreground sm:hidden" aria-hidden="true">
+                      {t.categoria_nome}
+                    </p>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <span className="inline-flex items-center gap-2 whitespace-nowrap">
                       <span className="size-2.5 rounded-full" style={{ backgroundColor: t.categoria_cor }} aria-hidden="true" />
                       {t.categoria_nome}
@@ -203,7 +206,7 @@ export default function TransacoesPage() {
                   <TableCell className="whitespace-nowrap text-right">
                     <ValorTransacao valor={t.valor} tipo={t.tipo} />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-right">
+                  <TableCell className="whitespace-nowrap px-1 text-right">
                     <Button variant="ghost" size="icon" onClick={() => abrirForm(t)} aria-label={`Editar ${t.descricao}`}>
                       <Pencil />
                     </Button>
@@ -223,7 +226,7 @@ export default function TransacoesPage() {
               ))}
             </TableBody>
           </Table>
-          <div className="flex items-center justify-between gap-3 border-t px-4 py-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3 text-sm">
             <span className="text-muted-foreground">
               {data.count} {data.count === 1 ? 'transação' : 'transações'}
             </span>

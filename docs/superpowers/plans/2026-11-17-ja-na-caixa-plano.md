@@ -126,7 +126,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste de spec do front nº 4 verde.
 - **Commit:** `feat(frontend): adicionar formulário de transação`
 
-### [ ] F9 — Tela de transações
+### [x] F9 — Tela de transações
 - **Arquivos:** `src/pages/TransacoesPage.tsx`, testes.
 - **Teste primeiro:** lista transações com valor formatado; filtro de mês muda a consulta; estado vazio.
 - **Pronto quando:** tabela paginada, filtros (mês, categoria, tipo, busca), modal criar/editar, confirmação ao excluir.

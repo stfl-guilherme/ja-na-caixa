@@ -65,7 +65,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste de spec nº 10 verde.
 - **Commit:** `feat(api): adicionar endpoint de resumo mensal`
 
-### [ ] B10 — Comando `seed_demo`
+### [x] B10 — Comando `seed_demo`
 - **Arquivos:** `financas/management/commands/seed_demo.py`, `financas/tests/test_seed_demo.py`.
 - **Teste primeiro:** cria `demo` com senha inutilizável, ~8 categorias e ~60 transações nos últimos 3 meses; rodar duas vezes não duplica; `--reset` recria.
 - **Pronto quando:** testes verdes; comando idempotente.

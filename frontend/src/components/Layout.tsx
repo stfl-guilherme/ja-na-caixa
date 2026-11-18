@@ -37,8 +37,15 @@ export function Layout() {
 
   const contexto = useMemo<InterfaceApp>(
     () => ({
-      abrirTransacao: (transacao) => setModal({ aberto: true, transacao }),
-      abrirCategoria: () => setCriandoCategoria(true),
+      // Abrir um modal fecha o aviso anterior, para ele não cobrir os campos no celular.
+      abrirTransacao: (transacao) => {
+        setAviso(null)
+        setModal({ aberto: true, transacao })
+      },
+      abrirCategoria: () => {
+        setAviso(null)
+        setCriandoCategoria(true)
+      },
       pedirExclusao: setExcluindo,
       avisar,
       avisoAberto: aviso !== null,

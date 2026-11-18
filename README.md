@@ -6,15 +6,15 @@ Controle financeiro pessoal: sistema web local para registrar receitas e despesa
 
 ## Funcionalidades
 
-- Login por sessão com botão **Entrar como demonstração** (usuário `demo`, sem senha no front)
+- Login por sessão com botão **Entrar como demonstração**, em dois modos: com dados de exemplo ou começando do zero (sem senha no front)
 - CRUD de categorias (nome, tipo receita/despesa, cor), com exclusão bloqueada quando há transações
 - CRUD de transações, com valor no formato brasileiro (`1.234,56`)
 - Filtros de transações por mês, categoria, tipo e busca na descrição, com paginação (20 por página)
-- Painel do mês (bento): receitas, despesas e saldo com comparação ao mês anterior, saldo acumulado dia a dia, entradas × saídas por dia, despesas por categoria (treemap), ano em resumo e 5 últimas transações; estados vazio e de saldo negativo
+- Painel do mês em seções verticais, cada uma com título e descrição: resumo (receitas, despesas e saldo com comparação ao mês anterior), saldo acumulado dia a dia, entradas × saídas por dia, despesas por categoria (treemap + tabela), ano até agora e 5 últimas transações; eixos rotulados e tooltips; estados vazio e de saldo negativo
 - Seletor de mês global (vale para Painel, Transações e Categorias) e "+ Nova transação" a partir de qualquer tela
 - Visual próprio: cena de praia no login, mascote Papo (jacaré-de-papo-amarelo) como decoração acessível, tokens de design em `frontend/src/styles/tokens.css`
 - Dados isolados por usuário (objetos de outro usuário retornam `404`)
-- Comando `seed_demo` com ~240 transações nos últimos 12 meses
+- Dados de demonstração recriados a cada entrada: ~240 transações nos últimos 12 meses (modo exemplo) ou conta vazia com guia de primeiros passos (modo vazio)
 - Layout responsivo a partir de 375 px (menu lateral ≥ 720 px; barra inferior e botão "+" abaixo disso)
 
 ## Stack
@@ -43,13 +43,13 @@ python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed_demo
+python manage.py seed_demo        # opcional: o login de demonstração já cria os dados
 python manage.py runserver
 ```
 
 A API fica em `http://localhost:8000/api/`.
 
-- `python manage.py seed_demo --reset` apaga e recria os dados do `demo`.
+- `python manage.py seed_demo --reset` apaga e recria os dados do `demo`; `--modo vazio` prepara o `demo-vazio`.
 - Para criar um usuário com senha (login pelo formulário): `python manage.py createsuperuser`. O mesmo usuário acessa o admin em `http://localhost:8000/admin/`.
 - Variáveis opcionais: `DEMO_ENABLED=false` desliga o login de demonstração; `DJANGO_SECRET_KEY` e `DJANGO_DEBUG` substituem os valores de desenvolvimento.
 
@@ -61,7 +61,21 @@ npm install
 npm run dev
 ```
 
-Acesse `http://localhost:5173` e clique em **Entrar como demonstração**. O Vite faz proxy de `/api` para o Django, então os dois servidores precisam estar rodando.
+Acesse `http://localhost:5173` e clique em **Entrar como demonstração** (detalhes abaixo). O Vite faz proxy de `/api` para o Django, então os dois servidores precisam estar rodando.
+
+### Como usar a demonstração
+
+Na tela de login, **Entrar como demonstração** abre duas opções no próprio cartão:
+
+| Opção | Usuário | O que você encontra |
+|---|---|---|
+| **Ver com dados de exemplo** (destacada) | `demo` | 8 categorias e cerca de 240 transações nos últimos 12 meses, com datas relativas ao mês atual: o Painel já abre com todos os gráficos |
+| **Começar do zero** | `demo-vazio` | Uma conta vazia. O Painel guia em 2 passos: criar uma categoria e lançar a primeira transação. No modal "Nova transação", se não houver categoria do tipo escolhido, dá para criá-la ali mesmo |
+
+- **Os dados de demonstração são recriados a cada entrada** (ADR-018). Sair e entrar de novo apaga o que foi lançado. Para guardar dados, crie um usuário próprio com `python manage.py createsuperuser` e entre pelo formulário.
+- Os dois usuários são separados: um não vê os dados do outro.
+- A API aceita `POST /api/auth/demo/` com `{"modo": "exemplo"}` ou `{"modo": "vazio"}`; sem `modo`, usa `exemplo`.
+- `DEMO_ENABLED=false` desliga os dois modos.
 
 ### Testes e verificação
 
@@ -95,6 +109,7 @@ Navegador ──▶ Vite :5173 ──(proxy /api)──▶ Django + DRF :8000 �
 | [Registro de uso de IA](docs/ia/registro-uso-ia.md) | Ferramentas, skills e revisão humana em cada etapa |
 | [Prompt inicial](docs/ia/prompt-inicial.md) | Instruções dadas ao Claude Code para a construção autônoma |
 | [Prompt do novo design](docs/ia/prompt-design.md) | Instruções para implementar o novo design |
+| [Prompt dos modos de demonstração](docs/ia/prompt-demo-painel.md) | Instruções para os modos de demonstração, o onboarding e o Painel em seções |
 
 ## Uso de IA
 

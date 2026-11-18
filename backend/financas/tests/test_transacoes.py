@@ -116,3 +116,54 @@ class TestIsolamentoTransacoes:
 def test_sem_login_retorna_401(api_client):
     assert api_client.get(URL).status_code == 401
     assert api_client.post(URL, {}, format="json").status_code == 401
+
+
+@pytest.mark.django_db
+class TestFiltrosTransacoes:
+    def test_filtro_mes(self, cliente_logado, usuario):
+        categoria = criar_categoria(usuario)
+        criar_transacao(categoria, data=date(2026, 10, 31), descricao="Outubro")
+        criar_transacao(categoria, data=date(2026, 11, 1), descricao="Início")
+        criar_transacao(categoria, data=date(2026, 11, 30), descricao="Fim")
+        criar_transacao(categoria, data=date(2026, 12, 1), descricao="Dezembro")
+        nomes = [t["descricao"] for t in resultados(cliente_logado.get(URL, {"mes": "2026-11"}))]
+        assert nomes == ["Fim", "Início"]
+
+    @pytest.mark.parametrize("mes", ["2026-13", "2026/11", "novembro", "2026-1"])
+    def test_mes_invalido(self, cliente_logado, mes):
+        resposta = cliente_logado.get(URL, {"mes": mes})
+        assert resposta.status_code == 400
+        assert "mes" in resposta.json()
+
+    def test_filtro_categoria(self, cliente_logado, usuario):
+        mercado = criar_categoria(usuario, nome="Mercado")
+        lazer = criar_categoria(usuario, nome="Lazer")
+        criar_transacao(mercado, descricao="Arroz")
+        criar_transacao(lazer, descricao="Cinema")
+        nomes = [t["descricao"] for t in resultados(cliente_logado.get(URL, {"categoria": lazer.pk}))]
+        assert nomes == ["Cinema"]
+
+    def test_filtro_tipo(self, cliente_logado, usuario):
+        criar_transacao(criar_categoria(usuario, nome="Salário", tipo="RECEITA"), descricao="Pagamento")
+        criar_transacao(criar_categoria(usuario, nome="Mercado"), descricao="Arroz")
+        nomes = [t["descricao"] for t in resultados(cliente_logado.get(URL, {"tipo": "RECEITA"}))]
+        assert nomes == ["Pagamento"]
+
+    def test_busca_sem_diferenciar_maiusculas(self, cliente_logado, usuario):
+        categoria = criar_categoria(usuario)
+        criar_transacao(categoria, descricao="Padaria do Zé")
+        criar_transacao(categoria, descricao="Mercado")
+        nomes = [t["descricao"] for t in resultados(cliente_logado.get(URL, {"busca": "PADARIA"}))]
+        assert nomes == ["Padaria do Zé"]
+
+    def test_paginacao_20_por_pagina(self, cliente_logado, usuario):
+        categoria = criar_categoria(usuario)
+        for i in range(25):
+            criar_transacao(categoria, descricao=f"T{i}")
+        pagina1 = cliente_logado.get(URL).json()
+        assert pagina1["count"] == 25
+        assert len(pagina1["results"]) == 20
+        assert pagina1["next"] is not None
+        pagina2 = cliente_logado.get(URL, {"page": 2}).json()
+        assert len(pagina2["results"]) == 5
+        assert pagina2["previous"] is not None

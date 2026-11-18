@@ -53,7 +53,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes de spec nº 1, 5 (transações) e 6 verdes.
 - **Commit:** `feat(api): adicionar CRUD de transações`
 
-### [ ] B8 — Filtros e paginação de transações
+### [x] B8 — Filtros e paginação de transações
 - **Arquivos:** `financas/views.py`, `financas/filters.py`, `financas/tests/test_transacoes.py`.
 - **Teste primeiro:** `mes` retorna só o mês; `mes` inválido → `400`; filtros `categoria`, `tipo`, `busca`; paginação com 20 por página e `count`.
 - **Pronto quando:** teste de spec nº 9 verde.

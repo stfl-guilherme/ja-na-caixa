@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+from financas.filters import filtrar_transacoes
 from financas.models import Categoria, TipoCategoria, Transacao
 from financas.serializers import CategoriaSerializer, TransacaoSerializer
 
@@ -48,6 +49,9 @@ class TransacaoViewSet(viewsets.ModelViewSet):
     pagination_class = TransacaoPagination
 
     def get_queryset(self):
-        return Transacao.objects.filter(categoria__usuario=self.request.user).select_related(
+        queryset = Transacao.objects.filter(categoria__usuario=self.request.user).select_related(
             "categoria"
         )
+        if self.action == "list":
+            queryset = filtrar_transacoes(queryset, self.request.query_params)
+        return queryset

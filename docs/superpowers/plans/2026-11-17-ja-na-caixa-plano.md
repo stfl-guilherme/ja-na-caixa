@@ -151,7 +151,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** responsivo a partir de 375 px; estados carregando/vazio/erro em todas as telas.
 - **Commit:** `style(frontend): polir responsividade e estados das telas`
 
-### [ ] P2 — README final (Fase 4)
+### [x] P2 — README final (Fase 4)
 - **Arquivos:** `README.md`, `docs/ia/registro-uso-ia.md`.
 - **Pronto quando:** README reproduzido em clone limpo; critérios de aceite conferidos.
 - **Commit:** `docs: finalizar documentação`

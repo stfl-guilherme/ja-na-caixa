@@ -78,7 +78,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Frontend
 
-### [ ] F1 — Scaffold do frontend
+### [x] F1 — Scaffold do frontend
 - **Arquivos:** `frontend/` (Vite React TS), `vite.config.ts` (proxy `/api` → `:8000`, Vitest jsdom), Tailwind v4, ESLint, `src/test/setup.ts`, alias `@/`.
 - **Teste primeiro:** `src/App.test.tsx` — renderiza o texto "JáNaCaixa".
 - **Pronto quando:** `npm run build`, `npm run lint`, `npm test` verdes.

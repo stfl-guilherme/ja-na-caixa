@@ -90,7 +90,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes de spec do front nº 1 e 2 verdes.
 - **Commit:** `feat(frontend): adicionar utilitários de moeda e data`
 
-### [ ] F3 — Cliente da API
+### [x] F3 — Cliente da API
 - **Arquivos:** `src/api/client.ts`, `src/api/types.ts`, `src/api/endpoints.ts`, `src/api/client.test.ts`.
 - **Teste primeiro:** POST envia `X-CSRFToken` lido do cookie; erro `400` vira `ApiError` com `fieldErrors`; `401` vira `ApiError` com `status 401`; `204` retorna `undefined`.
 - **Pronto quando:** testes verdes; tipos `Categoria`, `Transacao`, `Resumo`, `Paginado<T>`, `Usuario`.

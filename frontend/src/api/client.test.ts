@@ -106,3 +106,14 @@ describe('api', () => {
     expect(erro.message).toMatch(/erro inesperado/i)
   })
 })
+
+describe('resumoApi.anual', () => {
+  it('chama /api/resumo/anual/ com o ano', async () => {
+    const { resumoApi } = await import('./endpoints')
+    const fetchMock = vi.fn(async (_url: RequestInfo | URL) => new Response(JSON.stringify({ ano: 2026 }), { headers: { 'Content-Type': 'application/json' } }))
+    vi.stubGlobal('fetch', fetchMock)
+    await resumoApi.anual(2026)
+    expect(String(fetchMock.mock.calls[0][0])).toBe('/api/resumo/anual/?ano=2026')
+    vi.unstubAllGlobals()
+  })
+})

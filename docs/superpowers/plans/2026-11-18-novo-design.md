@@ -68,7 +68,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes.
 - **Commit:** `feat(frontend): adicionar formatação com sinal, máscaras e comparação mensal`
 
-### [ ] NF4 — API e mês global
+### [x] NF4 — API e mês global
 - **Arquivos:** `frontend/src/api/types.ts`, `endpoints.ts`, `frontend/src/hooks/useResumo.ts`, `frontend/src/hooks/useMesSelecionado.ts` (+ teste).
 - **Teste primeiro:** `useMesSelecionado` lê `?mes=` da URL, usa o mês atual sem parâmetro e preserva os outros parâmetros ao trocar; `resumoApi.anual(2026)` chama `/api/resumo/anual/?ano=2026`.
 - **Pronto quando:** tipos novos (`serie_diaria`, `mes_anterior`, `quantidade`, `totais`, `totais_por_dia`, `ResumoAnual`) e testes verdes.

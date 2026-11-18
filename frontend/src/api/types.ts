@@ -47,6 +47,18 @@ export interface Paginado<T> {
   results: T[]
 }
 
+export interface Totais {
+  receitas: string
+  despesas: string
+  saldo: string
+}
+
+/** Listagem de transações com os totais do filtro, calculados no backend (spec 6.3). */
+export interface ListaTransacoes extends Paginado<Transacao> {
+  totais: Totais
+  totais_por_dia: { data: string; saldo: string }[]
+}
+
 export interface FiltrosTransacao {
   mes?: string
   categoria?: number | ''
@@ -61,12 +73,25 @@ export interface ResumoCategoria {
   cor: string
   tipo: Tipo
   total: string
+  /** Transações da categoria no mês. */
+  quantidade: number
 }
 
-export interface Resumo {
-  mes: string
+export interface DiaDoMes {
+  data: string
   receitas: string
   despesas: string
-  saldo: string
+  saldo_acumulado: string
+}
+
+export interface Resumo extends Totais {
+  mes: string
   por_categoria: ResumoCategoria[]
+  mes_anterior: Totais & { mes: string }
+  serie_diaria: DiaDoMes[]
+}
+
+export interface ResumoAnual extends Totais {
+  ano: number
+  meses: (Totais & { mes: string })[]
 }

@@ -3,8 +3,9 @@ import type {
   Categoria,
   CategoriaInput,
   FiltrosTransacao,
-  Paginado,
+  ListaTransacoes,
   Resumo,
+  ResumoAnual,
   Tipo,
   Transacao,
   TransacaoInput,
@@ -29,7 +30,7 @@ export const categoriasApi = {
 
 export const transacoesApi = {
   listar: (filtros: FiltrosTransacao = {}) =>
-    api<Paginado<Transacao>>('/transacoes/', { params: { ...filtros } }),
+    api<ListaTransacoes>('/transacoes/', { params: { ...filtros } }),
   criar: (dados: TransacaoInput) => api<Transacao>('/transacoes/', { method: 'POST', body: dados }),
   atualizar: (id: number, dados: TransacaoInput) =>
     api<Transacao>(`/transacoes/${id}/`, { method: 'PUT', body: dados }),
@@ -38,4 +39,5 @@ export const transacoesApi = {
 
 export const resumoApi = {
   obter: (mes: string) => api<Resumo>('/resumo/', { params: { mes } }),
+  anual: (ano: number) => api<ResumoAnual>('/resumo/anual/', { params: { ano } }),
 }

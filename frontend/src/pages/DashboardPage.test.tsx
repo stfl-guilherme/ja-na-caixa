@@ -13,10 +13,12 @@ const resumo: Resumo = {
   despesas: '2310.45',
   saldo: '2189.55',
   por_categoria: [
-    { categoria_id: 1, nome: 'Salário', cor: '#16A34A', tipo: 'RECEITA', total: '4500.00' },
-    { categoria_id: 2, nome: 'Lazer', cor: '#A855F7', tipo: 'DESPESA', total: '1390.15' },
-    { categoria_id: 3, nome: 'Mercado', cor: '#22C55E', tipo: 'DESPESA', total: '920.30' },
+    { categoria_id: 1, nome: 'Salário', cor: '#16A34A', tipo: 'RECEITA', total: '4500.00', quantidade: 1 },
+    { categoria_id: 2, nome: 'Lazer', cor: '#A855F7', tipo: 'DESPESA', total: '1390.15', quantidade: 1 },
+    { categoria_id: 3, nome: 'Mercado', cor: '#22C55E', tipo: 'DESPESA', total: '920.30', quantidade: 2 },
   ],
+  mes_anterior: { mes: '2026-10', receitas: '4000.00', despesas: '2000.00', saldo: '2000.00' },
+  serie_diaria: [],
 }
 
 function transacao(id: number): Transacao {

@@ -59,7 +59,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste de spec nº 9 verde.
 - **Commit:** `feat(api): adicionar filtros e paginação de transações`
 
-### [ ] B9 — Resumo mensal
+### [x] B9 — Resumo mensal
 - **Arquivos:** `financas/views.py`, `financas/tests/test_resumo.py`.
 - **Teste primeiro:** receitas, despesas e saldo do mês como string; `0.10 + 0.20 == "0.30"`; `por_categoria` ordenado por total; sem `mes` usa mês atual; `mes` inválido → `400`; isolamento.
 - **Pronto quando:** teste de spec nº 10 verde.

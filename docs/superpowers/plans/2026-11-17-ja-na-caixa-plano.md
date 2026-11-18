@@ -96,7 +96,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; tipos `Categoria`, `Transacao`, `Resumo`, `Paginado<T>`, `Usuario`.
 - **Commit:** `feat(frontend): adicionar cliente da API`
 
-### [ ] F4 — Componentes de UI
+### [x] F4 — Componentes de UI
 - **Arquivos:** `src/components/ui/{button,input,label,card,dialog,select,table,skeleton,badge,textarea}.tsx`, `src/lib/utils.ts` (`cn`).
 - **Teste primeiro:** `button.test.tsx` — aplica variante e repassa `onClick`.
 - **Pronto quando:** build/lint/test verdes (ADR-007).

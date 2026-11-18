@@ -14,11 +14,13 @@ export function Field({ id, label, erros, children }: FieldProps) {
     <div className="grid gap-1.5">
       <Label htmlFor={id}>{label}</Label>
       {children}
-      {erros?.map((erro) => (
-        <p key={erro} id={`${id}-erro`} className="text-sm text-destructive" role="alert">
-          {erro}
-        </p>
-      ))}
+      {erros?.length ? (
+        <div id={`${id}-erro`} className="grid gap-0.5 text-sm text-destructive" role="alert">
+          {erros.map((erro) => (
+            <p key={erro}>{erro}</p>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

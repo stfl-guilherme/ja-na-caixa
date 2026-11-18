@@ -3,6 +3,7 @@ import { ApiError } from '@/api/client'
 import type { Categoria, CategoriaInput, Tipo } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
+import { ariaCampo } from '@/components/ui/aria-campo'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { NativeSelect } from '@/components/ui/native-select'
@@ -38,7 +39,7 @@ export function CategoriaForm({ categoria, onSalvar, onCancelar, salvando, erro 
           value={nome}
           maxLength={50}
           onChange={(e) => setNome(e.target.value)}
-          aria-invalid={campos.nome ? true : undefined}
+          {...ariaCampo('categoria-nome', campos.nome)}
           autoFocus
         />
       </Field>
@@ -48,7 +49,7 @@ export function CategoriaForm({ categoria, onSalvar, onCancelar, salvando, erro 
           value={tipo}
           onChange={(e) => setTipo(e.target.value as Tipo)}
           disabled={tipoBloqueado}
-          aria-invalid={campos.tipo ? true : undefined}
+          {...ariaCampo('categoria-tipo', campos.tipo)}
         >
           <option value="DESPESA">Despesa</option>
           <option value="RECEITA">Receita</option>
@@ -73,7 +74,7 @@ export function CategoriaForm({ categoria, onSalvar, onCancelar, salvando, erro 
             value={cor}
             maxLength={7}
             onChange={(e) => setCor(e.target.value)}
-            aria-invalid={campos.cor ? true : undefined}
+            {...ariaCampo('categoria-cor', campos.cor)}
             className="font-mono uppercase"
           />
         </div>

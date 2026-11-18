@@ -3,6 +3,7 @@ import { ApiError, type FieldErrors } from '@/api/client'
 import type { Categoria, Transacao, TransacaoInput } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
+import { ariaCampo } from '@/components/ui/aria-campo'
 import { Field } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { NativeSelect } from '@/components/ui/native-select'
@@ -29,7 +30,6 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
   const errosApi = erro instanceof ApiError ? erro.fieldErrors : {}
   const erroGeral = erro instanceof ApiError && Object.keys(errosApi).length === 0 ? erro.message : null
   const campos: FieldErrors = { ...errosApi, ...errosLocais }
-  const invalido = (campo: string) => (campos[campo] ? true : undefined)
 
   const enviar = (evento: FormEvent) => {
     evento.preventDefault()
@@ -61,7 +61,7 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
           value={descricao}
           maxLength={120}
           onChange={(e) => setDescricao(e.target.value)}
-          aria-invalid={invalido('descricao')}
+          {...ariaCampo('transacao-descricao', campos.descricao)}
           autoFocus
         />
       </Field>
@@ -73,7 +73,7 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
             placeholder="0,00"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
-            aria-invalid={invalido('valor')}
+            {...ariaCampo('transacao-valor', campos.valor)}
           />
         </Field>
         <Field id="transacao-data" label="Data" erros={campos.data}>
@@ -82,7 +82,7 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
             type="date"
             value={data}
             onChange={(e) => setData(e.target.value)}
-            aria-invalid={invalido('data')}
+            {...ariaCampo('transacao-data', campos.data)}
           />
         </Field>
       </div>
@@ -91,7 +91,7 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
           id="transacao-categoria"
           value={categoria}
           onChange={(e) => setCategoria(e.target.value)}
-          aria-invalid={invalido('categoria')}
+          {...ariaCampo('transacao-categoria', campos.categoria)}
         >
           <option value="">Selecione…</option>
           {receitas.length > 0 && (
@@ -119,6 +119,7 @@ export function TransacaoForm({ transacao, categorias, onSalvar, onCancelar, sal
           id="transacao-observacao"
           value={observacao}
           onChange={(e) => setObservacao(e.target.value)}
+          {...ariaCampo('transacao-observacao', campos.observacao)}
           placeholder="Opcional"
         />
       </Field>

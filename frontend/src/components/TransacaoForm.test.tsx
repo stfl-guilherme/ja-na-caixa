@@ -78,6 +78,7 @@ describe('TransacaoForm', () => {
     expect(screen.getByLabelText('Valor (R$)')).toHaveAttribute('aria-invalid', 'true')
     expect(screen.getByLabelText('Categoria')).toHaveAttribute('aria-invalid', 'true')
     expect(screen.getByLabelText('Descrição')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Valor (R$)')).toHaveAccessibleDescription('O valor deve ser maior que zero.')
   })
 
   it('preenche os campos ao editar', () => {

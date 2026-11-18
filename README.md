@@ -10,15 +10,17 @@ Controle financeiro pessoal: sistema web local para registrar receitas e despesa
 - CRUD de categorias (nome, tipo receita/despesa, cor), com exclusão bloqueada quando há transações
 - CRUD de transações, com valor no formato brasileiro (`1.234,56`)
 - Filtros de transações por mês, categoria, tipo e busca na descrição, com paginação (20 por página)
-- Dashboard do mês: receitas, despesas, saldo, gráfico de despesas por categoria e 5 últimas transações
+- Painel do mês (bento): receitas, despesas e saldo com comparação ao mês anterior, saldo acumulado dia a dia, entradas × saídas por dia, despesas por categoria (treemap), ano em resumo e 5 últimas transações; estados vazio e de saldo negativo
+- Seletor de mês global (vale para Painel, Transações e Categorias) e "+ Nova transação" a partir de qualquer tela
+- Visual próprio: cena de praia no login, mascote Papo (jacaré-de-papo-amarelo) como decoração acessível, tokens de design em `frontend/src/styles/tokens.css`
 - Dados isolados por usuário (objetos de outro usuário retornam `404`)
 - Comando `seed_demo` com ~240 transações nos últimos 12 meses
-- Layout responsivo a partir de 375 px
+- Layout responsivo a partir de 375 px (menu lateral ≥ 720 px; barra inferior e botão "+" abaixo disso)
 
 ## Stack
 
 **Backend:** Python 3.12 · Django 5 · Django REST Framework · SQLite
-**Frontend:** React · TypeScript (strict) · Vite · Tailwind CSS · componentes no padrão shadcn/ui · TanStack Query · React Router · Recharts
+**Frontend:** React · TypeScript (strict) · Vite · Tailwind CSS · componentes no padrão shadcn/ui · TanStack Query · React Router · gráficos em SVG próprio
 **Testes:** pytest-django · Vitest · React Testing Library
 
 ## Como rodar
@@ -86,8 +88,13 @@ Navegador ──▶ Vite :5173 ──(proxy /api)──▶ Django + DRF :8000 �
 | [Spec de design](docs/superpowers/specs/2026-11-17-ja-na-caixa-design.md) | Escopo, modelo de dados, API, telas, testes, cronograma |
 | [Decisões (ADR)](docs/decisoes.md) | Escolhas de arquitetura e por quê |
 | [Plano de implementação](docs/superpowers/plans/2026-11-17-ja-na-caixa-plano.md) | Tarefas, testes e commits previstos, com status |
+| [Plano do novo design](docs/superpowers/plans/2026-11-18-novo-design.md) | Tarefas do novo visual (backend e frontend), verificação e diferenças conhecidas |
+| [Decisões de design](docs/design/decisoes-de-design.md) | Princípios visuais, mascote, regras dos personagens (fonte da verdade do design) |
+| [Telas do design](docs/design/README.md) | Export do Claude Design (`docs/design/telas/`) e como lê-lo |
+| [Screenshots](docs/screenshots/) | Telas implementadas em 1440 px e 375 px |
 | [Registro de uso de IA](docs/ia/registro-uso-ia.md) | Ferramentas, skills e revisão humana em cada etapa |
 | [Prompt inicial](docs/ia/prompt-inicial.md) | Instruções dadas ao Claude Code para a construção autônoma |
+| [Prompt do novo design](docs/ia/prompt-design.md) | Instruções para implementar o novo design |
 
 ## Uso de IA
 
@@ -97,13 +104,13 @@ O rascunho da spec e das decisões foi feito em conversa com o Claude (claude.ai
 
 | Componente | Origem | Licença |
 |---|---|---|
-| Button, Input, Label, Card, Dialog, Table, Skeleton, Badge, Textarea (`frontend/src/components/ui/`) | Escritos no projeto seguindo o padrão do [shadcn/ui](https://ui.shadcn.com), sem uso da CLI (ADR-007) | MIT (shadcn/ui) |
-| Primitivos de Dialog, Label e Slot | [Radix UI](https://www.radix-ui.com) via npm | MIT |
-| Toasts | [sonner](https://sonner.emilkowal.ski) via npm | MIT |
+| Button, Dialog, Skeleton (`frontend/src/components/ui/`) | Escritos no projeto seguindo o padrão do [shadcn/ui](https://ui.shadcn.com), sem uso da CLI (ADR-007) | MIT (shadcn/ui) |
+| Primitivos de Dialog e Slot | [Radix UI](https://www.radix-ui.com) via npm | MIT |
 | Ícones | [Lucide](https://lucide.dev) via npm | ISC |
-| Gráfico | [Recharts](https://recharts.org) via npm | MIT |
-
-Nenhum componente do 21st.dev foi usado.
+| Fontes Plus Jakarta Sans e Baloo 2 | [Fontsource](https://fontsource.org) via npm (ADR-015) | SIL Open Font License 1.1 |
+| Gráficos do Painel (linha do saldo, barras espelhadas, treemap, contagem animada, cartão de métrica) | Escritos no projeto em React + SVG, **inspirados** em componentes do [21st.dev](https://21st.dev) (Analytics Bento, ondas espelhadas, treemap, DashboardMetricCard). Nenhum código foi copiado: os arquivos de referência não vieram no export (`docs/design/referencias/`, ADR-012) e foram adaptados conforme o ADR-014 | Código próprio; a licença das referências deve ser conferida quando os arquivos forem adicionados |
+| Mascote Papo, caranguejo e gaivota (`frontend/src/assets/`) | Ilustrações fornecidas pelo autor (gerador de imagens; ver `docs/design/decisoes-de-design.md`) | Uso no projeto |
+| Layout, cores e telas | Claude Design, a partir das decisões do autor (`docs/design/`) | — |
 
 ## Autor
 

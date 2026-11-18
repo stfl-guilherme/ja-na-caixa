@@ -326,8 +326,8 @@ Regras de interface:
 - [x] `README` permite rodar o projeto do zero seguindo só os passos escritos. *(Conferido em clone limpo: instalação, `migrate`, `seed_demo`, testes, build e os dois servidores respondendo pelo proxy.)*
 - [x] CRUD completo de categorias e de transações pela interface. *(Coberto por testes de componente e pela API; uso no navegador **pendente de verificação humana**.)*
 - [x] Dashboard mostra valores que batem com a soma das transações do mês. *(Testado em `test_resumo.py`; os totais vêm do backend.)*
-- [x] Todos os testes passam (`pytest` e `npm test`). *(85 no backend, 70 no frontend.)*
-- [ ] Nenhum erro no console do navegador nos fluxos principais. ***Pendente de verificação humana.***
+- [x] Todos os testes passam (`pytest` e `npm test`). *(113 no backend, 152 no frontend após o novo design.)*
+- [x] Nenhum erro no console do navegador nos fluxos principais. *(Roteiro automatizado em Chromium headless em 18/11/2026: só os `401`/`400` esperados de sessão e senha errada. Verificação manual pelo autor ainda **pendente**.)*
 - [x] Histórico do git mostra os documentos commitados antes do código. *(Spec `f71765a` e plano `c8eac96` antes do primeiro commit de código `50e7a20`.)*
 
 ## 11. Cronograma

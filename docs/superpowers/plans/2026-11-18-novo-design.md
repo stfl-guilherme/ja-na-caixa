@@ -118,8 +118,22 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Verificação
 
-### [ ] V1 — Verificação final
-- `pytest`, `npm run build`, `npm run lint`, `npm test` com saída registrada.
-- `seed_demo --reset`, back e front no ar; fluxo: login demo → painel → criar transação → editar → excluir → criar categoria → tentar excluir categoria em uso.
-- Screenshots em 1440px e 375px quando possível; diferenças restantes listadas no registro de IA.
+### [x] V1 — Verificação final
+- `pytest` (113), `npm run build`, `npm run lint` (sem avisos) e `npm test` (152) verdes.
+- `seed_demo --reset`, back e front no ar; fluxo pela API via proxy do Vite: login demo → resumo e resumo anual → criar transação → editar → excluir → criar categoria → excluir categoria em uso (`409`, 48 transações) → excluir categoria livre (`204`).
+- Roteiro no navegador (Chromium headless, Playwright) em 1440 px e 375 px: login padrão e erro, entrada demo, Painel, Transações, modal com erros, edição, exclusão, Transações vazio, Categorias, edição de categoria, exclusão bloqueada e Painel vazio. Screenshots em `docs/screenshots/`. Console: só o `401` esperado de `/auth/me` antes do login e o `400` do login com senha errada. Nenhuma rolagem horizontal.
+- Correções feitas a partir dos screenshots (`8895362`): falhas na linha do saldo (tracejado com `non-scaling-stroke` no Chromium), tabelas acessíveis que esticavam a página, rótulos dos meses sobrepostos no celular, fundo do menu lateral, cartões de categoria apertados.
 - **Commit:** `docs: atualizar documentação após novo design`
+
+### Diferenças conhecidas em relação a `docs/design/telas/`
+1. **Paginação:** 20 por página (spec 6.3); o protótipo usa 10.
+2. **Barra inferior:** tem um 4º item, "Sair" (ADR-017).
+3. **Cartão do usuário:** mostra iniciais e `username`; o design mostra nome completo e login (ADR-017).
+4. **Personagens:** nos estados vazios o Papo do menu lateral some (limite de 2 personagens); o export mostrava 3. No celular, o Papo pequeno do Painel troca para a pose preocupada com saldo negativo (o export mostrava sempre a pose espiando).
+5. **Categorias:** cartões com no mínimo 300 px (3 colunas em 1440 px); o design usa 260 px (4 colunas), o que cortava os nomes.
+6. **Ano em resumo no celular:** meses pela inicial (J, F, M…); no design as abreviações se sobrepõem em 375 px.
+7. **Estado vazio de Transações sem filtro:** texto "Nenhuma transação em {mês}." com botão "Nova transação" (o design só tem o vazio por filtro).
+8. **Comparação sem mês anterior:** "Sem movimento em {mês} para comparar", sem percentual (o design não prevê o caso).
+9. **Seletor de mês:** sem limite de janeiro a dezembro (o protótipo travava em 2026).
+10. **Componentes de referência do 21st.dev:** não vieram no export; os gráficos seguem o comportamento descrito em `Painel.dc.html` (ADR-012, ADR-014).
+11. **Mensagem do valor:** "Informe um valor maior que R$ 0,00." pode quebrar a linha entre "R$" e "0,00" em larguras estreitas.

@@ -21,14 +21,15 @@ Este projeto foi desenvolvido com assistência de IA, com autorização da profe
 | 5. Revisão | `requesting-code-review` | Comentários e correções |
 | 6. Conferir antes de declarar pronto | `verification-before-completion` | Saída dos testes |
 
-> Conferir os nomes exatos das skills na instalação do plugin e corrigir esta tabela se algum for diferente.
+> O plugin Superpowers não estava instalado no ambiente de execução. Cada etapa seguiu o roteiro da skill manualmente (ADR-006); o log abaixo indica a substituição em cada linha.
 
 ## Log
 
-| Data | Ferramenta / Skill | Objetivo | Artefato | Revisão humana |
-|---|---|---|---|---|
-| 17/11/2026 | Claude (claude.ai), sem skill | Definir escopo, stack e decisões; rascunhar spec | `docs/superpowers/specs/2026-11-17-ja-na-caixa-design.md`, `docs/decisoes.md` | Escolhi a opção de arquitetura B; rejeitei a sugestão de não ter login; troquei o login fictício pelo botão de demonstração |
-| | | | | |
+| Data | Ferramenta / Skill | Objetivo | Artefato | Commits | Revisão humana |
+|---|---|---|---|---|---|
+| 17/11/2026 | Claude (claude.ai), sem skill | Definir escopo, stack e decisões; rascunhar spec | `docs/superpowers/specs/2026-11-17-ja-na-caixa-design.md`, `docs/decisoes.md` | `a6f2600` | Escolhi a opção de arquitetura B; rejeitei a sugestão de não ter login; troquei o login fictício pelo botão de demonstração |
+| 17/11/2026 | Claude Code; `brainstorming` não instalada, roteiro manual equivalente (ADR-006) | Fase 1: revisar a spec, renomear para JáNaCaixa, resolver questões em aberto | Spec renomeada e revisada (seção 14 com perguntas e respostas), ADR-006 a ADR-010 | `f71765a` | pendente |
+| 17/11/2026 | Claude Code; `writing-plans` não instalada, roteiro manual equivalente (ADR-006) | Fase 2: gerar plano de implementação | `docs/superpowers/plans/2026-11-17-ja-na-caixa-plano.md` | `c8eac96` | pendente |
 
 ## Observação de transparência
 

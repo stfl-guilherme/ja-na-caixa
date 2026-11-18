@@ -15,7 +15,8 @@ export function CabecalhoPagina({ titulo, acao, extraMobile }: CabecalhoPaginaPr
   const larga = useTelaLarga()
   if (larga) {
     return (
-      <header className="mb-6 flex min-h-14 items-center gap-5">
+      // Fixo ao rolar (ADR-019); o fundo areia cobre o conteúdo que passa por baixo.
+      <header className="sticky top-0 z-30 -mx-10 mb-6 flex min-h-14 items-center gap-5 bg-fundo-app/95 px-10 py-3 backdrop-blur">
         <h1 className="m-0 text-[28px] font-extrabold tracking-[-0.4px]">{titulo}</h1>
         <MonthPicker />
         <div className="flex-1" />
@@ -24,15 +25,16 @@ export function CabecalhoPagina({ titulo, acao, extraMobile }: CabecalhoPaginaPr
     )
   }
   return (
-    <header className="mb-4 flex flex-col gap-3.5">
-      <div className="flex items-end gap-2">
+    <>
+      {/* No celular, só a linha do mês fica fixa: o título rola com a página. */}
+      <div className="sticky top-0 z-30 -mx-4 flex items-end gap-2 bg-fundo-app/95 px-4 py-3 backdrop-blur">
         <MonthPicker className="min-w-0 flex-1 justify-between" />
         {extraMobile}
       </div>
-      <div className="flex items-center justify-between gap-3">
+      <header className="mb-4 flex items-center justify-between gap-3 pt-0.5">
         <h1 className="m-0 text-2xl font-extrabold tracking-[-0.3px]">{titulo}</h1>
         {acao}
-      </div>
-    </header>
+      </header>
+    </>
   )
 }

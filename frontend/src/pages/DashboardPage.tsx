@@ -36,22 +36,11 @@ function diasDesenhados(mes: string, totalDias: number) {
 }
 
 function UltimasTransacoes({ mes }: { mes: string }) {
-  const { comMes } = useMesSelecionado()
   const ultimas = useTransacoes({ mes, page: 1 })
   return (
-    <SecaoPainel
-      id="t-ultimas"
-      titulo="Últimas transações"
-      className="flex h-full flex-col"
-      extra={
-        <Link to={comMes('/transacoes')} className="inline-flex min-h-11 items-center gap-1 px-1 text-sm font-bold text-verde-700 no-underline">
-          Ver todas
-          <ChevronRight className="size-4" strokeWidth={2.5} aria-hidden="true" />
-        </Link>
-      }
-    >
+    <div className="rounded-cartao bg-branco px-[22px] py-3 shadow-cartao">
       {ultimas.isPending ? (
-        <div className="grid gap-2" aria-label="Carregando">
+        <div className="grid gap-2 py-2" aria-label="Carregando">
           {Array.from({ length: 5 }, (_, i) => (
             <Skeleton key={i} className="h-10 bg-esqueleto-1" />
           ))}
@@ -76,7 +65,7 @@ function UltimasTransacoes({ mes }: { mes: string }) {
           ))}
         </ul>
       )}
-    </SecaoPainel>
+    </div>
   )
 }
 
@@ -163,7 +152,7 @@ function EstadoVazioPainel({ mes, larga, passoAtual }: { mes: string; larga: boo
 
 export default function DashboardPage() {
   const larga = useTelaLarga()
-  const { mes } = useMesSelecionado()
+  const { mes, comMes } = useMesSelecionado()
   const resumo = useResumo(mes)
   const categorias = useCategorias()
   // Sem categoria: passo 1. Com categoria mas sem nenhuma transação em nenhum mês: passo 2.
@@ -202,23 +191,28 @@ export default function DashboardPage() {
       ) : vazio ? (
         <EstadoVazioPainel mes={mes} larga={larga} passoAtual={passoAtual} />
       ) : (
-        <div className={cn('grid', larga ? 'grid-cols-12 gap-6' : 'grid-cols-1 gap-4')}>
-          {(['receita', 'despesa', 'saldo'] as const).map((metrica) => {
-            const campo = metrica === 'receita' ? 'receitas' : metrica === 'despesa' ? 'despesas' : 'saldo'
-            return (
-              <div key={metrica} className={larga ? 'col-span-4 row-start-1' : undefined}>
-                <MetricCard
-                  metrica={metrica}
-                  valor={resumo.data[campo]}
-                  anterior={resumo.data.mes_anterior[campo]}
-                  mes={mes}
-                  mesAnterior={resumo.data.mes_anterior.mes}
-                  papo={metrica === 'saldo' && larga ? papoSaldo : null}
-                />
-              </div>
-            )
-          })}
-          <div className={larga ? 'col-[1/8] row-start-2' : undefined}>
+        <div className="flex flex-col gap-12">
+          <SecaoPainel id="s-resumo" titulo={`Resumo de ${nomeDoMes(mes)}`} descricao="Quanto entrou, quanto saiu e quanto sobrou.">
+            {/* Espaço acima dos cartões para o Papo espiar sem cobrir o título (decisoes-de-design, seção 6). */}
+            <div className={cn('grid gap-4', larga && 'grid-cols-3 gap-6 pt-14')}>
+              {(['receita', 'despesa', 'saldo'] as const).map((metrica) => {
+                const campo = metrica === 'receita' ? 'receitas' : metrica === 'despesa' ? 'despesas' : 'saldo'
+                return (
+                  <MetricCard
+                    key={metrica}
+                    metrica={metrica}
+                    valor={resumo.data[campo]}
+                    anterior={resumo.data.mes_anterior[campo]}
+                    mes={mes}
+                    mesAnterior={resumo.data.mes_anterior.mes}
+                    papo={metrica === 'saldo' && larga ? papoSaldo : null}
+                  />
+                )
+              })}
+            </div>
+          </SecaoPainel>
+
+          <SecaoPainel id="s-saldo" titulo="Como seu saldo evoluiu" descricao="Saldo acumulado dia a dia ao longo do mês.">
             <SaldoLineChart
               serie={resumo.data.serie_diaria}
               ultimoDia={diasDesenhados(mes, resumo.data.serie_diaria.length)}
@@ -226,14 +220,17 @@ export default function DashboardPage() {
               progresso={progresso}
               compacto={compacto}
             />
-          </div>
-          <div className={larga ? 'col-[8/13] row-start-2' : undefined}>
-            <UltimasTransacoes mes={mes} />
-          </div>
-          <div className={larga ? 'col-[1/8] row-start-3' : undefined}>
+          </SecaoPainel>
+
+          <SecaoPainel
+            id="s-fluxo"
+            titulo="Entradas e saídas por dia"
+            descricao="Cada barra é um dia: para cima o que entrou, para baixo o que saiu."
+          >
             <FluxoEspelhadoChart serie={resumo.data.serie_diaria} mes={mes} progresso={progresso} compacto={compacto} />
-          </div>
-          <div className={larga ? 'col-[8/13] row-[3/5]' : undefined}>
+          </SecaoPainel>
+
+          <SecaoPainel id="s-mapa" titulo="Para onde foi o dinheiro" descricao="Suas despesas do mês divididas por categoria.">
             <CategoriasTreemap
               categorias={resumo.data.por_categoria}
               despesas={resumo.data.despesas}
@@ -241,16 +238,31 @@ export default function DashboardPage() {
               progresso={progresso}
               compacto={compacto}
             />
-          </div>
-          <div className={larga ? 'col-[1/8] row-start-4' : undefined}>
+          </SecaoPainel>
+
+          <SecaoPainel id="s-ano" titulo="Seu ano até agora" descricao="Compare os meses do ano.">
             {anual.data ? (
               <AnoBarChart anual={anual.data} mes={mes} hoje={mesAtual()} progresso={progresso} compacto={compacto} />
             ) : anual.error ? (
               <EstadoErro erro={anual.error} onTentarNovamente={() => anual.refetch()} />
             ) : (
-              <Skeleton className="h-72 rounded-cartao bg-esqueleto-1" aria-label="Carregando" />
+              <Skeleton className="h-80 rounded-cartao bg-esqueleto-1" aria-label="Carregando" />
             )}
-          </div>
+          </SecaoPainel>
+
+          <SecaoPainel
+            id="s-ultimas"
+            titulo="Últimas transações"
+            descricao="As 5 mais recentes do mês."
+            acao={
+              <Link to={comMes('/transacoes')} className="inline-flex min-h-11 items-center gap-1 px-1 text-sm font-bold text-verde-700 no-underline">
+                Ver todas
+                <ChevronRight className="size-4" strokeWidth={2.5} aria-hidden="true" />
+              </Link>
+            }
+          >
+            <UltimasTransacoes mes={mes} />
+          </SecaoPainel>
         </div>
       )}
     </>

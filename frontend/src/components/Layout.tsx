@@ -62,7 +62,7 @@ export function Layout() {
             saindo={logout.isPending}
           />
         )}
-        <main className={larga ? 'min-w-0 flex-1 px-10 pt-7 pb-12' : 'min-w-0 flex-1 px-4 pt-4 pb-[104px]'}>
+        <main className={larga ? 'min-w-0 flex-1 px-10 pt-4 pb-12' : 'min-w-0 flex-1 px-4 pt-1 pb-[104px]'}>
           <Outlet />
         </main>
         {!larga && <BottomNav onNova={nova} onSair={sair} saindo={logout.isPending} />}

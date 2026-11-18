@@ -1,30 +1,64 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-/** Cartão de seção do Painel: branco, raio 20, sombra suave, título h2 de 17px. */
+/**
+ * Seção do Painel em fluxo vertical (ADR-019): título h2 + uma linha de descrição
+ * em linguagem simples; o conteúdo vem abaixo.
+ */
 export function SecaoPainel({
   id,
   titulo,
-  extra,
-  className,
+  descricao,
+  acao,
   children,
 }: {
   id: string
   titulo: string
-  extra?: ReactNode
-  className?: string
+  descricao: string
+  acao?: ReactNode
   children: ReactNode
 }) {
   return (
-    <section aria-labelledby={id} className={cn('relative min-w-0 rounded-cartao bg-branco px-[22px] py-5 shadow-cartao', className)}>
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <h2 id={id} className="m-0 text-[17px] font-bold">
-          {titulo}
-        </h2>
-        {extra}
-      </div>
+    <section aria-labelledby={id} className="flex min-w-0 flex-col gap-4">
+      <header className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+        <div className="flex flex-col gap-1">
+          <h2 id={id} className="m-0 text-xl font-extrabold tracking-[-0.2px]">
+            {titulo}
+          </h2>
+          <p className="m-0 text-[15px] font-medium text-texto-2">{descricao}</p>
+        </div>
+        {acao}
+      </header>
       {children}
     </section>
+  )
+}
+
+/** Cartão branco que envolve um gráfico; `extra` fica no topo (legenda). */
+export function CartaoGrafico({ extra, className, children }: { extra?: ReactNode; className?: string; children: ReactNode }) {
+  return (
+    <div className={cn('relative min-w-0 rounded-cartao bg-branco px-[22px] py-5 shadow-cartao', className)}>
+      {extra && <div className="mb-3.5 flex flex-wrap items-center justify-end gap-x-4 gap-y-2">{extra}</div>}
+      {children}
+    </div>
+  )
+}
+
+/** Título de eixo: as unidades sempre aparecem escritas (ADR-019). */
+export function TituloEixo({ children, className }: { children: ReactNode; className?: string }) {
+  return <span className={cn('block text-xs font-bold text-texto-3', className)}>{children}</span>
+}
+
+/** Caixa do tooltip dos gráficos (lida pelo leitor de tela como status). */
+export function Dica({ esquerda, topo, children }: { esquerda: number; topo: number; children: ReactNode }) {
+  return (
+    <div
+      role="status"
+      className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[calc(100%+14px)] rounded-[10px] bg-tinta px-2.5 py-2 text-xs leading-[1.4] font-semibold whitespace-nowrap text-branco"
+      style={{ left: `${Math.min(86, Math.max(14, esquerda))}%`, top: `${topo}%` }}
+    >
+      {children}
+    </div>
   )
 }
 

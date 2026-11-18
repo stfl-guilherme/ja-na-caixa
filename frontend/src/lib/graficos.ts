@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from 'react'
 // Funções puras dos gráficos do Painel (docs/design/telas/app/painel/Painel.dc.html).
 // Trabalham com números só para desenhar: escala, posição e área. Nenhum total é calculado aqui.
 
@@ -99,4 +100,15 @@ export function rotulosDosDias(totalDias: number, posicao: (dia: number) => numb
   return [1, 5, 10, 15, 20, 25, totalDias]
     .filter((d, i, lista) => d <= totalDias && lista.indexOf(d) === i && !(d !== totalDias && totalDias - d < 3))
     .map((d) => ({ esquerda: posicao(d), texto: String(d) }))
+}
+
+/** Teclas ← e → movem a dica entre os itens do gráfico. */
+export function moverComSetas(evento: KeyboardEvent<HTMLDivElement>, atual: number | null, total: number, ir: (i: number) => void) {
+  if (evento.key === 'ArrowLeft') {
+    evento.preventDefault()
+    ir(Math.max(0, (atual ?? total) - 1))
+  } else if (evento.key === 'ArrowRight') {
+    evento.preventDefault()
+    ir(Math.min(total - 1, (atual ?? -1) + 1))
+  }
 }

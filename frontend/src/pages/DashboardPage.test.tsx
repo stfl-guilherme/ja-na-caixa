@@ -78,7 +78,8 @@ describe('DashboardPage', () => {
     rotas()
     renderComRotas(<DashboardPage />)
     expect(await screen.findByRole('img', { name: /saldo acumulado em novembro/ })).toBeInTheDocument()
-    expect(screen.getByRole('img', { name: /Gráfico espelhado/ })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /barras espelhadas/ })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /Mapa de árvore/ })).toBeInTheDocument()
     expect(await screen.findByRole('img', { name: /Gráfico de barras de 2026/ })).toBeInTheDocument()
     const mapa = screen.getByRole('region', { name: 'Para onde foi o dinheiro' })
     expect(within(mapa).getAllByText('Moradia').length).toBeGreaterThan(0)
@@ -153,5 +154,44 @@ describe('DashboardPage', () => {
     expect(passos[0]).toHaveTextContent('feito')
     await userEvent.click(screen.getByRole('button', { name: 'Lançar transação' }))
     expect(interfaceApp.abrirTransacao).toHaveBeenCalled()
+  })
+
+  it('organiza o painel em seções verticais, na ordem pedida, cada uma com descrição', async () => {
+    rotas()
+    renderComRotas(<DashboardPage />)
+    await screen.findByRole('heading', { name: 'Resumo de novembro' })
+    const titulos = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+    expect(titulos).toEqual([
+      'Resumo de novembro',
+      'Como seu saldo evoluiu',
+      'Entradas e saídas por dia',
+      'Para onde foi o dinheiro',
+      'Seu ano até agora',
+      'Últimas transações',
+    ])
+    for (const descricao of [
+      'Quanto entrou, quanto saiu e quanto sobrou.',
+      'Saldo acumulado dia a dia ao longo do mês.',
+      'Cada barra é um dia: para cima o que entrou, para baixo o que saiu.',
+      'Suas despesas do mês divididas por categoria.',
+      'Compare os meses do ano.',
+    ]) {
+      expect(screen.getByText(descricao)).toBeInTheDocument()
+    }
+    expect(within(screen.getByRole('region', { name: 'Últimas transações' })).getByRole('link', { name: /Ver todas/ })).toHaveAttribute(
+      'href',
+      '/transacoes?mes=2026-11',
+    )
+  })
+
+  it('todos os gráficos têm eixos rotulados com unidade', async () => {
+    rotas()
+    renderComRotas(<DashboardPage />)
+    await screen.findByRole('img', { name: /Gráfico de barras de 2026/ })
+    expect(screen.getByText('Saldo (R$)')).toBeInTheDocument()
+    // O cabeçalho da tabela do treemap também diz "Valor (R$)"; aqui contam só os títulos de eixo.
+    expect(screen.getAllByText('Valor (R$)', { selector: 'span' })).toHaveLength(2)
+    expect(screen.getAllByText('Dia do mês')).toHaveLength(2)
+    expect(screen.getByText('Mês de 2026')).toBeInTheDocument()
   })
 })

@@ -85,3 +85,11 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Contexto:** Questão em aberto da spec. O cronograma tem 6 dias e a ordem de corte já prevê cortes.
 - **Decisão:** Somente tema claro no MVP.
 - **Consequências:** Menos variantes de estilo para testar; pode entrar depois da apresentação.
+
+## ADR-011 — Lint com oxlint, padrão do template do Vite
+
+- **Status:** Aceita — 17/11/2026
+- **Contexto:** O plano (F1) previa ESLint. O template atual do `create-vite` (`react-ts`) já vem com `oxlint` configurado em `npm run lint` e com TypeScript 7.
+- **Decisão:** Manter o `oxlint` do template, com os plugins `react`, `typescript` e `oxc`. A checagem de tipos continua no `npm run build` (`tsc -b`, `strict: true`).
+- **Alternativas descartadas:** substituir por ESLint (mais configuração, sem ganho para o escopo).
+- **Consequências:** `npm run lint` roda `oxlint`; a definição de pronto do `CLAUDE.md` continua valendo.

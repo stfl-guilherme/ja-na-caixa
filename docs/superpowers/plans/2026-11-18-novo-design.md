@@ -80,8 +80,8 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** desktop (cena + cartão) e mobile (cena no topo sobre areia contínua, sem cartão) conforme `docs/design/telas/login/`.
 - **Commit:** `feat(frontend): aplicar novo design na tela de login`
 
-### [ ] NF6 — Layout base
-- **Arquivos:** `frontend/src/components/Layout.tsx` (+ teste), `AppSidebar.tsx`, `BottomNav.tsx`, `MonthPicker.tsx`, `NovaTransacaoProvider.tsx`, `frontend/src/components/TransacaoModal.tsx` (estrutura).
+### [x] NF6 — Layout base
+- **Arquivos:** `frontend/src/components/Layout.tsx` (+ teste), `components/layout/` (`AppSidebar`, `BottomNav`, `MonthPicker`, `CabecalhoPagina`, `contexto`), `TransacaoModal.tsx` (+ teste, **completo**, substitui `TransacaoForm.test.tsx`), `ExcluirTransacaoDialog.tsx`, `Aviso.tsx` (ADR-017).
 - **Teste primeiro:** testes atuais do layout continuam (nome, links, usuário, sair); novos: "+ Nova transação" abre o modal de qualquer rota; links preservam `?mes=`; seletor troca o mês na URL; item ativo com `aria-current="page"`; Papo do menu some quando a página pede (estado vazio com coadjuvante).
 - **Pronto quando:** menu lateral ≥ 720px, barra inferior + FAB < 720px.
 - **Commit:** `feat(frontend): adicionar layout com menu lateral, barra inferior e mês global`

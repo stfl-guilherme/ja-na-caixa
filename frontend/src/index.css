@@ -133,3 +133,15 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Entrada do aviso (toast): sobe e aparece uma vez. */
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

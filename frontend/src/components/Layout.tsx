@@ -1,82 +1,92 @@
-import { ArrowLeftRight, LayoutDashboard, LogOut, Tags } from 'lucide-react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+// Layout das telas internas: menu lateral (≥ 720px) ou barra inferior + "+" (< 720px),
+// mês global na URL, modal de transação e aviso disponíveis em qualquer tela.
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
+import type { Transacao } from '@/api/types'
 import { useLogout, useUsuario } from '@/auth/useAuth'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Aviso } from '@/components/Aviso'
+import { ExcluirTransacaoDialog } from '@/components/ExcluirTransacaoDialog'
+import { AppSidebar } from '@/components/layout/AppSidebar'
+import { BottomNav } from '@/components/layout/BottomNav'
+import { InterfaceContext, type InterfaceApp } from '@/components/layout/contexto'
+import { TransacaoModal } from '@/components/TransacaoModal'
+import { useTelaLarga } from '@/hooks/useTelaLarga'
 
-const LINKS = [
-  { to: '/', rotulo: 'Dashboard', icone: LayoutDashboard, end: true },
-  { to: '/transacoes', rotulo: 'Transações', icone: ArrowLeftRight, end: false },
-  { to: '/categorias', rotulo: 'Categorias', icone: Tags, end: false },
-]
+const DURACAO_AVISO_MS = 5000
 
 export function Layout() {
+  const larga = useTelaLarga()
   const { data: usuario } = useUsuario()
   const logout = useLogout()
   const navigate = useNavigate()
 
+  const [modal, setModal] = useState<{ aberto: boolean; transacao?: Transacao }>({ aberto: false })
+  const [excluindo, setExcluindo] = useState<Transacao | null>(null)
+  const [aviso, setAviso] = useState<string | null>(null)
+  const [ocultarPapoDoMenu, setOcultarPapoDoMenu] = useState(false)
+  const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  const avisar = useCallback((mensagem: string) => {
+    clearTimeout(temporizador.current)
+    setAviso(mensagem)
+    temporizador.current = setTimeout(() => setAviso(null), DURACAO_AVISO_MS)
+  }, [])
+  useEffect(() => () => clearTimeout(temporizador.current), [])
+
+  const contexto = useMemo<InterfaceApp>(
+    () => ({
+      abrirTransacao: (transacao) => setModal({ aberto: true, transacao }),
+      pedirExclusao: setExcluindo,
+      avisar,
+      avisoAberto: aviso !== null,
+      setOcultarPapoDoMenu,
+    }),
+    [avisar, aviso],
+  )
+
   const sair = () => logout.mutate(undefined, { onSettled: () => navigate('/login', { replace: true }) })
+  const nova = () => contexto.abrirTransacao()
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
-          {/* Espaço reservado para logo/mascote (fora do escopo da IA). */}
-          <span className="text-lg font-bold tracking-tight text-primary">JáNaCaixa</span>
-          <nav className="hidden flex-1 items-center gap-1 sm:flex" aria-label="Principal">
-            {LINKS.map(({ to, rotulo, icone: Icone, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
-                    isActive && 'bg-secondary text-foreground',
-                  )
-                }
-              >
-                <Icone className="size-4" aria-hidden="true" />
-                {rotulo}
-              </NavLink>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="hidden text-sm text-muted-foreground sm:inline">{usuario?.username}</span>
-            <Button variant="ghost" size="sm" onClick={sair} loading={logout.isPending}>
-              {!logout.isPending && <LogOut aria-hidden="true" />}
-              Sair
-            </Button>
-          </div>
-        </div>
-      </header>
+    <InterfaceContext.Provider value={contexto}>
+      <div className={larga ? 'flex min-h-screen flex-row bg-fundo-app' : 'flex min-h-screen flex-col bg-fundo-app'}>
+        {larga && (
+          <AppSidebar
+            usuario={usuario?.username ?? ''}
+            mostrarPapo={!ocultarPapoDoMenu}
+            onNova={nova}
+            onSair={sair}
+            saindo={logout.isPending}
+          />
+        )}
+        <main className={larga ? 'min-w-0 flex-1 px-10 pt-7 pb-12' : 'min-w-0 flex-1 px-4 pt-4 pb-[104px]'}>
+          <Outlet />
+        </main>
+        {!larga && <BottomNav onNova={nova} onSair={sair} saindo={logout.isPending} />}
+      </div>
 
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:pb-10">
-        <Outlet />
-      </main>
-
-      {/* Navegação inferior no celular (responsivo a partir de 375 px). */}
-      <nav
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t bg-card sm:hidden"
-        aria-label="Navegação móvel"
-      >
-        {LINKS.map(({ to, rotulo, icone: Icone, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              cn(
-                'flex flex-col items-center gap-1 py-2 text-xs text-muted-foreground',
-                isActive && 'text-primary',
-              )
-            }
-          >
-            <Icone className="size-5" aria-hidden="true" />
-            {rotulo}
-          </NavLink>
-        ))}
-      </nav>
-    </div>
+      <TransacaoModal
+        aberto={modal.aberto}
+        transacao={modal.transacao}
+        onFechar={() => setModal({ aberto: false })}
+        onSalvo={(editou) => {
+          setModal({ aberto: false })
+          avisar(editou ? 'Transação atualizada.' : 'Transação salva.')
+        }}
+        onPedirExcluir={(transacao) => {
+          setModal({ aberto: false })
+          setExcluindo(transacao)
+        }}
+      />
+      <ExcluirTransacaoDialog
+        transacao={excluindo}
+        onFechar={() => setExcluindo(null)}
+        onExcluida={() => {
+          setExcluindo(null)
+          avisar('Transação excluída.')
+        }}
+      />
+      {aviso && <Aviso mensagem={aviso} onFechar={() => setAviso(null)} />}
+    </InterfaceContext.Provider>
   )
 }

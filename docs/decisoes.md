@@ -153,3 +153,14 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Decisão:** o mês fica no parâmetro `?mes=AAAA-MM` da URL, lido por um hook (`useMesSelecionado`). Os links do menu preservam o parâmetro. Sem o parâmetro, vale o mês atual.
 - **Alternativas descartadas:** contexto React em memória (perde o mês ao recarregar a página e não gera links compartilháveis).
 - **Consequências:** clicar num cartão do Painel abre `/transacoes?mes=…&tipo=…` já filtrado; os testes de página passam o mês pela rota inicial.
+
+## ADR-017 — Ajustes do layout em relação ao export do design
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** Ao implementar o layout, apareceram lacunas no export (`docs/design/telas/`), que é um protótipo.
+- **Decisões:**
+  - *Sair no celular:* a barra inferior do design tem só Painel, Transações e Categorias, e o botão "Sair" existe apenas no menu lateral. Sem ele, quem usa o celular não encerra a sessão. A barra inferior ganha um quarto item, "Sair", com o mesmo estilo dos outros.
+  - *Modal de transação no layout:* para "+ Nova transação" abrir de qualquer tela, o modal, a confirmação de exclusão e o aviso de sucesso ficam no layout e são acionados por contexto (`useInterface`). A tela de Transações usa o mesmo modal para editar.
+  - *Cartão do usuário:* o design mostra nome completo e login; a API só tem `username`. O cartão mostra as iniciais e o `username`.
+  - *Limite de 2 personagens:* nos estados vazios com coadjuvante, a página pede ao layout para esconder o Papo do menu (`useOcultarPapoDoMenu`), como registrado em `decisoes-de-design.md`, seção 6.
+- **Consequências:** o plano (NF6) inclui o modal completo; a NF10 só monta a tela de Transações em volta dele.

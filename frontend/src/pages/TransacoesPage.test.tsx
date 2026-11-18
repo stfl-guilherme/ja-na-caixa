@@ -46,7 +46,7 @@ describe('TransacoesPage', () => {
     renderComRotas(<TransacoesPage />)
     const linha = (await screen.findByText('Supermercado')).closest('tr')!
     expect(within(linha).getAllByText('Mercado').length).toBeGreaterThan(0)
-    expect(semNbsp(within(linha).getByText(/123,45/).textContent)).toBe('-R$ 123,45')
+    expect(semNbsp(within(linha).getByText(/123,45/).textContent)).toBe('\u2212 R$ 123,45')
     expect(within(linha).getByText('10/11/2026')).toBeInTheDocument()
     const [[url]] = chamadas(fetchMock, 'GET', '/api/transacoes/')
     expect(queryDe(url).get('mes')).toBe('2026-11')

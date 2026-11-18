@@ -56,7 +56,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** tema mapeado (`bg-fundo-app`, `text-tinta`, `text-receita`, `bg-verde-700` etc.), `tabular-nums` no `body`, fundo areia nas telas internas, fontes empacotadas; build/lint/test verdes.
 - **Commit:** `style(frontend): aplicar tokens do design no tema do Tailwind`
 
-### [ ] NF2 — Componente `Personagem`
+### [x] NF2 — Componente `Personagem`
 - **Arquivos:** `frontend/src/components/Personagem.tsx`, `Personagem.test.tsx`.
 - **Teste primeiro:** renderiza o PNG da pose pedida com `alt=""` e `aria-hidden="true"`; tamanho em px aplicado à altura; variante `espiando` posicionada atrás da borda (`z-0`, cartão em `z-10`); não aceita pose inexistente (tipo).
 - **Pronto quando:** testes verdes.

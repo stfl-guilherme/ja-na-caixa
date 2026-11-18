@@ -74,3 +74,8 @@ export function chamadas(fetchMock: ReturnType<typeof mockFetch>, metodo: string
     ([url, init]) => (init?.method ?? 'GET') === metodo && String(url).split('?')[0] === caminho,
   )
 }
+
+/** Poses dos personagens visíveis num trecho da tela (regra: no máximo 2 por tela). */
+export function personagensNaTela(raiz: ParentNode = document.body) {
+  return [...raiz.querySelectorAll('img[data-personagem]')].map((img) => img.getAttribute('data-personagem'))
+}

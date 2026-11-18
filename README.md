@@ -1,6 +1,6 @@
 # Controle Financeiro Pessoal
 
-> 🚧 Em desenvolvimento — Trabalho de G2 de Engenharia de Software (AMF), apresentação em 24/11/2026.
+> 🚧 Em desenvolvimento — Trabalho de G2 de Engenharia de Software (AMF).
 
 Sistema web local para registrar receitas e despesas, organizá-las em categorias e acompanhar o saldo mensal.
 
@@ -21,6 +21,12 @@ Sistema web local para registrar receitas e despesas, organizá-las em categoria
 ## Como rodar
 
 > Os passos serão completados conforme a implementação avança.
+
+### Depois de clonar
+Ative os hooks versionados (bloqueiam commits com coautoria de IA):
+```bash
+git config core.hooksPath scripts/git-hooks
+```
 
 ### Backend
 ```bash

@@ -3,7 +3,11 @@ import {
   deslocarMes,
   formatarData,
   formatarMes,
+  formatarComSinal,
+  formatarMesRotulo,
   formatarMoeda,
+  formatarSaldo,
+  nomeDoMes,
   mesAtual,
   parseValorBR,
   valorParaInput,
@@ -68,5 +72,44 @@ describe('datas e meses', () => {
     expect(deslocarMes('2026-01', -1)).toBe('2025-12')
     expect(deslocarMes('2026-12', 1)).toBe('2027-01')
     expect(deslocarMes('2026-11', 0)).toBe('2026-11')
+  })
+})
+
+describe('formatarMoeda sem perder centavos', () => {
+  it('formata a string decimal exata, mesmo em valores grandes', () => {
+    expect(semNbsp(formatarMoeda('9999999999.99'))).toBe('R$ 9.999.999.999,99')
+    expect(semNbsp(formatarMoeda('0.01'))).toBe('R$ 0,01')
+  })
+})
+
+describe('formatarComSinal', () => {
+  it.each([
+    ['5200.00', 'RECEITA', '+ R$ 5.200,00'],
+    ['1450.00', 'DESPESA', '− R$ 1.450,00'],
+    ['0.30', 'DESPESA', '− R$ 0,30'],
+  ] as const)('%s de %s vira %s', (valor, tipo, esperado) => {
+    expect(semNbsp(formatarComSinal(valor, tipo))).toBe(esperado)
+  })
+
+  it('usa o caractere de menos U+2212', () => {
+    expect(formatarComSinal('1.00', 'DESPESA').startsWith('− ')).toBe(true)
+  })
+})
+
+describe('formatarSaldo', () => {
+  it.each([
+    ['2974.61', '+ R$ 2.974,61'],
+    ['-650.00', '− R$ 650,00'],
+    ['-0.30', '− R$ 0,30'],
+    ['0.00', 'R$ 0,00'],
+  ])('%s vira %s', (valor, esperado) => {
+    expect(semNbsp(formatarSaldo(valor))).toBe(esperado)
+  })
+})
+
+describe('formatarMesRotulo e nomeDoMes', () => {
+  it('formata como no design', () => {
+    expect(formatarMesRotulo('2026-11')).toBe('Novembro 2026')
+    expect(nomeDoMes('2026-10')).toBe('outubro')
   })
 })

@@ -62,7 +62,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes.
 - **Commit:** `feat(frontend): adicionar componente Personagem`
 
-### [ ] NF3 — Utilitários de exibição e máscaras
+### [x] NF3 — Utilitários de exibição e máscaras
 - **Arquivos:** `frontend/src/lib/format.ts`, `format.test.ts`, `frontend/src/lib/mascaras.ts`, `mascaras.test.ts`, `frontend/src/lib/comparacao.ts`, `comparacao.test.ts`.
 - **Teste primeiro:** `formatarComSinal("1450.00", "DESPESA")` → `− R$ 1.450,00` (U+2212); máscara de centavos (`"123456"` → `1.234,56`, envio `"1234.56"`, sem perder centavos); máscara de data (`"17112026"` → `17/11/2026`, conversão para ISO e validação de datas impossíveis); comparação: em Despesas, aumento = ruim (vermelho), queda = bom (verde); em Receitas/Saldo, o contrário; frases "gastou mais/menos", "ganhou…", "sobrou…".
 - **Pronto quando:** testes verdes.

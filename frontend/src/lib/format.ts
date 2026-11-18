@@ -2,9 +2,27 @@
 
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
-/** Formata um valor decimal vindo da API ("1234.56") como moeda brasileira. */
+/**
+ * Formata um valor decimal vindo da API ("1234.56") como moeda brasileira.
+ * A string é passada direto ao Intl (decimal exato), sem virar float.
+ */
 export function formatarMoeda(valor: string | number): string {
-  return moeda.format(Number(valor))
+  return moeda.format(typeof valor === 'string' ? (valor as Intl.StringNumericLiteral) : valor)
+}
+
+const MENOS = '\u2212'
+
+/** Valor da transação com sinal do tipo: "+ R$ 5.200,00" / "− R$ 1.450,00". */
+export function formatarComSinal(valor: string, tipo: 'RECEITA' | 'DESPESA'): string {
+  return `${tipo === 'RECEITA' ? '+' : MENOS} ${formatarMoeda(valor.replace(/^-/, ''))}`
+}
+
+/** Saldo com sinal explícito; zero fica sem sinal ("R$ 0,00"). */
+export function formatarSaldo(valor: string): string {
+  const negativo = valor.trim().startsWith('-')
+  const absoluto = valor.trim().replace(/^[-+]/, '')
+  if (/^0*(\.0*)?$/.test(absoluto)) return formatarMoeda('0')
+  return `${negativo ? MENOS : '+'} ${formatarMoeda(absoluto)}`
 }
 
 const COM_MILHAR = /^\d{1,3}(\.\d{3})+(,\d{1,2})?$/
@@ -50,6 +68,17 @@ const NOMES_MESES = [
   'novembro',
   'dezembro',
 ]
+
+/** "2026-10" → "outubro". */
+export function nomeDoMes(mes: string): string {
+  return NOMES_MESES[Number(mes.split('-')[1]) - 1]
+}
+
+/** "2026-11" → "Novembro 2026" (rótulo do seletor de mês no design). */
+export function formatarMesRotulo(mes: string): string {
+  const nome = nomeDoMes(mes)
+  return `${nome.charAt(0).toUpperCase()}${nome.slice(1)} ${mes.split('-')[0]}`
+}
 
 /** "2026-11" → "novembro de 2026". */
 export function formatarMes(mes: string): string {

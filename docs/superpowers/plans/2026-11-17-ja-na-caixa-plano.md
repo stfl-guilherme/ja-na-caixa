@@ -23,7 +23,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; `UniqueConstraint(Lower("nome"), "usuario")`.
 - **Commit:** `feat(financas): adicionar modelo Categoria`
 
-### [ ] B3 — Modelo `Transacao`
+### [x] B3 — Modelo `Transacao`
 - **Arquivos:** `financas/models.py`, migração, `financas/tests/test_models.py`.
 - **Teste primeiro:** valor `0` e negativo violam a constraint; excluir categoria com transação levanta `ProtectedError`; propriedades `tipo` e `usuario` vêm da categoria.
 - **Pronto quando:** `CheckConstraint valor > 0`, `on_delete=PROTECT`, índice `(categoria, data)`.

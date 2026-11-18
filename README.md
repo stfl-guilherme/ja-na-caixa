@@ -12,7 +12,7 @@ Controle financeiro pessoal: sistema web local para registrar receitas e despesa
 - Filtros de transações por mês, categoria, tipo e busca na descrição, com paginação (20 por página)
 - Dashboard do mês: receitas, despesas, saldo, gráfico de despesas por categoria e 5 últimas transações
 - Dados isolados por usuário (objetos de outro usuário retornam `404`)
-- Comando `seed_demo` com ~60 transações nos últimos 3 meses
+- Comando `seed_demo` com ~240 transações nos últimos 12 meses
 - Layout responsivo a partir de 375 px
 
 ## Stack

@@ -8,6 +8,12 @@ from django.utils import timezone
 from financas.models import Categoria, Transacao
 from financas.tests.factories import criar_categoria, criar_transacao, criar_usuario
 
+# Cores de categoria do design (--jnc-cat-* em frontend/src/styles/tokens.css).
+PALETA = {
+    "#2F6FB2", "#B5541A", "#7B5CC4", "#8C6A0C", "#1F7A70",
+    "#C2416A", "#557280", "#2F7D35", "#8A5A2E", "#A54F98",
+}
+
 
 @pytest.mark.django_db
 class TestSeedDemo:
@@ -17,13 +23,26 @@ class TestSeedDemo:
         assert not demo.has_usable_password()
         assert Categoria.objects.filter(usuario=demo).count() == 8
         transacoes = Transacao.objects.filter(categoria__usuario=demo)
-        assert 55 <= transacoes.count() <= 65
+        assert 230 <= transacoes.count() <= 250
         hoje = timezone.localdate()
-        limite = (hoje.replace(day=1) - timedelta(days=1)).replace(day=1)
-        limite = (limite - timedelta(days=1)).replace(day=1)
+        limite = hoje.replace(day=1)
+        for _ in range(11):
+            limite = (limite - timedelta(days=1)).replace(day=1)
         assert all(limite <= t.data <= hoje for t in transacoes)
         assert transacoes.filter(categoria__tipo="RECEITA").exists()
         assert transacoes.filter(categoria__tipo="DESPESA").exists()
+
+    def test_tem_transacoes_em_cada_um_dos_12_meses(self):
+        call_command("seed_demo")
+        meses = {(t.year, t.month) for t in Transacao.objects.values_list("data", flat=True)}
+        assert len(meses) == 12
+        hoje = timezone.localdate()
+        anterior = hoje.replace(day=1) - timedelta(days=1)
+        assert (anterior.year, anterior.month) in meses
+
+    def test_cores_da_paleta_do_design(self):
+        call_command("seed_demo")
+        assert set(Categoria.objects.values_list("cor", flat=True)) <= PALETA
 
     def test_tem_transacoes_no_mes_atual(self):
         call_command("seed_demo")

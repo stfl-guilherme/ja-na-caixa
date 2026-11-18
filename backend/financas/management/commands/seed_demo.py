@@ -1,4 +1,4 @@
-"""Cria o usuário `demo` com categorias e ~60 transações nos últimos 3 meses."""
+"""Cria o usuário `demo` com categorias e ~240 transações nos últimos 12 meses."""
 
 import calendar
 import random
@@ -14,15 +14,16 @@ from financas.models import Categoria, Transacao
 
 DEMO_USERNAME = "demo"
 
+# Cores da paleta fixa do design (--jnc-cat-*, frontend/src/styles/tokens.css).
 CATEGORIAS = [
-    ("Salário", "RECEITA", "#16A34A"),
-    ("Freelance", "RECEITA", "#0EA5E9"),
-    ("Moradia", "DESPESA", "#F97316"),
-    ("Mercado", "DESPESA", "#22C55E"),
-    ("Transporte", "DESPESA", "#3B82F6"),
-    ("Restaurantes", "DESPESA", "#EF4444"),
-    ("Lazer", "DESPESA", "#A855F7"),
-    ("Saúde", "DESPESA", "#EC4899"),
+    ("Salário", "RECEITA", "#2F7D35"),
+    ("Freelance", "RECEITA", "#C2416A"),
+    ("Moradia", "DESPESA", "#2F6FB2"),
+    ("Mercado", "DESPESA", "#B5541A"),
+    ("Transporte", "DESPESA", "#7B5CC4"),
+    ("Restaurantes", "DESPESA", "#A54F98"),
+    ("Lazer", "DESPESA", "#8C6A0C"),
+    ("Saúde", "DESPESA", "#1F7A70"),
 ]
 
 # (categoria, descrição, valor mínimo, valor máximo). 20 lançamentos por mês.
@@ -50,7 +51,7 @@ MODELOS_DO_MES = [
 ]
 
 
-def _meses_recentes(hoje: date, quantidade: int = 3) -> list[tuple[int, int]]:
+def _meses_recentes(hoje: date, quantidade: int = 12) -> list[tuple[int, int]]:
     meses = []
     ano, mes = hoje.year, hoje.month
     for _ in range(quantidade):

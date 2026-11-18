@@ -42,7 +42,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; formato paginado anterior (`count`, `next`, `previous`, `results`) inalterado.
 - **Commit:** `feat(api): adicionar totais do filtro à listagem de transações`
 
-### [ ] NB6 — Seed de 12 meses com cores da paleta
+### [x] NB6 — Seed de 12 meses com cores da paleta
 - **Arquivos:** `backend/financas/management/commands/seed_demo.py`, `backend/financas/tests/test_seed_demo.py`.
 - **Teste primeiro:** transações nos últimos 12 meses (inclusive o atual, nenhuma no futuro), cerca de 20 por mês; todas as cores das categorias pertencem à paleta de 10 cores; o mês anterior ao atual tem transações; continua idempotente e `--reset` recria.
 - **Pronto quando:** testes verdes; `seed_demo --reset` roda no banco local.

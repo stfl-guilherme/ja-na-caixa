@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 from decimal import Decimal
 
@@ -163,3 +164,31 @@ def _serie_diaria(transacoes, inicio, fim) -> list[dict]:
         )
         data += timedelta(days=1)
     return serie
+
+
+class ResumoAnualView(APIView):
+    """Receitas e despesas de cada um dos 12 meses do ano (spec 6.6)."""
+
+    def get(self, request):
+        texto = request.query_params.get("ano") or str(timezone.localdate().year)
+        if not re.fullmatch(r"\d{4}", texto) or int(texto) < 1:
+            raise ValidationError({"ano": ["Use o formato AAAA, ex.: 2026."]})
+        ano = int(texto)
+
+        por_mes = {numero: [Decimal("0"), Decimal("0")] for numero in range(1, 13)}
+        transacoes = Transacao.objects.filter(categoria__usuario=request.user, data__year=ano)
+        for valor, tipo, data in transacoes.values_list("valor", "categoria__tipo", "data"):
+            por_mes[data.month][0 if tipo == TipoCategoria.RECEITA else 1] += valor
+
+        receitas = sum((r for r, _ in por_mes.values()), Decimal("0"))
+        despesas = sum((d for _, d in por_mes.values()), Decimal("0"))
+        return Response(
+            {
+                "ano": ano,
+                **_totais(receitas, despesas),
+                "meses": [
+                    {"mes": f"{ano:04d}-{numero:02d}", **_totais(r, d)} for numero, (r, d) in por_mes.items()
+                ],
+            }
+        )
+

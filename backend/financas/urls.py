@@ -15,5 +15,6 @@ urlpatterns = [
     path("auth/logout/", views_auth.LogoutView.as_view(), name="auth-logout"),
     path("auth/me/", views_auth.MeView.as_view(), name="auth-me"),
     path("resumo/", views.ResumoView.as_view(), name="resumo"),
+    path("resumo/anual/", views.ResumoAnualView.as_view(), name="resumo-anual"),
     *router.urls,
 ]

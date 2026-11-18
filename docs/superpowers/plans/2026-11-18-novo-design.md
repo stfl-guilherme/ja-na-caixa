@@ -30,7 +30,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste verde; o teste antigo de `por_categoria` passa a incluir `quantidade`.
 - **Commit:** `feat(api): informar quantidade de transações por categoria no resumo`
 
-### [ ] NB4 — Resumo anual
+### [x] NB4 — Resumo anual
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/urls.py`, `backend/financas/tests/test_resumo_anual.py`.
 - **Teste primeiro:** 12 meses sempre presentes, em ordem; totais por mês e do ano; meses vazios com `"0.00"`; precisão decimal; isolamento; transação de outro ano não entra; sem `ano` usa o ano atual; `ano` inválido (`"26"`, `"abcd"`, `"0000"`) → `400 {"ano": [...]}`; sem login → `401`.
 - **Pronto quando:** testes verdes; rota `GET /api/resumo/anual/` antes de qualquer rota que pudesse capturá-la.

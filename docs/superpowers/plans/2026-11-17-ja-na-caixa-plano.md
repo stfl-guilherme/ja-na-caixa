@@ -108,7 +108,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** teste de spec do front nº 3 verde.
 - **Commit:** `feat(frontend): adicionar tela de login`
 
-### [ ] F6 — Layout e rotas protegidas
+### [x] F6 — Layout e rotas protegidas
 - **Arquivos:** `src/App.tsx`, `src/components/Layout.tsx`, `src/components/ProtectedRoute.tsx`, testes.
 - **Teste primeiro:** sem sessão (`me` → `401`) redireciona para `/login`; com sessão mostra o cabeçalho "JáNaCaixa" e o menu.
 - **Pronto quando:** build/lint/test verdes.

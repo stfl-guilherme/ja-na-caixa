@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render } from '@testing-library/react'
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { vi } from 'vitest'
 
@@ -13,7 +13,12 @@ export function criarQueryClient() {
 /** Renderiza `ui` na rota `caminho`, com rotas auxiliares para checar redirecionamentos. */
 export function renderComRotas(
   ui: ReactElement,
-  { caminho = '/', rota = '*', extras = {} }: { caminho?: string; rota?: string; extras?: Record<string, ReactElement> } = {},
+  {
+    caminho = '/',
+    rota = '*',
+    extras = {},
+    filhos,
+  }: { caminho?: string; rota?: string; extras?: Record<string, ReactElement>; filhos?: ReactNode } = {},
 ) {
   const queryClient = criarQueryClient()
   return {
@@ -23,6 +28,7 @@ export function renderComRotas(
         <MemoryRouter initialEntries={[caminho]}>
           <Routes>
             <Route path={rota} element={ui} />
+            {filhos}
             {Object.entries(extras).map(([path, elemento]) => (
               <Route key={path} path={path} element={elemento} />
             ))}

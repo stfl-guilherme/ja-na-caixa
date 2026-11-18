@@ -1,7 +1,19 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState } from 'react'
+import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import { AppRoutes } from './AppRoutes'
+
 export default function App() {
+  const [queryClient] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } } }),
+  )
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold text-primary">JáNaCaixa</h1>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+      <Toaster richColors position="top-right" closeButton />
+    </QueryClientProvider>
   )
 }

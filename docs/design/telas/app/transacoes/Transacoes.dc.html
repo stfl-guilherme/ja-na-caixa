@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JáNaCaixa — Transações</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-direction: {{direcao}}; background: #FBF6EC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028; font-variant-numeric: tabular-nums">
+
+<sc-if value="{{largo}}" hint-placeholder-val="{{ true }}">
+<dc-import name="Sidebar" ativo="transacoes" on-nova="{{abrirNova}}" hint-size="248px,900px"></dc-import>
+</sc-if>
+
+<main style="flex: 1; min-width: 0; padding: {{padMain}}; box-sizing: border-box">
+<sc-if value="{{largo}}" hint-placeholder-val="{{ true }}">
+<header style="display: flex; align-items: center; gap: 20px; min-height: 56px; margin-bottom: 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.4px">Transações</h1>
+<div role="group" aria-label="Mês de referência" style=" display: flex; align-items: center; gap: 2px; padding: 2px; background: #FFFFFF; border: 1px solid #EDE4D3; border-radius: 12px"><button type="button" onClick="{{mesAnt}}" disabled="{{semAnt}}" aria-label="Mês anterior" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opAnt}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><span aria-live="polite" style="min-width: 150px; text-align: center; font-size: 15px; font-weight: 700">{{mesRotulo}}</span><button type="button" onClick="{{mesProx}}" disabled="{{semProx}}" aria-label="Próximo mês" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opProx}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button></div>
+<div style="flex: 1"></div>
+
+</header>
+</sc-if>
+<sc-if value="{{estreito}}" hint-placeholder-val="{{ false }}">
+<header style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px">
+<div role="group" aria-label="Mês de referência" style="justify-content: space-between; display: flex; align-items: center; gap: 2px; padding: 2px; background: #FFFFFF; border: 1px solid #EDE4D3; border-radius: 12px"><button type="button" onClick="{{mesAnt}}" disabled="{{semAnt}}" aria-label="Mês anterior" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opAnt}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button><span aria-live="polite" style=" text-align: center; font-size: 15px; font-weight: 700">{{mesRotulo}}</span><button type="button" onClick="{{mesProx}}" disabled="{{semProx}}" aria-label="Próximo mês" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opProx}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button></div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.3px">Transações</h1>
+
+</div>
+</header>
+</sc-if>
+
+<div style="position: relative; margin-bottom: 20px">
+<sc-if value="{{papoFiltros}}" hint-placeholder-val="{{ true }}">
+<img src="../../../assets/mascote/papo-espiando.png" alt="" aria-hidden="true" onMouseEnter="{{papoOn}}" style="position: absolute; right: 28px; top: -72px; height: 80px; width: auto; z-index: 0; transform-origin: 50% 100%; transform: {{papoGiro}}; transition: transform 0.2s ease">
+</sc-if>
+<section aria-label="Filtros" onMouseEnter="{{papoOn}}" onMouseLeave="{{papoOff}}" style="position: relative; z-index: 1; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); box-sizing: border-box; padding: {{padFiltro}}; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 14px 16px; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 6px; flex: {{flexTipo}}">
+<span id="lbl-tipo" style="font-size: 14px; font-weight: 600; color: #142028">Tipo</span>
+<div role="group" aria-labelledby="lbl-tipo" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 2px; background: #F3EEE3; border-radius: 12px">
+<sc-for list="{{tipos}}" as="tp" hint-placeholder-count="3">
+<button type="button" onClick="{{tp.escolher}}" aria-pressed="{{tp.pressionado}}" style="min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: {{tp.fundo}}; color: {{tp.cor}}; box-shadow: {{tp.sombra}}; font-family: inherit; font-size: 14px; font-weight: {{tp.peso}}; cursor: pointer; white-space: nowrap">{{tp.rotulo}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex: {{flexCat}}; min-width: 0">
+<label for="f-cat" style="font-size: 14px; font-weight: 600; color: #142028">Categoria</label>
+<select id="f-cat" value="{{filtroCat}}" onChange="{{mudarCat}}" style="height: 48px; padding: 0 12px; border: 1.5px solid #7C8A93; border-radius: 12px; background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 500; color: #142028"><option value="todas">Todas as categorias</option><optgroup label="Receitas"><option value="salario">Salário</option><option value="freela">Freelance</option><option value="rendimentos">Rendimentos</option></optgroup><optgroup label="Despesas"><option value="moradia">Moradia</option><option value="mercado">Mercado</option><option value="transporte">Transporte</option><option value="lazer">Lazer</option><option value="saude">Saúde</option><option value="contas">Contas da casa</option><option value="assinaturas">Assinaturas</option></optgroup></select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; min-width: 0">
+<label for="f-busca" style="font-size: 14px; font-weight: 600; color: #142028">Buscar</label>
+<div style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 12px; border-radius: 12px; box-sizing: border-box; background: #FFFFFF; border: 1.5px solid #7C8A93">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex: none" fill="none" stroke="#4A5862" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<input id="f-busca" type="search" placeholder="Buscar por descrição" value="{{busca}}" onChange="{{mudarBusca}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028">
+</div>
+</div>
+<sc-if value="{{filtroAtivo}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{limpar}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 1.5px solid #C9D2D7; border-radius: 12px; background: #FFFFFF; color: #142028; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none">Limpar filtros</button>
+</sc-if>
+</div>
+<p style="margin: 0; font-size: 13px; font-weight: 500; color: #4A5862">{{resumo}}</p>
+</section>
+</div>
+
+<sc-if value="{{carregando}}" hint-placeholder-val="{{ false }}">
+<section aria-busy="true" aria-label="Lista de transações" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); box-sizing: border-box; padding: {{padLista}}; overflow: hidden">
+<span role="status" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">Carregando transações…</span>
+<div aria-hidden="true" style="display: flex; flex-direction: column">
+<sc-for list="{{esqueleto}}" as="sk" hint-placeholder-count="8">
+<div style="display: flex; align-items: center; gap: 20px; padding: 18px 8px; border-top: {{sk.borda}}">
+<span style="width: {{sk.w1}}; height: 12px; border-radius: 6px; background: #EFE9DD"></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 8px"><span style="width: {{sk.w2}}; height: 12px; border-radius: 6px; background: #EFE9DD"></span><span style="width: 30%; height: 10px; border-radius: 5px; background: #F4EFE6"></span></span>
+<span style="width: {{sk.w3}}; height: 12px; border-radius: 6px; background: #EFE9DD"></span>
+</div>
+</sc-for>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{vazio}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="vazio-t" style="position: relative; overflow: hidden; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); box-sizing: border-box; min-height: {{altVazio}}; display: flex; flex-direction: column; align-items: center; justify-content: {{justVazio}}; text-align: center; gap: 14px; padding: {{padVazio}}">
+<img src="../../../assets/mascote/papo-espiando-lado.png" alt="" aria-hidden="true" style="position: absolute; left: 0; bottom: {{ladoBase}}; height: {{altLado}}; width: auto">
+<img src="../../../assets/personagens/gaivota.png" alt="" aria-hidden="true" style="position: absolute; right: {{gaivotaDir}}; bottom: 0; height: {{altGaivota}}; width: auto">
+<h2 id="vazio-t" style="position: relative; margin: 0; max-width: 360px; font-size: 20px; font-weight: 800; line-height: 1.35">Nenhuma transação encontrada com esses filtros.</h2>
+<p style="position: relative; margin: 0; max-width: 360px; font-size: 15px; font-weight: 500; line-height: 1.5; color: #4A5862">Tente outra palavra na busca ou volte a mostrar todas.</p>
+<button type="button" onClick="{{limpar}}" style="position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 12px; background: #157A2E; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Limpar filtros</button>
+</section>
+</sc-if>
+
+<sc-if value="{{tabelaDesk}}" hint-placeholder-val="{{ true }}">
+<section aria-label="Lista de transações" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); box-sizing: border-box; padding: 8px 8px 0; overflow: hidden">
+<div role="table" aria-label="Transações de {{mesNome}}, página {{pag}} de {{totalPags}}" style="display: flex; flex-direction: column">
+<div role="rowgroup">
+<div role="row" style="display: grid; grid-template-columns: 112px minmax(0, 1.6fr) minmax(0, 1fr) 160px 96px; gap: 16px; align-items: center; padding: 12px 16px; font-size: 12px; font-weight: 700; color: #4A5862; text-transform: uppercase; letter-spacing: 0.4px">
+<span role="columnheader">Data</span><span role="columnheader">Descrição</span><span role="columnheader">Categoria</span><span role="columnheader" style="text-align: right">Valor</span><span role="columnheader" style="text-align: right"><span style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0">Ações</span></span>
+</div>
+</div>
+<div role="rowgroup">
+<sc-for list="{{linhas}}" as="t" hint-placeholder-count="10">
+<div role="row" style="display: grid; grid-template-columns: 112px minmax(0, 1.6fr) minmax(0, 1fr) 160px 96px; gap: 16px; align-items: center; min-height: 56px; padding: 4px 16px; border-top: 1px solid #F0EADF">
+<span role="cell" style="font-size: 14px; font-weight: 600; color: #2B3A44">{{t.data}}</span>
+<span role="cell" style="min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.desc}}</span><sc-if value="{{t.temObs}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 500; color: #4A5862; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.obs}}</span></sc-if></span>
+<span role="cell" style="display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; font-weight: 600"><span aria-hidden="true" style="flex: none; width: 10px; height: 10px; border-radius: 50%; background: {{t.cor}}"></span><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.cat}}</span></span>
+<span role="cell" style="display: flex; align-items: center; justify-content: flex-end; gap: 5px; font-size: 15px; font-weight: 700; color: {{t.corValor}}; white-space: nowrap"><sc-if value="{{t.entrada}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17"></path><path d="M16 17H7V8"></path></svg></sc-if><sc-if value="{{t.saida}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></sc-if><span>{{t.valor}}</span></span>
+<span role="cell" style="display: flex; justify-content: flex-end; gap: 2px">
+<button type="button" onClick="{{t.editar}}" aria-label="{{t.ariaEditar}}" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg></button>
+<button type="button" onClick="{{t.excluir}}" aria-label="{{t.ariaExcluir}}" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer; color: #C2412D"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6M14 11v6"></path></svg></button>
+</span>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{listaMobile}}" hint-placeholder-val="{{ false }}">
+<section aria-label="Lista de transações" style="display: flex; flex-direction: column; gap: 18px">
+<sc-for list="{{grupos}}" as="gr" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; color: #4A5862"><span>{{gr.titulo}}</span><span style="color: {{gr.corTotal}}">{{gr.total}}</span></h2>
+<ul style="list-style: none; margin: 0; padding: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); box-sizing: border-box; overflow: hidden">
+<sc-for list="{{gr.itens}}" as="t" hint-placeholder-count="2">
+<li style="border-top: {{t.borda}}">
+<button type="button" onClick="{{t.editar}}" aria-label="{{t.ariaEditar}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 14px; border: 0; background: transparent; text-align: left; font-family: inherit; color: #142028; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 10px; height: 10px; border-radius: 50%; background: {{t.cor}}"></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.desc}}</span><span style="font-size: 12px; font-weight: 500; color: #4A5862">{{t.cat}}</span></span>
+<span style="flex: none; display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 700; color: {{t.corValor}}"><sc-if value="{{t.entrada}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17"></path><path d="M16 17H7V8"></path></svg></sc-if><sc-if value="{{t.saida}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></sc-if><span>{{t.valor}}</span></span>
+</button>
+</li>
+</sc-for>
+</ul>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{temPaginas}}" hint-placeholder-val="{{ true }}">
+<nav aria-label="Paginação" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px">
+<span style="font-size: 13px; font-weight: 600; color: #4A5862">{{faixa}}</span>
+<div style="display: flex; align-items: center; gap: 6px">
+<button type="button" onClick="{{pagAnt}}" disabled="{{semPagAnt}}" aria-label="Página anterior" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer; background: #FFFFFF; border: 1px solid #EDE4D3; opacity: {{opPagAnt}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<sc-for list="{{paginas}}" as="pg" hint-placeholder-count="3">
+<button type="button" onClick="{{pg.ir}}" aria-current="{{pg.atual}}" aria-label="{{pg.aria}}" style="min-width: 44px; height: 44px; border-radius: 10px; border: 1px solid {{pg.borda}}; background: {{pg.fundo}}; color: {{pg.cor}}; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer">{{pg.n}}</button>
+</sc-for>
+<button type="button" onClick="{{pagProx}}" disabled="{{semPagProx}}" aria-label="Próxima página" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer; background: #FFFFFF; border: 1px solid #EDE4D3; opacity: {{opPagProx}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</nav>
+</sc-if>
+</main>
+
+<sc-if value="{{estreito}}" hint-placeholder-val="{{ false }}">
+<div style="position: sticky; bottom: 0; z-index: 5">
+<button type="button" onClick="{{abrirNova}}" aria-label="Nova transação" style="position: absolute; right: 16px; top: -72px; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border: 0; border-radius: 50%; background: #157A2E; color: #FFFFFF; box-shadow: 0 8px 20px rgba(21, 122, 46, 0.35); cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+<dc-import name="BottomNav" ativo="transacoes" hint-size="100%,68px"></dc-import>
+</div>
+</sc-if>
+
+<sc-if value="{{modalForm}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: {{alinharModal}}; justify-content: center; padding: {{padOverlay}}; box-sizing: border-box; background: rgba(20, 32, 40, 0.45)">
+<div role="dialog" aria-modal="true" aria-labelledby="mt-titulo" onKeyDown="{{teclaModal}}" style="width: 100%; max-width: 540px; max-height: 94vh; overflow: auto; background: #FFFFFF; border-radius: {{raioModal}}; padding: 22px 24px 24px; box-sizing: border-box; box-shadow: 0 24px 60px rgba(20, 32, 40, 0.25)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px">
+<h2 id="mt-titulo" style="margin: 0; font-size: 20px; font-weight: 800">{{tituloModal}}</h2>
+<button type="button" onClick="{{fecharModal}}" aria-label="Fechar" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<p style="margin: 0 0 18px; font-size: 13px; font-weight: 500; color: #4A5862">Campos com * são obrigatórios.</p>
+<form onSubmit="{{salvar}}" novalidate="" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-desc" style="font-size: 14px; font-weight: 600; color: #142028">Descrição *</label>
+<div style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 12px; border-radius: 12px; box-sizing: border-box; background: #FFFFFF; border: {{form.bDesc}}"><input id="m-desc" type="text" autocomplete="off" autoFocus="{{ true }}" placeholder="Ex.: Mercado do mês" value="{{form.desc}}" onChange="{{form.onDesc}}" aria-invalid="{{form.invDesc}}" aria-describedby="{{form.dbDesc}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028"></div>
+<sc-if value="{{form.temErrDesc}}" hint-placeholder-val="{{ false }}"><p id="e-desc" style="margin: 0; display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: #B42318"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg><span>{{form.errDesc}}</span></p></sc-if>
+</div>
+<div style="display: grid; grid-template-columns: {{colsValorData}}; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<label for="m-valor" style="font-size: 14px; font-weight: 600; color: #142028">Valor *</label>
+<div style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 12px; border-radius: 12px; box-sizing: border-box; background: #FFFFFF; border: {{form.bValor}}; background: {{form.fundoValor}}"><span aria-hidden="true" style="font-size: 15px; font-weight: 700; color: #4A5862">R$</span><input id="m-valor" type="text" inputMode="decimal" autocomplete="off" value="{{form.valorTxt}}" onChange="{{form.onValor}}" aria-invalid="{{form.invValor}}" aria-describedby="{{form.dbValor}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028; text-align: right; font-weight: 700"></div>
+<sc-if value="{{form.temErrValor}}" hint-placeholder-val="{{ false }}"><p id="e-valor" style="margin: 0; display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: #B42318"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg><span>{{form.errValor}}</span></p></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<label for="m-data" style="font-size: 14px; font-weight: 600; color: #142028">Data *</label>
+<div style="display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 12px; border-radius: 12px; box-sizing: border-box; background: #FFFFFF; border: {{form.bData}}"><input id="m-data" type="text" inputMode="numeric" placeholder="dd/mm/aaaa" maxLength="10" value="{{form.data}}" onChange="{{form.onData}}" aria-invalid="{{form.invData}}" aria-describedby="{{form.dbData}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028"></div>
+<sc-if value="{{form.temErrData}}" hint-placeholder-val="{{ false }}"><p id="e-data" style="margin: 0; display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: #B42318"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg><span>{{form.errData}}</span></p></sc-if>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-cat" style="font-size: 14px; font-weight: 600; color: #142028">Categoria *</label>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<select id="m-cat" value="{{form.cat}}" onChange="{{form.onCat}}" aria-invalid="{{form.invCat}}" aria-describedby="m-tipo {{form.dbCat}}" style="flex: 1 1 220px; height: 48px; padding: 0 12px; border: {{form.bCat}}; border-radius: 12px; background: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028"><option value="">Selecione…</option><optgroup label="Receitas"><option value="salario">Salário</option><option value="freela">Freelance</option><option value="rendimentos">Rendimentos</option></optgroup><optgroup label="Despesas"><option value="moradia">Moradia</option><option value="mercado">Mercado</option><option value="transporte">Transporte</option><option value="lazer">Lazer</option><option value="saude">Saúde</option><option value="contas">Contas da casa</option><option value="assinaturas">Assinaturas</option></optgroup></select>
+<span id="m-tipo" style="display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 999px; background: {{form.tipoFundo}}; color: {{form.tipoCor}}; font-size: 13px; font-weight: 700">
+<sc-if value="{{form.ehReceita}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17"></path><path d="M16 17H7V8"></path></svg></sc-if><sc-if value="{{form.ehDespesa}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></sc-if><span>{{form.tipoTxt}}</span></span>
+</div>
+<sc-if value="{{form.temErrCat}}" hint-placeholder-val="{{ false }}"><p id="e-cat" style="margin: 0; display: flex; gap: 6px; font-size: 13px; font-weight: 600; color: #B42318"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px" fill="none" stroke="#B42318" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg><span>{{form.errCat}}</span></p></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m-obs" style="font-size: 14px; font-weight: 600; color: #142028">Observação <span style="font-weight: 500; color: #4A5862">(opcional)</span></label>
+<textarea id="m-obs" rows="3" value="{{form.obs}}" onChange="{{form.onObs}}" placeholder="Algum detalhe para lembrar depois" style="padding: 12px; border: 1.5px solid #7C8A93; border-radius: 12px; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028; resize: vertical"></textarea>
+</div>
+<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 4px">
+<sc-if value="{{modoEditar}}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{pedirExcluir}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 1.5px solid #C9D2D7; border-radius: 12px; background: #FFFFFF; color: #142028; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; border-color: transparent; color: #C2412D; padding: 0 8px"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6M14 11v6"></path></svg><span>Excluir</span></button></sc-if>
+<div style="flex: 1"></div>
+<button type="button" onClick="{{fecharModal}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 1.5px solid #C9D2D7; border-radius: 12px; background: #FFFFFF; color: #142028; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none">Cancelar</button>
+<button type="submit" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 12px; background: #157A2E; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Salvar</button>
+</div>
+</form>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{modalExcluir}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; background: rgba(20, 32, 40, 0.45)">
+<div role="alertdialog" aria-modal="true" aria-labelledby="mx-titulo" aria-describedby="mx-desc" onKeyDown="{{teclaModal}}" style="width: 100%; max-width: 440px; background: #FFFFFF; border-radius: 20px; padding: 24px; box-sizing: border-box; box-shadow: 0 24px 60px rgba(20, 32, 40, 0.25); display: flex; flex-direction: column; gap: 14px">
+<h2 id="mx-titulo" style="margin: 0; font-size: 20px; font-weight: 800">Excluir transação?</h2>
+<div id="mx-desc" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #FBF6EC">
+<span aria-hidden="true" style="flex: none; width: 10px; height: 10px; border-radius: 50%; background: {{alvo.cor}}"></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><strong style="font-size: 15px; font-weight: 700">{{alvo.desc}}</strong><span style="font-size: 13px; font-weight: 500; color: #4A5862">{{alvo.cat}} · {{alvo.data}}</span></span>
+<strong style="font-size: 15px; font-weight: 700; color: {{alvo.corValor}}; white-space: nowrap">{{alvo.valor}}</strong>
+</div>
+<p style="margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; color: #2B3A44">Ela sai do saldo e dos gráficos de {{mesNome}}. Isso não pode ser desfeito.</p>
+</div>
+<div style="display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 4px">
+<button type="button" onClick="{{fecharModal}}" autoFocus="{{ true }}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 1.5px solid #C9D2D7; border-radius: 12px; background: #FFFFFF; color: #142028; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none">Cancelar</button>
+<button type="button" onClick="{{confirmarExcluir}}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 12px; background: #C2412D; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 14H6L5 6"></path><path d="M10 11v6M14 11v6"></path></svg><span>Excluir transação</span></button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{temToast}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="position: fixed; z-index: 60; left: {{toastL}}; right: {{toastR}}; bottom: {{toastB}}; max-width: 420px; margin-left: auto; display: flex; align-items: center; gap: 12px; padding: 10px 8px 10px 12px; background: #FFFFFF; border-radius: 14px; box-shadow: 0 12px 32px rgba(20, 32, 40, 0.18); border: 1px solid #E3EDE5">
+<img src="../../../assets/mascote/papo-joinha.png" alt="" aria-hidden="true" style="flex: none; height: 40px; width: auto; display: block">
+<span style="flex: 1; font-size: 15px; font-weight: 700; color: #142028">{{toastMsg}}</span>
+<button type="button" onClick="{{fecharToast}}" aria-label="Fechar aviso" style="display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #2B3A44; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+</sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estado": {"editor": "enum", "options": ["normal", "carregando", "vazio"], "default": "normal"}, "modal": {"editor": "enum", "options": ["nenhum", "nova", "editar", "excluir"], "default": "nenhum"}, "erroValor": {"editor": "boolean", "default": false}, "toast": {"editor": "boolean", "default": false}, "$preview": {"width": 1440, "height": 1100}}'>
+const CATS = {
+  salario: { nome: 'Salário', cor: '#2F7D35', tipo: 'receita', corNome: 'Verde' },
+  freela: { nome: 'Freelance', cor: '#C2416A', tipo: 'receita', corNome: 'Rosa' },
+  rendimentos: { nome: 'Rendimentos', cor: '#8A5A2E', tipo: 'receita', corNome: 'Marrom' },
+  moradia: { nome: 'Moradia', cor: '#2F6FB2', tipo: 'despesa', corNome: 'Azul' },
+  mercado: { nome: 'Mercado', cor: '#B5541A', tipo: 'despesa', corNome: 'Laranja' },
+  transporte: { nome: 'Transporte', cor: '#7B5CC4', tipo: 'despesa', corNome: 'Roxo' },
+  lazer: { nome: 'Lazer', cor: '#8C6A0C', tipo: 'despesa', corNome: 'Mostarda' },
+  saude: { nome: 'Saúde', cor: '#1F7A70', tipo: 'despesa', corNome: 'Petróleo' },
+  contas: { nome: 'Contas da casa', cor: '#557280', tipo: 'despesa', corNome: 'Ardósia' },
+  assinaturas: { nome: 'Assinaturas', cor: '#A54F98', tipo: 'despesa', corNome: 'Magenta' }
+};
+const TX0 = [
+  [1, 'Salário de novembro', 'salario', 5200, 'Empresa XPTO'], [1, 'Aluguel', 'moradia', -1450, ''], [2, 'Condomínio', 'moradia', -380, ''],
+  [3, 'Mercado Bom Preço', 'mercado', -312.47, 'Compra do mês'], [3, 'Uber para o centro', 'transporte', -23.9, ''], [4, 'Conta de luz', 'contas', -142.36, ''],
+  [5, 'Internet', 'contas', -99.9, ''], [5, 'Spotify', 'assinaturas', -21.9, ''], [6, 'Farmácia', 'saude', -58.3, ''],
+  [7, 'Freela: site da padaria', 'freela', 1400, '50% na entrega'], [8, 'Cinema', 'lazer', -64, ''], [8, 'Pizza com amigos', 'lazer', -72.5, ''],
+  [9, 'Combustível', 'transporte', -180, ''], [10, 'Mercado Bom Preço', 'mercado', -268.15, ''], [11, 'Conta de água', 'contas', -64.8, ''],
+  [12, 'Academia', 'saude', -99, ''], [13, 'Netflix', 'assinaturas', -39.9, ''], [14, 'Rendimento da poupança', 'rendimentos', 86.42, ''],
+  [14, 'Feira do bairro', 'mercado', -74.6, ''], [15, 'Show na praça', 'lazer', -120, ''], [15, 'Ônibus', 'transporte', -18.4, ''],
+  [16, 'Mercado Bom Preço', 'mercado', -189.33, ''], [17, 'Livro', 'lazer', -49.9, ''], [17, 'Uber para casa', 'transporte', -31.7, '']
+].map((t, i) => ({ id: i + 1, dia: t[0], desc: t[1], cat: t[2], valor: t[3], obs: t[4] }));
+class Component extends DCLogic {
+  medirTela() {
+    this.medir = () => this.setState({ estreito: window.innerWidth < 720 });
+    this.medir();
+    window.addEventListener('resize', this.medir);
+  }
+  brl(v) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v).replace(/\u00a0/g, ' ');
+  }
+  comSinal(v) {
+    return (v < 0 ? '− ' : '+ ') + this.brl(Math.abs(v));
+  }
+  dataBR(d) {
+    return String(d).padStart(2, '0') + '/11/2026';
+  }
+  componentDidMount() {
+    this.medirTela();
+    try { this.reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { this.reduzir = false; }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.medir);
+    clearTimeout(this.tt);
+  }
+  centavosTxt(c) {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(c / 100);
+  }
+  formVazio() {
+    return { desc: '', centavos: 0, data: '17/11/2026', cat: '', obs: '' };
+  }
+  formDe(t) {
+    return { desc: t.desc, centavos: Math.round(Math.abs(t.valor) * 100), data: this.dataBR(t.dia), cat: t.cat, obs: t.obs };
+  }
+  validar(f) {
+    const e = {};
+    if (!f.desc.trim()) e.desc = 'Escreva uma descrição, ex.: Mercado do mês.';
+    if (!(f.centavos > 0)) e.valor = 'Informe um valor maior que R$ 0,00.';
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(f.data);
+    const ok = m && +m[1] >= 1 && +m[1] <= 31 && +m[2] >= 1 && +m[2] <= 12;
+    if (!ok) e.data = 'Use o formato dd/mm/aaaa, ex.: 17/11/2026.';
+    if (!f.cat) e.cat = 'Escolha uma categoria.';
+    return e;
+  }
+  mostrarToast(msg) {
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(() => this.setState({ toast: null }), 5000);
+  }
+  renderVals() {
+    const estreito = this.state.estreito ?? (typeof window !== 'undefined' && window.innerWidth < 720);
+    const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const mes = this.state.mes ?? 10;
+    const mesNome = MESES[mes];
+    const mesRotulo = mesNome.charAt(0).toUpperCase() + mesNome.slice(1) + ' 2026';
+    const nav = {
+      mesNome, mesRotulo,
+      semAnt: mes === 0, semProx: mes === 11,
+      opAnt: mes === 0 ? '0.35' : '1', opProx: mes === 11 ? '0.35' : '1',
+      mesAnt: () => this.setState({ mes: Math.max(0, mes - 1) }),
+      mesProx: () => this.setState({ mes: Math.min(11, mes + 1) })
+    };
+    const P = this.props;
+    const lista = this.state.lista ?? TX0;
+    const tipo = this.state.tipo ?? 'todas';
+    const filtroCat = this.state.filtroCat ?? 'todas';
+    const busca = this.state.busca ?? (P.estado === 'vazio' ? 'pizza de abacaxi' : '');
+    const carregando = (this.state.carregou ? false : P.estado === 'carregando');
+    const modal = this.state.modal ?? (P.modal && P.modal !== 'nenhum' ? P.modal : null);
+    const alvoId = this.state.alvoId ?? (modal === 'excluir' ? 2 : modal === 'editar' ? 14 : null);
+    const toastMsg = this.state.toast !== undefined ? this.state.toast : (P.toast ? 'Transação salva.' : null);
+
+    const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const filtrada = lista.filter((t) =>
+      (tipo === 'todas' || (tipo === 'receitas' ? t.valor > 0 : t.valor < 0)) &&
+      (filtroCat === 'todas' || t.cat === filtroCat) &&
+      (!busca.trim() || norm(t.desc).includes(norm(busca.trim())))
+    ).sort((a, b) => b.dia - a.dia || b.id - a.id);
+    const POR = 10;
+    const totalPags = Math.max(1, Math.ceil(filtrada.length / POR));
+    const pag = Math.min(this.state.pag ?? 1, totalPags);
+    const pagina = filtrada.slice((pag - 1) * POR, pag * POR);
+    const recF = filtrada.filter((t) => t.valor > 0).reduce((a, t) => a + t.valor, 0);
+    const despF = -filtrada.filter((t) => t.valor < 0).reduce((a, t) => a + t.valor, 0);
+    const vazio = !carregando && filtrada.length === 0;
+    const filtroAtivo = tipo !== 'todas' || filtroCat !== 'todas' || !!busca.trim();
+
+    const abrir = (m, id) => this.setState({ modal: m, alvoId: id ?? null, form: m === 'editar' ? this.formDe(lista.find((x) => x.id === id)) : m === 'nova' ? this.formVazio() : this.state.form, tentou: false });
+    const linhaDe = (t, j) => ({
+      id: t.id,
+      data: this.dataBR(t.dia),
+      desc: t.desc,
+      obs: t.obs,
+      temObs: !!t.obs,
+      cat: CATS[t.cat].nome,
+      cor: CATS[t.cat].cor,
+      valor: this.comSinal(t.valor),
+      corValor: t.valor > 0 ? '#1E7B3A' : '#C2412D',
+      entrada: t.valor > 0,
+      saida: t.valor < 0,
+      borda: j ? '1px solid #F0EADF' : '0',
+      ariaEditar: 'Editar ' + t.desc + ', ' + this.comSinal(t.valor) + ', ' + this.dataBR(t.dia),
+      ariaExcluir: 'Excluir ' + t.desc + ', ' + this.dataBR(t.dia),
+      editar: () => abrir('editar', t.id),
+      excluir: () => abrir('excluir', t.id)
+    });
+    const linhas = pagina.map(linhaDe);
+    const DIAS = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+    const grupos = [];
+    pagina.forEach((t) => {
+      let g = grupos.find((x) => x.dia === t.dia);
+      if (!g) { g = { dia: t.dia, lista: [] }; grupos.push(g); }
+      g.lista.push(t);
+    });
+    const gruposV = grupos.map((g) => {
+      const tot = g.lista.reduce((a, t) => a + t.valor, 0);
+      return {
+        titulo: this.dataBR(g.dia) + ' · ' + DIAS[new Date(2026, 10, g.dia).getDay()],
+        total: this.comSinal(tot),
+        corTotal: tot >= 0 ? '#1E7B3A' : '#C2412D',
+        itens: g.lista.map(linhaDe)
+      };
+    });
+
+    const f = this.state.form ?? (modal === 'nova' ? (P.erroValor ? { desc: 'Padaria', centavos: 0, data: '17/11/2026', cat: 'mercado', obs: '' } : this.formVazio()) : modal === 'editar' ? this.formDe(lista.find((x) => x.id === alvoId)) : this.formVazio());
+    const tentou = this.state.tentou ?? !!(P.erroValor && modal === 'nova');
+    const err = tentou ? this.validar(f) : {};
+    const setF = (k, v) => this.setState({ form: { ...f, [k]: v } });
+    const borda = (k) => (err[k] ? '2px solid #B42318' : '1.5px solid #7C8A93');
+    const tipoCat = f.cat ? CATS[f.cat].tipo : null;
+    const form = {
+      desc: f.desc, valorTxt: this.centavosTxt(f.centavos), data: f.data, cat: f.cat, obs: f.obs,
+      bDesc: borda('desc'), bValor: borda('valor'), bData: borda('data'), bCat: borda('cat'),
+      fundoValor: err.valor ? '#FFF8F7' : '#FFFFFF',
+      invDesc: err.desc ? 'true' : 'false', invValor: err.valor ? 'true' : 'false', invData: err.data ? 'true' : 'false', invCat: err.cat ? 'true' : 'false',
+      dbDesc: err.desc ? 'e-desc' : undefined, dbValor: err.valor ? 'e-valor' : undefined, dbData: err.data ? 'e-data' : undefined, dbCat: err.cat ? 'e-cat' : '',
+      temErrDesc: !!err.desc, temErrValor: !!err.valor, temErrData: !!err.data, temErrCat: !!err.cat,
+      errDesc: err.desc, errValor: err.valor, errData: err.data, errCat: err.cat,
+      ehReceita: tipoCat === 'receita', ehDespesa: tipoCat === 'despesa',
+      tipoTxt: tipoCat === 'receita' ? 'Receita: entra no saldo' : tipoCat === 'despesa' ? 'Despesa: sai do saldo' : 'Tipo vem da categoria',
+      tipoFundo: tipoCat === 'receita' ? '#E6F2E9' : tipoCat === 'despesa' ? '#FBE9E5' : '#F1F3F4',
+      tipoCor: tipoCat === 'receita' ? '#1E7B3A' : tipoCat === 'despesa' ? '#B3361F' : '#4A5862',
+      onDesc: (e) => setF('desc', e.target.value),
+      onValor: (e) => { const d = e.target.value.replace(/\D/g, '').slice(0, 11); setF('centavos', d ? parseInt(d, 10) : 0); },
+      onData: (e) => {
+        const d = e.target.value.replace(/\D/g, '').slice(0, 8);
+        setF('data', d.length > 4 ? d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4) : d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d);
+      },
+      onCat: (e) => setF('cat', e.target.value),
+      onObs: (e) => setF('obs', e.target.value)
+    };
+    const fechar = () => this.setState({ modal: null, alvoId: null, form: null, tentou: false });
+    const alvoT = lista.find((x) => x.id === alvoId);
+
+    const tiposDef = [['todas', 'Todas'], ['receitas', 'Receitas'], ['despesas', 'Despesas']];
+    const papoVisivel = !estreito && !vazio && !toastMsg;
+
+    return {
+      largo: !estreito,
+      estreito: !!estreito,
+      direcao: estreito ? 'column' : 'row',
+      padMain: estreito ? '16px 16px 104px' : '28px 40px 48px',
+      padFiltro: estreito ? '16px' : '20px 22px',
+      padLista: estreito ? '4px 14px' : '6px 16px',
+      flexTipo: estreito ? '1 1 100%' : '0 0 auto',
+      flexCat: estreito ? '1 1 100%' : '0 1 240px',
+      ...nav,
+      papoFiltros: papoVisivel,
+      papoGiro: this.state.papoHover && !this.reduzir ? 'rotate(-4deg)' : 'none',
+      papoOn: () => this.setState({ papoHover: true }),
+      papoOff: () => this.setState({ papoHover: false }),
+      tipos: tiposDef.map(([id, rot]) => ({
+        rotulo: rot, pressionado: tipo === id ? 'true' : 'false',
+        fundo: tipo === id ? '#FFFFFF' : 'transparent', cor: tipo === id ? '#142028' : '#2B3A44',
+        sombra: tipo === id ? '0 1px 3px rgba(20, 32, 40, 0.15)' : 'none', peso: tipo === id ? '700' : '600',
+        escolher: () => this.setState({ tipo: id, pag: 1 })
+      })),
+      filtroCat, busca, filtroAtivo,
+      mudarCat: (e) => this.setState({ filtroCat: e.target.value, pag: 1 }),
+      mudarBusca: (e) => this.setState({ busca: e.target.value, pag: 1 }),
+      limpar: () => this.setState({ tipo: 'todas', filtroCat: 'todas', busca: '', pag: 1 }),
+      resumo: filtrada.length + (filtrada.length === 1 ? ' transação' : ' transações') + ' · Receitas + ' + this.brl(recF) + ' · Despesas − ' + this.brl(despF),
+      carregando,
+      esqueleto: [['80px', '46%', '90px'], ['80px', '38%', '110px'], ['80px', '52%', '80px'], ['80px', '34%', '100px'], ['80px', '44%', '90px'], ['80px', '40%', '120px'], ['80px', '48%', '84px'], ['80px', '36%', '96px']].map((w, i) => ({ w1: estreito ? '0px' : w[0], w2: w[1], w3: w[2], borda: i ? '1px solid #F4EFE6' : '0' })),
+      vazio,
+      altVazio: estreito ? '420px' : '380px',
+      justVazio: estreito ? 'flex-end' : 'center',
+      padVazio: estreito ? '24px 20px 28px' : '40px 220px',
+      altLado: estreito ? '150px' : '240px',
+      ladoBase: estreito ? 'auto' : '0',
+      altGaivota: estreito ? '110px' : '150px',
+      gaivotaDir: estreito ? '16px' : '40px',
+      tabelaDesk: !estreito && !carregando && !vazio,
+      listaMobile: !!estreito && !carregando && !vazio,
+      linhas, grupos: gruposV,
+      pag, totalPags,
+      temPaginas: !carregando && !vazio,
+      faixa: filtrada.length ? 'Mostrando ' + ((pag - 1) * POR + 1) + '–' + Math.min(pag * POR, filtrada.length) + ' de ' + filtrada.length : '',
+      paginas: Array.from({ length: totalPags }, (_, i) => ({
+        n: String(i + 1), atual: i + 1 === pag ? 'page' : undefined, aria: 'Página ' + (i + 1),
+        fundo: i + 1 === pag ? '#142028' : '#FFFFFF', cor: i + 1 === pag ? '#FFFFFF' : '#142028', borda: i + 1 === pag ? '#142028' : '#EDE4D3',
+        ir: () => this.setState({ pag: i + 1 })
+      })),
+      semPagAnt: pag <= 1, semPagProx: pag >= totalPags,
+      opPagAnt: pag <= 1 ? '0.4' : '1', opPagProx: pag >= totalPags ? '0.4' : '1',
+      pagAnt: () => this.setState({ pag: Math.max(1, pag - 1) }),
+      pagProx: () => this.setState({ pag: Math.min(totalPags, pag + 1) }),
+      abrirNova: () => abrir('nova'),
+      modalForm: modal === 'nova' || modal === 'editar',
+      modalExcluir: modal === 'excluir' && !!alvoT,
+      modoEditar: modal === 'editar',
+      tituloModal: modal === 'editar' ? 'Editar transação' : 'Nova transação',
+      alinharModal: estreito ? 'flex-end' : 'center',
+      padOverlay: estreito ? '0' : '24px',
+      raioModal: estreito ? '20px 20px 0 0' : '20px',
+      colsValorData: estreito ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      form,
+      fecharModal: fechar,
+      teclaModal: (e) => { if (e.key === 'Escape') { e.stopPropagation(); fechar(); } },
+      salvar: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const er = this.validar(f);
+        if (Object.keys(er).length) { this.setState({ tentou: true, form: f }); return; }
+        const sinal = CATS[f.cat].tipo === 'receita' ? 1 : -1;
+        const dia = Math.min(30, +f.data.slice(0, 2));
+        const novo = { desc: f.desc.trim(), cat: f.cat, valor: sinal * f.centavos / 100, dia, obs: f.obs.trim() };
+        const nl = modal === 'editar' ? lista.map((x) => (x.id === alvoId ? { ...x, ...novo } : x)) : lista.concat([{ id: Math.max(...lista.map((x) => x.id)) + 1, ...novo }]);
+        this.setState({ lista: nl, modal: null, alvoId: null, form: null, tentou: false });
+        this.mostrarToast(modal === 'editar' ? 'Transação atualizada.' : 'Transação salva.');
+      },
+      pedirExcluir: () => this.setState({ modal: 'excluir' }),
+      alvo: alvoT ? { desc: alvoT.desc, cat: CATS[alvoT.cat].nome, cor: CATS[alvoT.cat].cor, data: this.dataBR(alvoT.dia), valor: this.comSinal(alvoT.valor), corValor: alvoT.valor > 0 ? '#1E7B3A' : '#C2412D' } : {},
+      confirmarExcluir: () => {
+        this.setState({ lista: lista.filter((x) => x.id !== alvoId), modal: null, alvoId: null });
+        this.mostrarToast('Transação excluída.');
+      },
+      temToast: !!toastMsg,
+      toastMsg,
+      toastL: estreito ? '16px' : 'auto',
+      toastR: estreito ? '16px' : '24px',
+      toastB: estreito ? '88px' : '24px',
+      fecharToast: () => { clearTimeout(this.tt); this.setState({ toast: null }); }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

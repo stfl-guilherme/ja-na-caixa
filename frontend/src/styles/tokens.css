@@ -1,0 +1,79 @@
+/* JáNaCaixa — design tokens (extraídos das telas do canvas) */
+:root {
+  /* Texto e superfícies */
+  --jnc-tinta: #142028;          /* texto principal, contornos de destaque */
+  --jnc-texto-2: #4A5862;        /* texto de apoio (7,3:1 no branco; 6,0:1 na areia) */
+  --jnc-texto-3: #2B3A44;        /* ícones e itens de menu inativos */
+  --jnc-borda-campo: #7C8A93;    /* borda de input (3,6:1) */
+  --jnc-borda-sutil: #EDE4D3;    /* bordas de cartões/menu */
+  --jnc-divisor: #F0EADF;        /* linhas entre itens */
+  --jnc-branco: #FFFFFF;
+  --jnc-fundo-app: #FBF6EC;      /* fundo das telas internas (areia bem clara) */
+  --jnc-areia: #F6E7C8;          /* areia do login mobile = fundo da página */
+  --jnc-borda-areia: #8F7B55;    /* borda de campo sobre areia (3,3:1) */
+
+  /* Marca e ações */
+  --jnc-verde-700: #157A2E;      /* botão Entrar / ações primárias (5,4:1 com branco) */
+  --jnc-verde-ativo-bg: #E6F2E9; /* item de menu ativo */
+  --jnc-verde-ativo-tx: #145C26;
+  --jnc-amarelo-papo: #F8D428;   /* botão "Entrar como demonstração" */
+  --jnc-verde-papo: #20C838;     /* só na ilustração */
+
+  /* Valores */
+  --jnc-receita: #1E7B3A;        /* texto de receita (+) */
+  --jnc-despesa: #C2412D;        /* texto de despesa (−) */
+  --jnc-receita-grafico: #2E9E5B;
+  --jnc-despesa-grafico: #E0604A;
+  --jnc-erro: #B42318;
+  --jnc-erro-bg: #FEF1F0;
+
+  /* Cena de praia (somente login) */
+  --jnc-ceu: #CDEFFC;
+  --jnc-mar-1: #6CC6EA;
+  --jnc-mar-2: #2EA3D6;
+  --jnc-mar-3: #0E7FB4;
+  --jnc-sol: #FFE27A;
+
+  /* Cores de categoria (todas >= 4,9:1 com texto branco) */
+  --jnc-cat-azul: #2F6FB2;
+  --jnc-cat-laranja: #B5541A;
+  --jnc-cat-roxo: #7B5CC4;
+  --jnc-cat-mostarda: #8C6A0C;
+  --jnc-cat-petroleo: #1F7A70;
+  --jnc-cat-rosa: #C2416A;
+  --jnc-cat-ardosia: #557280;
+  --jnc-cat-verde: #2F7D35;
+  --jnc-cat-marrom: #8A5A2E;
+  --jnc-cat-magenta: #A54F98;
+
+  /* Tipografia */
+  --jnc-fonte-logo: 'Baloo 2', 'Plus Jakarta Sans', sans-serif;   /* só o nome JáNaCaixa, 800 */
+  --jnc-fonte: 'Plus Jakarta Sans', system-ui, sans-serif;         /* todo o resto */
+  --jnc-fs-h1: 28px;      /* 800, mobile 24px */
+  --jnc-fs-h2: 17px;      /* 700 títulos de cartão; 20px 800 em modais/seções */
+  --jnc-fs-corpo: 15px;   /* 500 */
+  --jnc-fs-campo: 16px;   /* inputs sempre 16px (evita zoom no iOS) */
+  --jnc-fs-rotulo: 14px;  /* 600 */
+  --jnc-fs-legenda: 13px; /* 500/600 */
+  --jnc-fs-eixo: 11px;    /* 600, rótulos de gráfico */
+  /* números: font-variant-numeric: tabular-nums em todo o app */
+
+  /* Forma */
+  --jnc-raio-campo: 12px;
+  --jnc-raio-botao: 12px;
+  --jnc-raio-demo: 16px;
+  --jnc-raio-cartao: 20px;
+  --jnc-raio-painel: 24px;
+  --jnc-sombra-cartao: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06);
+  --jnc-sombra-modal: 0 24px 60px rgba(20, 32, 40, 0.25);
+  --jnc-overlay: rgba(20, 32, 40, 0.45);
+
+  /* Destaque cartunesco (somente botão "Entrar como demonstração") */
+  --jnc-contorno-cartum: 2.5px solid var(--jnc-tinta);
+  --jnc-sombra-cartum: 0 4px 0 var(--jnc-tinta);
+
+  /* Espaço e toque */
+  --jnc-esp-1: 4px; --jnc-esp-2: 8px; --jnc-esp-3: 12px; --jnc-esp-4: 16px;
+  --jnc-esp-5: 24px; --jnc-esp-6: 32px; --jnc-esp-7: 48px;
+  --jnc-alvo-toque: 44px;   /* mínimo; campos 48px, botão principal 48–52px */
+}

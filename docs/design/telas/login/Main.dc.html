@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JáNaCaixa — Login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<sc-if value="{{largo}}" hint-placeholder-val="{{ true }}">
+<main style="position: relative; min-height: max(100vh, 760px); overflow: hidden; display: flex; justify-content: flex-end; align-items: center; padding: 32px clamp(16px, 6vw, 96px); box-sizing: border-box; background: #CDEFFC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028">
+<div aria-label="Ilustração do mascote Papo na praia" role="img" style="position: absolute; top: 0; left: 0; right: 0">
+<dc-import name="SceneVar" variante="manha" pose="{{pose}}" fala="{{fala}}" altura="max(100vh, 760px)" mascote-x="28%" mascote-altura="58%" hint-size="100%,900px"></dc-import>
+</div>
+<div style="position: relative; width: 100%; max-width: 440px; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 36px 32px 24px; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; box-shadow: 0 24px 60px rgba(20, 32, 40, 0.18)">
+<div style="width: 100%">
+<dc-import name="Form" estado="{{estado}}" on-entrar="{{entrar}}" on-demo="{{demo}}" hint-size="100%,640px"></dc-import>
+</div>
+<footer style="font-size: 13px; font-weight: 500; color: #4A5862">Projeto acadêmico — AMF</footer>
+</div>
+</main>
+</sc-if>
+<sc-if value="{{estreito}}" hint-placeholder-val="{{ false }}">
+<main style="min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; background-color: #F6E7C8; background-image: radial-gradient(circle, rgba(150, 110, 50, 0.14) 0.9px, transparent 1.4px), radial-gradient(circle, rgba(255, 255, 255, 0.35) 0.9px, transparent 1.4px); background-size: 18px 18px, 27px 27px; background-position: 0 0, 9px 13px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028">
+<div aria-label="Ilustração do mascote Papo na praia" role="img">
+<dc-import name="SceneMobile" pose="{{pose}}" fala="{{fala}}" altura="clamp(220px, 38svh, 300px)" mascote-x="36%" hint-size="100%,300px"></dc-import>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 12px 20px 32px; box-sizing: border-box">
+<div style="width: 100%; max-width: 440px">
+<dc-import name="Form" estado="{{estado}}" superficie="areia" on-entrar="{{entrar}}" on-demo="{{demo}}" hint-size="100%,640px"></dc-import>
+</div>
+<footer style="font-size: 13px; font-weight: 500; color: #4A5862">Projeto acadêmico — AMF</footer>
+</div>
+</main>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estado":{"editor":"enum","options":["padrao","carregando","erro"],"default":"padrao"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.medir = () => this.setState({ estreito: window.innerWidth < 720 });
+    this.medir();
+    window.addEventListener('resize', this.medir);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.t);
+    window.removeEventListener('resize', this.medir);
+  }
+  simular(fim) {
+    clearTimeout(this.t);
+    this.setState({ estado: 'carregando' });
+    this.t = setTimeout(() => this.setState({ estado: fim }), 1600);
+  }
+  renderVals() {
+    const estado = this.state.estado ?? this.props.estado ?? 'padrao';
+    const mapa = {
+      padrao: ['login', 'Bom dia! O mar tá calmo, pode entrar.'],
+      carregando: ['carregando', 'Abrindo a caixa…'],
+      erro: ['erro', 'Hmm… não achei essa conta.']
+    };
+    const m = mapa[estado] || mapa.padrao;
+    const estreito = this.state.estreito ?? (typeof window !== 'undefined' && window.innerWidth < 720);
+    return {
+      estado,
+      pose: m[0],
+      fala: m[1],
+      falso: false,
+      largo: !estreito,
+      estreito: !!estreito,
+      entrar: () => this.simular('erro'),
+      demo: () => this.simular('padrao')
+    };
+  }
+}
+</script>
+</body>
+</html>

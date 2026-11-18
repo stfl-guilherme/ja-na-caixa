@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Navegação inferior (mobile)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav aria-label="Menu principal" style="width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); height: 68px; padding: 6px 8px 8px; background: #FFFFFF; border-top: 1px solid #EDE4D3; font-family: 'Plus Jakarta Sans', system-ui, sans-serif">
+<sc-for list="{{itens}}" as="item" hint-placeholder-count="3">
+<a href="{{item.href}}" aria-current="{{item.atual}}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; border-radius: 12px; text-decoration: none; font-size: 12px; font-weight: {{item.peso}}; color: {{item.cor}}; background: {{item.fundo}}">
+<span aria-hidden="true" style="display: flex; width: 22px; height: 22px">
+<sc-if value="{{item.isPainel}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="10" rx="2"></rect><rect x="13" y="3" width="8" height="6" rx="2"></rect><rect x="13" y="11" width="8" height="10" rx="2"></rect><rect x="3" y="15" width="8" height="6" rx="2"></rect></svg></sc-if>
+<sc-if value="{{item.isTransacoes}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3"></path><path d="M17 20V4M17 4l-3 3M17 4l3 3"></path></svg></sc-if>
+<sc-if value="{{item.isCategorias}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"></path><circle cx="8" cy="8" r="1.5"></circle></svg></sc-if>
+</span>
+<span>{{item.rotulo}}</span>
+</a>
+</sc-for>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ativo":{"editor":"enum","options":["painel","transacoes","categorias"],"default":"painel"},"$preview":{"width":375,"height":68}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ativo = this.props.ativo ?? 'painel';
+    const base = [
+      { id: 'painel', rotulo: 'Painel', href: 'Painel.dc.html' },
+      { id: 'transacoes', rotulo: 'Transações', href: 'Transacoes.dc.html' },
+      { id: 'categorias', rotulo: 'Categorias', href: 'Categorias.dc.html' }
+    ];
+    return {
+      itens: base.map((i) => {
+        const on = i.id === ativo;
+        return {
+          ...i,
+          atual: on ? 'page' : undefined,
+          peso: on ? '700' : '600',
+          cor: on ? '#145C26' : '#4A5862',
+          fundo: on ? '#E6F2E9' : 'transparent',
+          isPainel: i.id === 'painel',
+          isTransacoes: i.id === 'transacoes',
+          isCategorias: i.id === 'categorias'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

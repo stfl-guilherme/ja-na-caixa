@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JáNaCaixa — Painel</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-direction: {{direcao}}; background: #FBF6EC; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028; font-variant-numeric: tabular-nums">
+
+<sc-if value="{{largo}}" hint-placeholder-val="{{ true }}">
+<dc-import name="Sidebar" ativo="painel" hint-size="248px,900px"></dc-import>
+</sc-if>
+
+<main style="flex: 1; min-width: 0; padding: {{padMain}}; box-sizing: border-box">
+
+<sc-if value="{{largo}}" hint-placeholder-val="{{ true }}">
+<header style="display: flex; align-items: center; gap: 20px; height: 56px; margin-bottom: 24px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.4px">Painel</h1>
+<div role="group" aria-label="Mês de referência" style="display: flex; align-items: center; gap: 2px; padding: 2px; background: #FFFFFF; border: 1px solid #EDE4D3; border-radius: 12px">
+<button type="button" onClick="{{mesAnt}}" disabled="{{semAnt}}" aria-label="Mês anterior" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opAnt}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<span aria-live="polite" style="min-width: 150px; text-align: center; font-size: 15px; font-weight: 700">{{mesRotulo}}</span>
+<button type="button" onClick="{{mesProx}}" disabled="{{semProx}}" aria-label="Próximo mês" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; cursor: pointer; opacity: {{opProx}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</header>
+</sc-if>
+
+<sc-if value="{{estreito}}" hint-placeholder-val="{{ false }}">
+<header style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px">
+<div style="display: flex; align-items: flex-end; gap: 8px">
+<div role="group" aria-label="Mês de referência" style="flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; padding: 2px; background: #FFFFFF; border: 1px solid #EDE4D3; border-radius: 12px">
+<button type="button" onClick="{{mesAnt}}" disabled="{{semAnt}}" aria-label="Mês anterior" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; opacity: {{opAnt}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<span aria-live="polite" style="font-size: 15px; font-weight: 700">{{mesRotulo}}</span>
+<button type="button" onClick="{{mesProx}}" disabled="{{semProx}}" aria-label="Próximo mês" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; color: #142028; opacity: {{opProx}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+<img src="../../../assets/mascote/papo-espiando.png" alt="" aria-hidden="true" style="flex: none; width: 104px; height: auto; display: block; margin-bottom: 1px">
+</div>
+<h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.3px">Painel</h1>
+</header>
+</sc-if>
+
+<sc-if value="{{vazio}}" hint-placeholder-val="{{ false }}">
+<section aria-labelledby="vazio-titulo" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding: {{padVazio}}; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06)">
+<div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 4px">
+<img src="../../../assets/mascote/papo-cadeira-acenando.png" alt="" style="height: {{altVazio}}; width: auto; display: block">
+<img src="../../../assets/personagens/caranguejo.png" alt="" style="height: {{altCaranguejo}}; width: auto; display: block">
+</div>
+<h2 id="vazio-titulo" style="margin: 0; font-size: 22px; font-weight: 800; line-height: 1.3">Nada lançado em {{mesNome}}. Bora começar?</h2>
+<p style="margin: 0; max-width: 420px; font-size: 15px; font-weight: 500; line-height: 1.5; color: #4A5862">Registre a primeira receita ou despesa do mês e o painel se monta sozinho.</p>
+<button type="button" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 22px; border: 0; border-radius: 12px; background: #157A2E; color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+<span>Nova transação</span>
+</button>
+</section>
+</sc-if>
+
+<sc-if value="{{comDados}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: {{colunas}}; gap: {{gap}}">
+
+<sc-for list="{{metricas}}" as="m" hint-placeholder-count="3">
+<div onMouseEnter="{{m.entrar}}" onMouseLeave="{{m.sair}}" style="position: relative; grid-column: {{m.col}}; grid-row: {{m.row}}; min-width: 0">
+<sc-if value="{{m.temPapo}}" hint-placeholder-val="{{ false }}">
+<img src="{{m.papoSrc}}" alt="" aria-hidden="true" style="position: absolute; right: 22px; top: {{m.papoTopo}}; height: {{m.papoAltura}}; width: auto; z-index: 0; transform-origin: 50% 100%; transform: {{m.papoGiro}}; transition: transform 0.2s ease">
+</sc-if>
+<a href="Transacoes.dc.html" aria-label="{{m.aria}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; padding: 20px 22px; min-height: 44px; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); color: #142028; text-decoration: none">
+<span style="display: flex; align-items: center; gap: 10px">
+<span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: {{m.iconeFundo}}; color: {{m.iconeCor}}">
+<sc-if value="{{m.isReceita}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17"></path><path d="M16 17H7V8"></path></svg></sc-if>
+<sc-if value="{{m.isDespesa}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></sc-if>
+<sc-if value="{{m.isSaldo}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h13v4"></path><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"></path><circle cx="16" cy="14.5" r="1.3"></circle></svg></sc-if>
+</span>
+<span style="font-size: 15px; font-weight: 700">{{m.rotulo}}</span>
+</span>
+<span style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: {{m.corValor}}; white-space: nowrap">{{m.valorTxt}}</span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: {{m.corComp}}">
+<sc-if value="{{m.subiu}}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></sc-if>
+<sc-if value="{{m.desceu}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg></sc-if>
+<span>{{m.compTxt}}</span>
+</span>
+</a>
+</div>
+</sc-for>
+
+<section aria-labelledby="t-saldo" style="grid-column: {{g.saldo.col}}; grid-row: {{g.saldo.row}}; min-width: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); padding: 20px 22px; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px">
+<h2 id="t-saldo" style="margin: 0; font-size: 17px; font-weight: 700">Saldo do mês</h2>
+<span style="font-size: 13px; font-weight: 500; color: #4A5862">Acumulado dia a dia</span>
+</div>
+<div style="display: grid; grid-template-columns: {{colEixo}} minmax(0, 1fr); column-gap: 8px">
+<div aria-hidden="true" style="position: relative; height: {{altGraf}}">
+<sc-for list="{{saldo.ticks}}" as="t" hint-placeholder-count="4">
+<span style="position: absolute; right: 0; top: {{t.top}}; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #4A5862; white-space: nowrap">{{t.rotulo}}</span>
+</sc-for>
+</div>
+<div style="position: relative; height: {{altGraf}}">
+<sc-for list="{{saldo.ticks}}" as="t" hint-placeholder-count="4">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: {{t.top}}; border-top: 1px {{t.estilo}} {{t.cor}}"></div>
+</sc-for>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; overflow: visible">
+<path d="{{saldo.area}}" fill="#2E9E5B" fill-opacity="{{saldo.areaOp}}"></path>
+<path d="{{saldo.linha}}" fill="none" stroke="{{saldo.corLinha}}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" pathLength="1" stroke-dasharray="1" stroke-dashoffset="{{saldo.dash}}"></path>
+</svg>
+<div tabindex="0" role="img" aria-label="{{saldo.aria}}" onMouseMove="{{saldo.mover}}" onMouseLeave="{{saldo.sair}}" onFocus="{{saldo.focar}}" onBlur="{{saldo.sair}}" onKeyDown="{{saldo.tecla}}" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: crosshair; border-radius: 6px"></div>
+<sc-if value="{{saldo.temDica}}" hint-placeholder-val="{{ false }}">
+<div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: {{saldo.dica.x}}; border-left: 1px dashed #8A98A0; pointer-events: none"></div>
+<div aria-hidden="true" style="position: absolute; left: {{saldo.dica.x}}; top: {{saldo.dica.y}}; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #FFFFFF; border: 3px solid {{saldo.corLinha}}; box-sizing: border-box; pointer-events: none"></div>
+<div role="status" style="position: absolute; left: {{saldo.dica.xc}}; top: {{saldo.dica.y}}; transform: translate(-50%, calc(-100% - 14px)); padding: 8px 10px; border-radius: 10px; background: #142028; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap; pointer-events: none">
+<div>{{saldo.dica.data}}</div>
+<div style="font-size: 14px; font-weight: 800">{{saldo.dica.valor}}</div>
+</div>
+</sc-if>
+</div>
+<div></div>
+<div aria-hidden="true" style="position: relative; height: 22px">
+<sc-for list="{{eixoDias}}" as="d" hint-placeholder-count="7">
+<span style="position: absolute; left: {{d.left}}; top: 6px; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #4A5862">{{d.rotulo}}</span>
+</sc-for>
+</div>
+</div>
+<div role="table" aria-label="Saldo acumulado por dia em {{mesNome}}" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"><div role="rowgroup"><div role="row"><span role="columnheader">Data</span><span role="columnheader">Saldo acumulado</span></div></div><div role="rowgroup"><sc-for list="{{saldo.tabela}}" as="r" hint-placeholder-count="3"><div role="row"><span role="cell">{{r.data}}</span><span role="cell">{{r.valor}}</span></div></sc-for></div></div>
+</section>
+
+<section aria-labelledby="t-ultimas" style="grid-column: {{g.ultimas.col}}; grid-row: {{g.ultimas.row}}; min-width: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px">
+<h2 id="t-ultimas" style="margin: 0; font-size: 17px; font-weight: 700">Últimas transações</h2>
+<a href="Transacoes.dc.html" style="display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 4px; color: #157A2E; font-size: 14px; font-weight: 700; text-decoration: none">Ver todas<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+<sc-for list="{{ultimas}}" as="t" hint-placeholder-count="5">
+<li style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: {{t.borda}}">
+<span aria-hidden="true" style="flex: none; width: 10px; height: 10px; border-radius: 50%; background: {{t.cor}}"></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.desc}}</span>
+<span style="font-size: 12px; font-weight: 500; color: #4A5862">{{t.cat}} · {{t.data}}</span>
+</span>
+<span style="flex: none; display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; color: {{t.corValor}}">
+<sc-if value="{{t.entrada}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7 17"></path><path d="M16 17H7V8"></path></svg></sc-if>
+<sc-if value="{{t.saida}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg></sc-if>
+<span>{{t.valor}}</span>
+</span>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section aria-labelledby="t-fluxo" style="grid-column: {{g.fluxo.col}}; grid-row: {{g.fluxo.row}}; min-width: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); padding: 20px 22px; box-sizing: border-box">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 14px">
+<h2 id="t-fluxo" style="margin: 0; font-size: 17px; font-weight: 700">Entradas e saídas por dia</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; font-weight: 600; color: #2B3A44">
+<span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #2E9E5B"></span>Receitas (acima)</span>
+<span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #E0604A"></span>Despesas (abaixo)</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: {{colEixo}} minmax(0, 1fr); column-gap: 8px">
+<div aria-hidden="true" style="position: relative; height: {{altGraf}}">
+<sc-for list="{{fluxo.ticks}}" as="t" hint-placeholder-count="3">
+<span style="position: absolute; right: 0; top: {{t.top}}; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #4A5862; white-space: nowrap">{{t.rotulo}}</span>
+</sc-for>
+</div>
+<div role="img" aria-label="{{fluxo.aria}}" style="position: relative; height: {{altGraf}}">
+<sc-for list="{{fluxo.ticks}}" as="t" hint-placeholder-count="3">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: {{t.top}}; border-top: 1px {{t.estilo}} {{t.cor}}"></div>
+</sc-for>
+<svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block">
+<path d="{{fluxo.rec}}" fill="#2E9E5B"></path>
+<path d="{{fluxo.desp}}" fill="#E0604A"></path>
+</svg>
+</div>
+<div></div>
+<div aria-hidden="true" style="position: relative; height: 22px">
+<sc-for list="{{eixoDias}}" as="d" hint-placeholder-count="7">
+<span style="position: absolute; left: {{d.leftBarra}}; top: 6px; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #4A5862">{{d.rotulo}}</span>
+</sc-for>
+</div>
+</div>
+<div role="table" aria-label="Receitas e despesas por dia em {{mesNome}}" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"><div role="rowgroup"><div role="row"><span role="columnheader">Data</span><span role="columnheader">Receitas</span><span role="columnheader">Despesas</span></div></div><div role="rowgroup"><sc-for list="{{fluxo.tabela}}" as="r" hint-placeholder-count="3"><div role="row"><span role="cell">{{r.data}}</span><span role="cell">{{r.rec}}</span><span role="cell">{{r.desp}}</span></div></sc-for></div></div>
+</section>
+
+<section aria-labelledby="t-mapa" style="grid-column: {{g.mapa.col}}; grid-row: {{g.mapa.row}}; min-width: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); padding: 20px 22px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px">
+<h2 id="t-mapa" style="margin: 0; font-size: 17px; font-weight: 700">Para onde foi o dinheiro</h2>
+<span style="font-size: 13px; font-weight: 500; color: #4A5862">Despesas por categoria</span>
+</div>
+<div role="img" aria-label="{{mapa.aria}}" style="position: relative; height: {{altMapa}}; border-radius: 12px; overflow: hidden">
+<sc-for list="{{mapa.blocos}}" as="b" hint-placeholder-count="6">
+<div aria-hidden="true" style="position: absolute; left: {{b.left}}; top: {{b.top}}; width: {{b.width}}; height: {{b.height}}; box-sizing: border-box; padding: 2px">
+<div style="width: 100%; height: 100%; box-sizing: border-box; border-radius: 8px; background: {{b.cor}}; color: {{b.texto}}; padding: 8px 10px; overflow: hidden; display: flex; flex-direction: column; gap: 2px; opacity: {{b.op}}">
+<sc-if value="{{b.mostraNome}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; font-weight: 700; line-height: 1.2">{{b.nome}}</span></sc-if>
+<sc-if value="{{b.mostraValor}}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 800; line-height: 1.2; white-space: nowrap">{{b.valor}}</span><span style="font-size: 12px; font-weight: 600; line-height: 1.2">{{b.pct}}</span></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div role="table" aria-label="5 maiores categorias de despesa" style="display: flex; flex-direction: column; font-size: 14px">
+<div style="font-size: 13px; font-weight: 700; color: #4A5862; padding-bottom: 6px" aria-hidden="true">5 maiores categorias</div>
+<div role="rowgroup"><div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; gap: 12px; padding: 6px 0; font-size: 12px; font-weight: 600; color: #4A5862"><span role="columnheader">Categoria</span><span role="columnheader" style="text-align: right">Valor</span><span role="columnheader" style="text-align: right">%</span></div></div>
+<div role="rowgroup">
+<sc-for list="{{mapa.top5}}" as="r" hint-placeholder-count="5">
+<div role="row" style="display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; gap: 12px; align-items: center; padding: 9px 0; border-top: 1px solid #F0EADF">
+<span role="rowheader" style="display: flex; align-items: center; gap: 8px; font-weight: 600; min-width: 0"><span aria-hidden="true" style="flex: none; width: 10px; height: 10px; border-radius: 50%; background: {{r.cor}}"></span><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.nome}}</span></span>
+<span role="cell" style="text-align: right; font-weight: 700; white-space: nowrap">{{r.valor}}</span>
+<span role="cell" style="text-align: right; font-weight: 600; color: #4A5862">{{r.pct}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div role="table" aria-label="Todas as despesas por categoria em {{mesNome}}" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"><div role="rowgroup"><div role="row"><span role="columnheader">Categoria</span><span role="columnheader">Valor</span><span role="columnheader">Percentual</span></div></div><div role="rowgroup"><sc-for list="{{mapa.todas}}" as="r" hint-placeholder-count="3"><div role="row"><span role="cell">{{r.nome}}</span><span role="cell">{{r.valor}}</span><span role="cell">{{r.pct}}</span></div></sc-for></div></div>
+</section>
+
+<section aria-labelledby="t-ano" style="grid-column: {{g.ano.col}}; grid-row: {{g.ano.row}}; min-width: 0; background: #FFFFFF; border-radius: 20px; box-shadow: 0 1px 2px rgba(20, 32, 40, 0.05), 0 8px 24px rgba(20, 32, 40, 0.06); padding: 20px 22px; box-sizing: border-box">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-bottom: 14px">
+<h2 id="t-ano" style="margin: 0; font-size: 17px; font-weight: 700">Ano em resumo · 2026</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; font-weight: 600; color: #2B3A44">
+<span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #2E9E5B"></span>Receitas</span>
+<span style="display: flex; align-items: center; gap: 6px"><span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 3px; background: #E0604A"></span>Despesas</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: {{colEixo}} minmax(0, 1fr); column-gap: 8px">
+<div aria-hidden="true" style="position: relative; height: {{altGraf}}">
+<sc-for list="{{ano.ticks}}" as="t" hint-placeholder-count="5">
+<span style="position: absolute; right: 0; top: {{t.top}}; transform: translateY(-50%); font-size: 11px; font-weight: 600; color: #4A5862; white-space: nowrap">{{t.rotulo}}</span>
+</sc-for>
+</div>
+<div role="img" aria-label="{{ano.aria}}" style="position: relative; height: {{altGraf}}">
+<sc-for list="{{ano.ticks}}" as="t" hint-placeholder-count="5">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: {{t.top}}; border-top: 1px {{t.estilo}} {{t.cor}}"></div>
+</sc-for>
+<svg viewBox="0 0 120 100" preserveAspectRatio="none" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block">
+<path d="{{ano.rec}}" fill="#2E9E5B"></path>
+<path d="{{ano.desp}}" fill="#E0604A"></path>
+</svg>
+</div>
+<div></div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); height: 22px; padding-top: 6px; font-size: 11px; font-weight: 600; color: #4A5862; text-align: center">
+<sc-for list="{{ano.meses}}" as="mm" hint-placeholder-count="12"><span style="font-weight: {{mm.peso}}; color: {{mm.cor}}">{{mm.rotulo}}</span></sc-for>
+</div>
+</div>
+<div role="table" aria-label="Receitas e despesas por mês em 2026" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0"><div role="rowgroup"><div role="row"><span role="columnheader">Mês</span><span role="columnheader">Receitas</span><span role="columnheader">Despesas</span></div></div><div role="rowgroup"><sc-for list="{{ano.tabela}}" as="r" hint-placeholder-count="3"><div role="row"><span role="cell">{{r.mes}}</span><span role="cell">{{r.rec}}</span><span role="cell">{{r.desp}}</span></div></sc-for></div></div>
+</section>
+
+</div>
+</sc-if>
+</main>
+
+<sc-if value="{{estreito}}" hint-placeholder-val="{{ false }}">
+<div style="position: sticky; bottom: 0; z-index: 5">
+<button type="button" aria-label="Nova transação" style="position: absolute; right: 16px; top: -72px; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border: 0; border-radius: 50%; background: #157A2E; color: #FFFFFF; box-shadow: 0 8px 20px rgba(21, 122, 46, 0.35); cursor: pointer">
+<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+<dc-import name="BottomNav" ativo="painel" hint-size="100%,68px"></dc-import>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"cenario":{"editor":"enum","options":["normal","negativo","vazio"],"default":"normal"},"$preview":{"width":1440,"height":1440}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.medir = () => this.setState({ estreito: window.innerWidth < 720 });
+    this.medir();
+    window.addEventListener('resize', this.medir);
+    let reduzir = false;
+    try { reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    this.reduzir = reduzir;
+    if (reduzir) { this.setState({ p: 1 }); return; }
+    const t0 = performance.now();
+    const passo = (t) => {
+      const k = Math.min(1, (t - t0) / 900);
+      this.setState({ p: 1 - Math.pow(1 - k, 3) });
+      if (k < 1) this.raf = requestAnimationFrame(passo);
+    };
+    this.raf = requestAnimationFrame(passo);
+  }
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('resize', this.medir);
+  }
+  brl(v) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v).replace(/ /g, ' ');
+  }
+  comSinal(v) {
+    return (v < 0 ? '− ' : '+ ') + this.brl(Math.abs(v));
+  }
+  pct(v) {
+    return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(v) + '%';
+  }
+  dataBR(d, m) {
+    return String(d).padStart(2, '0') + '/' + String(m).padStart(2, '0') + '/2026';
+  }
+  lumi(hex) {
+    const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4)));
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  textoSobre(hex) {
+    const l = this.lumi(hex);
+    const cBranco = 1.05 / (l + 0.05);
+    const cTinta = (l + 0.05) / (this.lumi('#142028') + 0.05);
+    return cBranco >= cTinta ? '#FFFFFF' : '#142028';
+  }
+  squarify(itens, W, H) {
+    const out = [];
+    const pior = (linha, lado) => {
+      const s = linha.reduce((a, b) => a + b.a, 0);
+      const mx = Math.max(...linha.map((r) => r.a));
+      const mn = Math.min(...linha.map((r) => r.a));
+      return Math.max((lado * lado * mx) / (s * s), (s * s) / (lado * lado * mn));
+    };
+    const montar = (lista, x, y, w, h) => {
+      if (!lista.length) return;
+      if (lista.length === 1) { out.push({ ...lista[0], x, y, w, h }); return; }
+      const lado = Math.min(w, h);
+      let linha = [lista[0]];
+      let i = 1;
+      while (i < lista.length && pior(linha.concat([lista[i]]), lado) <= pior(linha, lado)) { linha.push(lista[i]); i++; }
+      const s = linha.reduce((a, b) => a + b.a, 0);
+      if (w >= h) {
+        const cw = s / h; let yy = y;
+        linha.forEach((r) => { const rh = r.a / cw; out.push({ ...r, x, y: yy, w: cw, h: rh }); yy += rh; });
+        montar(lista.slice(i), x + cw, y, w - cw, h);
+      } else {
+        const rh = s / w; let xx = x;
+        linha.forEach((r) => { const rw = r.a / rh; out.push({ ...r, x: xx, y, w: rw, h: rh }); xx += rw; });
+        montar(lista.slice(i), x, y + rh, w, h - rh);
+      }
+    };
+    const total = itens.reduce((a, b) => a + b.v, 0);
+    montar(itens.map((it) => ({ ...it, a: (it.v / total) * W * H })), 0, 0, W, H);
+    return out;
+  }
+  renderVals() {
+    const estreito = this.state.estreito ?? (typeof window !== 'undefined' && window.innerWidth < 720);
+    const p = this.state.p ?? 0;
+    const cenario = this.props.cenario ?? 'normal';
+    const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const mes = this.state.mes ?? 10;
+    const mesNome = MESES[mes];
+    const mesRotulo = mesNome.charAt(0).toUpperCase() + mesNome.slice(1) + ' 2026';
+    const vazio = cenario === 'vazio' || mes === 11;
+
+    const CATS = {
+      moradia: { nome: 'Moradia', cor: '#2F6FB2' },
+      mercado: { nome: 'Mercado', cor: '#B5541A' },
+      transporte: { nome: 'Transporte', cor: '#7B5CC4' },
+      lazer: { nome: 'Lazer', cor: '#8C6A0C' },
+      saude: { nome: 'Saúde', cor: '#1F7A70' },
+      contas: { nome: 'Contas da casa', cor: '#557280' },
+      assinaturas: { nome: 'Assinaturas', cor: '#A54F98' },
+      salario: { nome: 'Salário', cor: '#2F7D35' },
+      freela: { nome: 'Freelance', cor: '#C2416A' },
+      rendimentos: { nome: 'Rendimentos', cor: '#8A5A2E' }
+    };
+    let TX = [
+      [1, 'Salário de novembro', 'salario', 5200], [1, 'Aluguel', 'moradia', -1450], [2, 'Condomínio', 'moradia', -380],
+      [3, 'Mercado Bom Preço', 'mercado', -312.47], [3, 'Uber para o centro', 'transporte', -23.9], [4, 'Conta de luz', 'contas', -142.36],
+      [5, 'Internet', 'contas', -99.9], [5, 'Spotify', 'assinaturas', -21.9], [6, 'Farmácia', 'saude', -58.3],
+      [7, 'Freela: site da padaria', 'freela', 1400], [8, 'Cinema', 'lazer', -64], [8, 'Pizza com amigos', 'lazer', -72.5],
+      [9, 'Combustível', 'transporte', -180], [10, 'Mercado Bom Preço', 'mercado', -268.15], [11, 'Conta de água', 'contas', -64.8],
+      [12, 'Academia', 'saude', -99], [13, 'Netflix', 'assinaturas', -39.9], [14, 'Rendimento da poupança', 'rendimentos', 86.42],
+      [14, 'Feira do bairro', 'mercado', -74.6], [15, 'Show na praça', 'lazer', -120], [15, 'Ônibus', 'transporte', -18.4],
+      [16, 'Mercado Bom Preço', 'mercado', -189.33], [17, 'Livro', 'lazer', -49.9], [17, 'Uber para casa', 'transporte', -31.7]
+    ];
+    if (cenario === 'negativo') {
+      TX = TX.concat([[12, 'Dentista', 'saude', -650], [16, 'Conserto do carro', 'transporte', -2950]]);
+    }
+    const HOJE = 17;
+    const rec = TX.filter((t) => t[3] > 0).reduce((a, t) => a + t[3], 0);
+    const desp = -TX.filter((t) => t[3] < 0).reduce((a, t) => a + t[3], 0);
+    const saldoMes = rec - desp;
+    const ANT = { rec: 6420, desp: 4105.6 };
+    const antSaldo = ANT.rec - ANT.desp;
+    const mesAntNome = MESES[(mes + 11) % 12];
+    const g = estreito
+      ? { m: ['1 / -1', '1 / -1', '1 / -1'], mr: ['auto', 'auto', 'auto'], saldo: { col: '1 / -1', row: 'auto' }, ultimas: { col: '1 / -1', row: 'auto' }, fluxo: { col: '1 / -1', row: 'auto' }, mapa: { col: '1 / -1', row: 'auto' }, ano: { col: '1 / -1', row: 'auto' } }
+      : { m: ['1 / 5', '5 / 9', '9 / 13'], mr: ['1', '1', '1'], saldo: { col: '1 / 8', row: '2' }, ultimas: { col: '8 / 13', row: '2' }, fluxo: { col: '1 / 8', row: '3' }, mapa: { col: '8 / 13', row: '3 / 5' }, ano: { col: '1 / 8', row: '4' } };
+
+    const variacao = (agora, antes) => ((agora - antes) / Math.abs(antes)) * 100;
+    const hover = !!this.state.hoverSaldo && !this.reduzir;
+    const negativo = saldoMes < 0;
+    const fazMetrica = (id, i, valor, antes, rotulo) => {
+      const v = variacao(valor, antes);
+      const subiu = v >= 0;
+      const bom = id === 'despesa' ? !subiu : subiu;
+      let frase;
+      if (id === 'receita') frase = subiu ? 'ganhou mais' : 'ganhou menos';
+      else if (id === 'despesa') frase = subiu ? 'gastou mais' : 'gastou menos';
+      else frase = subiu ? 'sobrou mais' : 'sobrou menos';
+      const vis = valor * p;
+      const valorTxt = id === 'receita' ? '+ ' + this.brl(vis) : id === 'despesa' ? '− ' + this.brl(vis) : this.comSinal(vis);
+      const compTxt = this.pct(Math.abs(v)) + ' vs ' + mesAntNome + ' · ' + frase;
+      const temPapo = id === 'saldo' && !estreito;
+      return {
+        id, rotulo, valorTxt, compTxt, subiu, desceu: !subiu,
+        isReceita: id === 'receita', isDespesa: id === 'despesa', isSaldo: id === 'saldo',
+        corValor: id === 'receita' ? '#1E7B3A' : id === 'despesa' ? '#C2412D' : (valor < 0 ? '#C2412D' : '#142028'),
+        corComp: bom ? '#1E7B3A' : '#C2412D',
+        iconeFundo: id === 'receita' ? '#E6F2E9' : id === 'despesa' ? '#FBE9E5' : '#EEF2F4',
+        iconeCor: id === 'receita' ? '#1E7B3A' : id === 'despesa' ? '#C2412D' : '#2B3A44',
+        col: g.m[i], row: g.mr[i],
+        aria: rotulo + ' de ' + mesNome + ': ' + (id === 'receita' ? '+ ' + this.brl(valor) : id === 'despesa' ? '− ' + this.brl(valor) : this.comSinal(valor)) + '. ' + compTxt + '. Abrir transações filtradas.',
+        temPapo,
+        papoSrc: negativo ? '../../../assets/mascote/papo-preocupado.png' : '../../../assets/mascote/papo-espiando.png',
+        papoAltura: negativo ? '170px' : '80px',
+        papoTopo: '-72px',
+        papoGiro: hover ? 'rotate(-4deg)' : 'none',
+        entrar: id === 'saldo' ? () => this.setState({ hoverSaldo: true }) : undefined,
+        sair: id === 'saldo' ? () => this.setState({ hoverSaldo: false }) : undefined
+      };
+    };
+    const metricas = [
+      fazMetrica('receita', 0, rec, ANT.rec, 'Receitas'),
+      fazMetrica('despesa', 1, desp, ANT.desp, 'Despesas'),
+      fazMetrica('saldo', 2, saldoMes, antSaldo, 'Saldo')
+    ];
+
+    const porDia = Array.from({ length: 30 }, (_, i) => ({ d: i + 1, rec: 0, desp: 0 }));
+    TX.forEach((t) => { if (t[3] > 0) porDia[t[0] - 1].rec += t[3]; else porDia[t[0] - 1].desp += -t[3]; });
+    let acc = 0;
+    const acumulado = porDia.slice(0, HOJE).map((x) => { acc += x.rec - x.desp; return acc; });
+    const passoNice = (v) => { const pts = [500, 1000, 2000, 2500, 5000]; return pts.find((s) => v / s <= 4) || 5000; };
+    const sMax = Math.max(...acumulado, 0);
+    const sMin = Math.min(...acumulado, 0);
+    const passoS = passoNice(sMax - sMin);
+    const topS = Math.ceil(sMax / passoS) * passoS;
+    const baseS = Math.floor(sMin / passoS) * passoS;
+    const yS = (v) => ((topS - v) / (topS - baseS)) * 100;
+    const xD = (d) => ((d - 1) / 29) * 100;
+    const ticksS = [];
+    for (let v = topS; v >= baseS - 0.01; v -= passoS) ticksS.push({ top: yS(v) + '%', rotulo: v === 0 ? 'R$ 0,00' : this.comSinal(v), estilo: v === 0 ? 'solid' : 'dashed', cor: v === 0 ? '#9AA6AD' : '#E8E1D3' });
+    const linha = acumulado.map((v, i) => (i ? 'L' : 'M') + xD(i + 1).toFixed(2) + ' ' + yS(v).toFixed(2)).join(' ');
+    const area = linha + ' L ' + xD(HOJE).toFixed(2) + ' ' + yS(baseS < 0 ? 0 : baseS).toFixed(2) + ' L 0 ' + yS(baseS < 0 ? 0 : baseS).toFixed(2) + ' Z';
+    const dia = this.state.dia;
+    const temDica = dia != null && dia >= 1 && dia <= HOJE;
+    const corLinha = negativo ? '#C2412D' : '#1E7B3A';
+    const irDia = (d) => this.setState({ dia: Math.max(1, Math.min(HOJE, d)) });
+    const saldo = {
+      ticks: ticksS,
+      linha, area, corLinha,
+      areaOp: (0.12 * p).toFixed(3),
+      dash: (1 - p).toFixed(3),
+      aria: 'Gráfico de linha do saldo acumulado em ' + mesNome + ': começa em ' + this.comSinal(acumulado[0]) + ' no dia 1 e chega a ' + this.comSinal(acumulado[HOJE - 1]) + ' no dia ' + HOJE + '. Use as setas para ver cada dia.',
+      temDica,
+      dica: temDica ? {
+        x: xD(dia) + '%',
+        xc: Math.min(86, Math.max(14, xD(dia))) + '%',
+        y: yS(acumulado[dia - 1]) + '%',
+        data: this.dataBR(dia, 11),
+        valor: this.comSinal(acumulado[dia - 1])
+      } : {},
+      mover: (e) => { const r = e.currentTarget.getBoundingClientRect(); irDia(Math.round(((e.clientX - r.left) / r.width) * 29) + 1); },
+      sair: () => this.setState({ dia: null }),
+      focar: () => irDia(HOJE),
+      tecla: (e) => {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); irDia((this.state.dia ?? HOJE) - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); irDia((this.state.dia ?? 1) + 1); }
+      },
+      tabela: acumulado.map((v, i) => ({ data: this.dataBR(i + 1, 11), valor: this.comSinal(v) }))
+    };
+    const eixoDias = [1, 5, 10, 15, 20, 25, 30].map((d) => ({ rotulo: String(d), left: xD(d) + '%', leftBarra: (((d - 1) * 10 + 5) / 300) * 100 + '%' }));
+
+    const fMax = Math.max(...porDia.map((x) => Math.max(x.rec, x.desp)));
+    const topF = Math.ceil(fMax / 1000) * 1000;
+    const recPath = porDia.map((x, i) => { const h = (x.rec / topF) * 48 * p; return h > 0 ? 'M' + (i * 10 + 2) + ' ' + (50 - h).toFixed(2) + ' h6 v' + h.toFixed(2) + ' h-6 Z' : ''; }).join(' ');
+    const despPath = porDia.map((x, i) => { const h = (x.desp / topF) * 48 * p; return h > 0 ? 'M' + (i * 10 + 2) + ' 50 h6 v' + h.toFixed(2) + ' h-6 Z' : ''; }).join(' ');
+    const fluxo = {
+      rec: recPath || 'M0 0',
+      desp: despPath || 'M0 0',
+      ticks: [
+        { top: (2 / 100) * 100 + '%', rotulo: '+ ' + this.brl(topF), estilo: 'dashed', cor: '#E8E1D3' },
+        { top: '50%', rotulo: 'R$ 0,00', estilo: 'solid', cor: '#9AA6AD' },
+        { top: '98%', rotulo: '− ' + this.brl(topF), estilo: 'dashed', cor: '#E8E1D3' }
+      ],
+      aria: 'Gráfico espelhado de receitas e despesas por dia em ' + mesNome + '. Maior receita: ' + this.brl(Math.max(...porDia.map((x) => x.rec))) + '. Maior despesa em um dia: ' + this.brl(Math.max(...porDia.map((x) => x.desp))) + '. Detalhes na tabela a seguir.',
+      tabela: porDia.filter((x) => x.rec || x.desp).map((x) => ({ data: this.dataBR(x.d, 11), rec: x.rec ? '+ ' + this.brl(x.rec) : '—', desp: x.desp ? '− ' + this.brl(x.desp) : '—' }))
+    };
+
+    const somaCat = {};
+    TX.filter((t) => t[3] < 0).forEach((t) => { somaCat[t[2]] = (somaCat[t[2]] || 0) - t[3]; });
+    const itens = Object.keys(somaCat).map((k) => ({ k, v: somaCat[k], nome: CATS[k].nome, cor: CATS[k].cor })).sort((a, b) => b.v - a.v);
+    const W = estreito ? 130 : 160;
+    const H = 100;
+    const pxW = estreito ? 311 : 410;
+    const pxH = estreito ? 240 : 260;
+    const blocos = this.squarify(itens, W, H).map((b) => {
+      const bw = (b.w / W) * pxW;
+      const bh = (b.h / H) * pxH;
+      return {
+        left: (b.x / W) * 100 + '%', top: (b.y / H) * 100 + '%', width: (b.w / W) * 100 + '%', height: (b.h / H) * 100 + '%',
+        cor: b.cor, texto: this.textoSobre(b.cor), nome: b.nome,
+        valor: this.brl(b.v), pct: this.pct((b.v / desp) * 100),
+        mostraNome: bw > 64 && bh > 30, mostraValor: bw > 96 && bh > 72,
+        op: Math.min(1, p * 1.4).toFixed(2)
+      };
+    });
+    const linhaCat = (x) => ({ nome: x.nome, cor: x.cor, valor: this.brl(x.v), pct: this.pct((x.v / desp) * 100) });
+    const mapa = {
+      blocos,
+      top5: itens.slice(0, 5).map(linhaCat),
+      todas: itens.map(linhaCat),
+      aria: 'Mapa de árvore das despesas de ' + mesNome + ' por categoria. Maior: ' + itens[0].nome + ', ' + this.brl(itens[0].v) + ' (' + this.pct((itens[0].v / desp) * 100) + ').'
+    };
+
+    const ANO = [[6100, 4890], [6100, 5230], [6250, 4710], [6250, 5020], [6400, 4880], [6900, 5610], [6400, 5140], [6400, 4760], [6420, 4990], [6420, 4105.6], [rec, desp], null];
+    const topA = 8000;
+    const yA = (v) => 100 - (v / topA) * 96 * p;
+    const ano = {
+      rec: ANO.map((x, i) => (x ? 'M' + (i * 10 + 1.6) + ' 100 V' + yA(x[0]).toFixed(2) + ' h3.2 V100 Z' : '')).join(' '),
+      desp: ANO.map((x, i) => (x ? 'M' + (i * 10 + 5.2) + ' 100 V' + yA(x[1]).toFixed(2) + ' h3.2 V100 Z' : '')).join(' '),
+      ticks: [8000, 6000, 4000, 2000, 0].map((v) => ({ top: (100 - (v / topA) * 96) + '%', rotulo: this.brl(v), estilo: v === 0 ? 'solid' : 'dashed', cor: v === 0 ? '#9AA6AD' : '#E8E1D3' })),
+      meses: ABREV.map((a, i) => ({ rotulo: i === 11 ? 'dez —' : a, peso: i === 10 ? '800' : '600', cor: i === 10 ? '#142028' : '#4A5862' })),
+      aria: 'Gráfico de barras de 2026 com receitas e despesas lado a lado por mês, de janeiro a novembro. Dezembro ainda sem dados. Detalhes na tabela a seguir.',
+      tabela: ANO.map((x, i) => ({ mes: MESES[i], rec: x ? '+ ' + this.brl(x[0]) : 'sem dados', desp: x ? '− ' + this.brl(x[1]) : 'sem dados' }))
+    };
+
+    const ultimas = TX.map((t, i) => ({ t, i })).sort((a, b) => b.t[0] - a.t[0] || b.i - a.i).slice(0, 5).map(({ t }, j) => ({
+      desc: t[1], cat: CATS[t[2]].nome, cor: CATS[t[2]].cor, data: this.dataBR(t[0], 11),
+      valor: this.comSinal(t[3]), corValor: t[3] > 0 ? '#1E7B3A' : '#C2412D',
+      entrada: t[3] > 0, saida: t[3] < 0, borda: j ? '1px solid #F0EADF' : '0'
+    }));
+
+    return {
+      largo: !estreito,
+      estreito: !!estreito,
+      direcao: estreito ? 'column' : 'row',
+      padMain: estreito ? '16px 16px 96px' : '28px 40px 48px',
+      colunas: estreito ? 'minmax(0, 1fr)' : 'repeat(12, minmax(0, 1fr))',
+      gap: estreito ? '16px' : '24px',
+      colEixo: estreito ? '76px' : '92px',
+      altGraf: estreito ? '170px' : '200px',
+      altMapa: estreito ? '240px' : '260px',
+      padVazio: estreito ? '28px 20px' : '56px 32px',
+      altVazio: estreito ? '150px' : '220px',
+      altCaranguejo: estreito ? '58px' : '84px',
+      mesNome, mesRotulo,
+      semAnt: mes === 0, semProx: mes === 11,
+      opAnt: mes === 0 ? '0.35' : '1', opProx: mes === 11 ? '0.35' : '1',
+      mesAnt: () => this.setState({ mes: Math.max(0, mes - 1), dia: null }),
+      mesProx: () => this.setState({ mes: Math.min(11, mes + 1), dia: null }),
+      vazio, comDados: !vazio,
+      g, metricas, saldo, eixoDias, fluxo, mapa, ano, ultimas
+    };
+  }
+}
+</script>
+</body>
+</html>

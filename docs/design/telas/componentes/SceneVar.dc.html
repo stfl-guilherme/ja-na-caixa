@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cena da praia — manhã calma</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; height: {{altura}}; overflow: hidden; background: {{fundo}}; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028">
+<svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block">
+<defs>
+<path id="nuvem" d="M30 80 C 8 80 0 58 16 46 C 12 24 38 12 58 22 C 66 4 102 -2 118 18 C 132 8 160 12 162 36 C 186 34 200 56 186 72 C 182 78 176 80 168 80 Z"></path>
+</defs>
+
+<g display="{{dManha}}">
+<rect width="1440" height="900" fill="#CDEFFC"></rect>
+<rect y="330" width="1440" height="140" fill="#DDF4FD"></rect>
+<circle cx="230" cy="140" r="92" fill="#FFE9A0" fill-opacity="0.45"></circle>
+<circle cx="230" cy="140" r="58" fill="#FFE27A"></circle>
+<use href="#nuvem" transform="translate(400 70) scale(0.95)" fill="#FFFFFF" stroke="#EEF9FE" stroke-width="2"></use>
+<use href="#nuvem" transform="translate(640 210) scale(0.6)" fill="#FFFFFF" fill-opacity="0.9"></use>
+<use href="#nuvem" transform="translate(40 250) scale(0.5)" fill="#FFFFFF" fill-opacity="0.85"></use>
+<path d="M0 470 Q 40 463 80 470 T 160 470 T 240 470 T 320 470 T 400 470 T 480 470 T 560 470 T 640 470 T 720 470 T 800 470 T 880 470 L 1440 470 V 900 H 0 Z" fill="#6CC6EA"></path>
+<path d="M0 535 Q 60 524 120 535 T 240 535 T 360 535 T 480 535 T 600 535 T 720 535 T 840 535 L 1440 535 V 900 H 0 Z" fill="#2EA3D6"></path>
+<path d="M0 596 Q 80 584 160 596 T 320 596 T 480 596 T 640 596 T 800 596 L 1440 596 V 900 H 0 Z" fill="#0E7FB4"></path>
+<path d="M0 640 C 300 606 760 668 1440 622 V 700 H 0 Z" fill="#7CCBEB"></path>
+<path d="M0 652 C 300 618 760 680 1440 634 V 712 H 0 Z" fill="#FFFFFF" fill-opacity="0.75"></path>
+<path d="M0 664 C 300 630 760 692 1440 646 V 900 H 0 Z" fill="#F6E7C8"></path>
+<path d="M0 676 C 300 642 760 704 1440 658" fill="none" stroke="#EAD6AE" stroke-width="6" stroke-linecap="round"></path>
+<path d="M0 900 V 822 C 400 794 900 850 1440 804 V 900 Z" fill="#EFD9AD"></path>
+</g>
+
+
+</svg>
+<div style="position: absolute; left: {{mascoteX}}; bottom: 6%; height: {{mascoteAltura}}; aspect-ratio: {{proporcao}}; transform: translateX(-50%)">
+<div aria-hidden="true" style="position: absolute; left: 10%; right: 10%; bottom: -3%; height: 7%; border-radius: 50%; background: rgba(20, 32, 40, 0.16)"></div>
+<img src="{{src}}" alt="{{alt}}" style="position: relative; display: block; width: 100%; height: 100%; object-fit: contain">
+<sc-if value="{{mostrarFala}}" hint-placeholder-val="{{ true }}">
+<div role="status" style="position: absolute; left: 84%; top: 2%; width: max-content; max-width: 220px; padding: 10px 14px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 8px 24px rgba(20, 32, 40, 0.16); font-size: 15px; font-weight: 700; line-height: 1.35; color: #142028">
+<div aria-hidden="true" style="position: absolute; left: -6px; top: 18px; width: 14px; height: 14px; background: #FFFFFF; transform: rotate(45deg); border-radius: 2px"></div>
+<span style="position: relative">{{fala}}</span>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variante":{"editor":null,"default":"manha"},"pose":{"editor":"enum","options":["login","carregando","erro","sucesso"],"default":"login"},"fala":{"editor":null,"default":"Bom dia! O mar tá calmo, pode entrar."},"mostrarFala":{"editor":"boolean","default":true},"altura":{"editor":null,"default":"900px"},"mascoteX":{"editor":null,"default":"28%"},"mascoteAltura":{"editor":null,"default":"58%"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const poses = {
+      login: { src: '../../assets/mascote/papo-cadeira-acenando.png', r: '608 / 576', alt: 'Papo, o jacaré mascote, relaxando numa cadeira de praia ao lado de um baú de moedas, acenando' },
+      carregando: { src: '../../assets/mascote/papo-animado.png', r: '511 / 570', alt: 'Papo animado, de punhos fechados, esperando' },
+      erro: { src: '../../assets/mascote/papo-preocupado.png', r: '491 / 618', alt: 'Papo preocupado, coçando a cabeça com uma gota de suor' },
+      sucesso: { src: '../../assets/mascote/papo-joinha.png', r: '513 / 617', alt: 'Papo piscando e fazendo joinha' }
+    };
+    const v = this.props.variante ?? 'manha';
+    const p = poses[this.props.pose] || poses.login;
+    const fala = this.props.fala ?? 'Bom dia! O mar tá calmo, pode entrar.';
+    const d = (n) => (v === n ? 'inline' : 'none');
+    return {
+      dManha: d('manha'),
+      fundo: '#CDEFFC',
+      src: p.src,
+      alt: p.alt,
+      proporcao: p.r,
+      fala,
+      mostrarFala: (this.props.mostrarFala ?? true) && !!fala,
+      altura: this.props.altura ?? '900px',
+      mascoteX: this.props.mascoteX ?? '28%',
+      mascoteAltura: this.props.mascoteAltura ?? '58%'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+{
+  "_sobre": "Dados de exemplo usados nas telas (novembro/2026, até o dia 17). Bons para seed do usuário de demonstração. Valor positivo = receita, negativo = despesa.",
+  "categorias": [
+    {
+      "id": "salario",
+      "nome": "Salário",
+      "cor": "#2F7D35",
+      "tipo": "receita"
+    },
+    {
+      "id": "freela",
+      "nome": "Freelance",
+      "cor": "#C2416A",
+      "tipo": "receita"
+    },
+    {
+      "id": "rendimentos",
+      "nome": "Rendimentos",
+      "cor": "#8A5A2E",
+      "tipo": "receita"
+    },
+    {
+      "id": "moradia",
+      "nome": "Moradia",
+      "cor": "#2F6FB2",
+      "tipo": "despesa"
+    },
+    {
+      "id": "mercado",
+      "nome": "Mercado",
+      "cor": "#B5541A",
+      "tipo": "despesa"
+    },
+    {
+      "id": "transporte",
+      "nome": "Transporte",
+      "cor": "#7B5CC4",
+      "tipo": "despesa"
+    },
+    {
+      "id": "lazer",
+      "nome": "Lazer",
+      "cor": "#8C6A0C",
+      "tipo": "despesa"
+    },
+    {
+      "id": "saude",
+      "nome": "Saúde",
+      "cor": "#1F7A70",
+      "tipo": "despesa"
+    },
+    {
+      "id": "contas",
+      "nome": "Contas da casa",
+      "cor": "#557280",
+      "tipo": "despesa"
+    },
+    {
+      "id": "assinaturas",
+      "nome": "Assinaturas",
+      "cor": "#A54F98",
+      "tipo": "despesa"
+    }
+  ],
+  "transacoes": [
+    {
+      "id": 1,
+      "data": "2026-11-01",
+      "descricao": "Salário de novembro",
+      "categoria": "salario",
+      "valor": 5200,
+      "observacao": "Empresa XPTO"
+    },
+    {
+      "id": 2,
+      "data": "2026-11-01",
+      "descricao": "Aluguel",
+      "categoria": "moradia",
+      "valor": -1450,
+      "observacao": ""
+    },
+    {
+      "id": 3,
+      "data": "2026-11-02",
+      "descricao": "Condomínio",
+      "categoria": "moradia",
+      "valor": -380,
+      "observacao": ""
+    },
+    {
+      "id": 4,
+      "data": "2026-11-03",
+      "descricao": "Mercado Bom Preço",
+      "categoria": "mercado",
+      "valor": -312.47,
+      "observacao": "Compra do mês"
+    },
+    {
+      "id": 5,
+      "data": "2026-11-03",
+      "descricao": "Uber para o centro",
+      "categoria": "transporte",
+      "valor": -23.9,
+      "observacao": ""
+    },
+    {
+      "id": 6,
+      "data": "2026-11-04",
+      "descricao": "Conta de luz",
+      "categoria": "contas",
+      "valor": -142.36,
+      "observacao": ""
+    },
+    {
+      "id": 7,
+      "data": "2026-11-05",
+      "descricao": "Internet",
+      "categoria": "contas",
+      "valor": -99.9,
+      "observacao": ""
+    },
+    {
+      "id": 8,
+      "data": "2026-11-05",
+      "descricao": "Spotify",
+      "categoria": "assinaturas",
+      "valor": -21.9,
+      "observacao": ""
+    },
+    {
+      "id": 9,
+      "data": "2026-11-06",
+      "descricao": "Farmácia",
+      "categoria": "saude",
+      "valor": -58.3,
+      "observacao": ""
+    },
+    {
+      "id": 10,
+      "data": "2026-11-07",
+      "descricao": "Freela: site da padaria",
+      "categoria": "freela",
+      "valor": 1400,
+      "observacao": "50% na entrega"
+    },
+    {
+      "id": 11,
+      "data": "2026-11-08",
+      "descricao": "Cinema",
+      "categoria": "lazer",
+      "valor": -64,
+      "observacao": ""
+    },
+    {
+      "id": 12,
+      "data": "2026-11-08",
+      "descricao": "Pizza com amigos",
+      "categoria": "lazer",
+      "valor": -72.5,
+      "observacao": ""
+    },
+    {
+      "id": 13,
+      "data": "2026-11-09",
+      "descricao": "Combustível",
+      "categoria": "transporte",
+      "valor": -180,
+      "observacao": ""
+    },
+    {
+      "id": 14,
+      "data": "2026-11-10",
+      "descricao": "Mercado Bom Preço",
+      "categoria": "mercado",
+      "valor": -268.15,
+      "observacao": ""
+    },
+    {
+      "id": 15,
+      "data": "2026-11-11",
+      "descricao": "Conta de água",
+      "categoria": "contas",
+      "valor": -64.8,
+      "observacao": ""
+    },
+    {
+      "id": 16,
+      "data": "2026-11-12",
+      "descricao": "Academia",
+      "categoria": "saude",
+      "valor": -99,
+      "observacao": ""
+    },
+    {
+      "id": 17,
+      "data": "2026-11-13",
+      "descricao": "Netflix",
+      "categoria": "assinaturas",
+      "valor": -39.9,
+      "observacao": ""
+    },
+    {
+      "id": 18,
+      "data": "2026-11-14",
+      "descricao": "Rendimento da poupança",
+      "categoria": "rendimentos",
+      "valor": 86.42,
+      "observacao": ""
+    },
+    {
+      "id": 19,
+      "data": "2026-11-14",
+      "descricao": "Feira do bairro",
+      "categoria": "mercado",
+      "valor": -74.6,
+      "observacao": ""
+    },
+    {
+      "id": 20,
+      "data": "2026-11-15",
+      "descricao": "Show na praça",
+      "categoria": "lazer",
+      "valor": -120,
+      "observacao": ""
+    },
+    {
+      "id": 21,
+      "data": "2026-11-15",
+      "descricao": "Ônibus",
+      "categoria": "transporte",
+      "valor": -18.4,
+      "observacao": ""
+    },
+    {
+      "id": 22,
+      "data": "2026-11-16",
+      "descricao": "Mercado Bom Preço",
+      "categoria": "mercado",
+      "valor": -189.33,
+      "observacao": ""
+    },
+    {
+      "id": 23,
+      "data": "2026-11-17",
+      "descricao": "Livro",
+      "categoria": "lazer",
+      "valor": -49.9,
+      "observacao": ""
+    },
+    {
+      "id": 24,
+      "data": "2026-11-17",
+      "descricao": "Uber para casa",
+      "categoria": "transporte",
+      "valor": -31.7,
+      "observacao": ""
+    }
+  ],
+  "mes_anterior_outubro": {
+    "receitas": 6420.0,
+    "despesas": 4105.6
+  },
+  "ano_2026": [
+    {
+      "mes": "jan",
+      "receitas": 6100,
+      "despesas": 4890
+    },
+    {
+      "mes": "fev",
+      "receitas": 6100,
+      "despesas": 5230
+    },
+    {
+      "mes": "mar",
+      "receitas": 6250,
+      "despesas": 4710
+    },
+    {
+      "mes": "abr",
+      "receitas": 6250,
+      "despesas": 5020
+    },
+    {
+      "mes": "mai",
+      "receitas": 6400,
+      "despesas": 4880
+    },
+    {
+      "mes": "jun",
+      "receitas": 6900,
+      "despesas": 5610
+    },
+    {
+      "mes": "jul",
+      "receitas": 6400,
+      "despesas": 5140
+    },
+    {
+      "mes": "ago",
+      "receitas": 6400,
+      "despesas": 4760
+    },
+    {
+      "mes": "set",
+      "receitas": 6420,
+      "despesas": 4990
+    },
+    {
+      "mes": "out",
+      "receitas": 6420,
+      "despesas": 4105.6
+    }
+  ],
+  "cenario_saldo_negativo_extra": [
+    {
+      "data": "2026-11-12",
+      "descricao": "Dentista",
+      "categoria": "saude",
+      "valor": -650
+    },
+    {
+      "data": "2026-11-16",
+      "descricao": "Conserto do carro",
+      "categoria": "transporte",
+      "valor": -2950
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Papo e tokens de design</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1200px; box-sizing: border-box; padding: 56px 64px; background: #F5F9FA; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028; display: flex; flex-direction: column; gap: 28px">
+<header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px">
+<div>
+<h1 style="margin: 0; font-size: 44px; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px">Papo, o mascote</h1>
+<p style="margin: 6px 0 0; font-size: 18px; font-weight: 500; color: #4A5862">Jacaré-de-papo-amarelo · tranquilo, cuidadoso com o dinheiro, bem-humorado</p>
+</div>
+<p style="margin: 0; max-width: 380px; font-size: 14px; font-weight: 500; line-height: 1.5; color: #4A5862">A ilustração é o único elemento cartunesco da tela. Use o PNG como está: sem redesenhar, recolorir, distorcer ou cortar os pés.</p>
+</header>
+<section style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; background: #CDEFFC; border-radius: 14px; padding: 12px 8px 0"><img src="../../assets/mascote/papo-cadeira-acenando.png" alt="Papo relaxando na cadeira de praia, acenando" style="height: 196px; width: auto; display: block"></div>
+<strong style="font-size: 17px; font-weight: 700">Login · padrão</strong>
+<span style="font-size: 14px; font-weight: 500; color: #4A5862; line-height: 1.45">Boas-vindas. Baú de moedas reforça "o dinheiro já tá na caixa".</span>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; background: #CDEFFC; border-radius: 14px; padding: 12px 8px 0"><img src="../../assets/mascote/papo-animado.png" alt="Papo animado, de punhos fechados" style="height: 196px; width: auto; display: block"></div>
+<strong style="font-size: 17px; font-weight: 700">Carregando</strong>
+<span style="font-size: 14px; font-weight: 500; color: #4A5862; line-height: 1.45">Expectativa enquanto a conta abre.</span>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; background: #CDEFFC; border-radius: 14px; padding: 12px 8px 0"><img src="../../assets/mascote/papo-preocupado.png" alt="Papo preocupado, coçando a cabeça" style="height: 196px; width: auto; display: block"></div>
+<strong style="font-size: 17px; font-weight: 700">Erro · preocupado</strong>
+<span style="font-size: 14px; font-weight: 500; color: #4A5862; line-height: 1.45">Erros e alertas. Sempre acompanhado de texto que explica o problema.</span>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="height: 220px; display: flex; align-items: flex-end; justify-content: center; background: #CDEFFC; border-radius: 14px; padding: 12px 8px 0"><img src="../../assets/mascote/papo-joinha.png" alt="Papo piscando e fazendo joinha" style="height: 196px; width: auto; display: block"></div>
+<strong style="font-size: 17px; font-weight: 700">Sucesso · piscando (extra)</strong>
+<span style="font-size: 14px; font-weight: 500; color: #4A5862; line-height: 1.45">Meta batida, cadastro salvo. Fora do login.</span>
+</div>
+</section>
+<section style="display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Tokens · cor</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #142028"></div><strong style="font-size: 13px">tinta</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#142028 · texto, contorno</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #4A5862"></div><strong style="font-size: 13px">texto-2</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#4A5862 · apoio</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #7C8A93"></div><strong style="font-size: 13px">borda-campo</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#7C8A93 · 3,6:1</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #F5F9FA; border: 1px solid #DCE3E7; box-sizing: border-box"></div><strong style="font-size: 13px">fundo</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#F5F9FA / #FFFFFF</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #157A2E"></div><strong style="font-size: 13px">verde-700</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#157A2E · Entrar (5,4:1)</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #F8D428"></div><strong style="font-size: 13px">amarelo-papo</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#F8D428 · demonstração</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #B42318"></div><strong style="font-size: 13px">erro</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#B42318 / fundo #FEF1F0</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 44px; border-radius: 10px; background: #20C838"></div><strong style="font-size: 13px">verde-papo</strong><span style="font-size: 12px; font-weight: 500; color: #4A5862">#20C838 · só ilustração</span></div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 28px; border-radius: 8px; background: #CDEFFC"></div><span style="font-size: 12px; font-weight: 500; color: #4A5862">céu #CDEFFC</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 28px; border-radius: 8px; background: #6CC6EA"></div><span style="font-size: 12px; font-weight: 500; color: #4A5862">mar-1 #6CC6EA</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 28px; border-radius: 8px; background: #2EA3D6"></div><span style="font-size: 12px; font-weight: 500; color: #4A5862">mar-2 #2EA3D6</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 28px; border-radius: 8px; background: #0E7FB4"></div><span style="font-size: 12px; font-weight: 500; color: #4A5862">mar-3 #0E7FB4</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div style="height: 28px; border-radius: 8px; background: #F6E7C8"></div><span style="font-size: 12px; font-weight: 500; color: #4A5862">areia #F6E7C8</span></div>
+</div>
+</div>
+<div style="background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Tokens · tipo, forma, espaço</h2>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; line-height: 1.5; color: #142028">
+<span><strong>Logo</strong> · Baloo 2 800 · 36 px (só o nome)</span>
+<span><strong>Título</strong> · Plus Jakarta Sans 700 · 24 / 30</span>
+<span><strong>Corpo</strong> · 500 · 16 / 24 (campos sempre 16 px)</span>
+<span><strong>Rótulo</strong> · 600 · 14 · <strong>Legenda</strong> · 500 · 13</span>
+<span><strong>Raio</strong> · campos e botões 12 · demonstração 16 · card 20 · painel 24</span>
+<span><strong>Espaço</strong> · 4 · 8 · 12 · 16 · 24 · 32 · 48</span>
+<span><strong>Alvo de toque</strong> · ≥ 44 px (campos 48, Entrar 52)</span>
+<span><strong>Destaque cartum</strong> · contorno 2,5 px tinta + sombra 0 4 0 tinta, só no botão de demonstração</span>
+</div>
+<div style="display: flex; gap: 12px; align-items: center; margin-top: 4px">
+<span style="display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 12px; background: #157A2E; color: #FFFFFF; font-size: 15px; font-weight: 700">Entrar</span>
+<span style="display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 16px; background: #F8D428; border: 2.5px solid #142028; box-shadow: 0 4px 0 #142028; font-size: 15px; font-weight: 800; box-sizing: border-box">Demonstração</span>
+</div>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1200}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

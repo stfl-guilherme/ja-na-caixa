@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Formulário de login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<form onSubmit="{{enviar}}" novalidate="" style="width: 100%; display: flex; flex-direction: column; gap: 20px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #142028; box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'Baloo 2', 'Plus Jakarta Sans', sans-serif; font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -0.5px"><span style="color: #157A2E">Já</span>NaCaixa</div>
+<p style="margin: 0; font-size: 15px; font-weight: 500; line-height: 1.4; color: #4A5862">Cada centavo no seu lugar.</p>
+</div>
+<h1 style="margin: 8px 0 0; font-size: 24px; font-weight: 700; line-height: 1.25; letter-spacing: -0.2px">Entre na sua conta</h1>
+<sc-if value="{{erro}}" hint-placeholder-val="{{ false }}">
+<div id="erro-login" role="alert" style="display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: #FEF1F0; border: 1px solid #F4C7C3; color: #7A1A12">
+<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 1px" fill="none" stroke="#B42318" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 7v6"></path><path d="M12 17h.01"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<strong style="font-size: 15px; font-weight: 700">Usuário ou senha inválidos</strong>
+<span style="font-size: 14px; font-weight: 500">Confira os dados e tente de novo.</span>
+</div>
+</div>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="jnc-usuario" style="font-size: 14px; font-weight: 600">Usuário</label>
+<div style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 6px 0 14px; border-radius: 12px; border: {{borda}}; background: {{fundoCampo}}; box-sizing: border-box">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex: none" fill="none" stroke="#4A5862" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+<input id="jnc-usuario" name="usuario" type="text" autocomplete="username" placeholder="seu.usuario" value="{{usuario}}" onChange="{{onUsuario}}" disabled="{{carregando}}" aria-invalid="{{ariaInvalid}}" aria-describedby="{{descricao}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="jnc-senha" style="font-size: 14px; font-weight: 600">Senha</label>
+<div style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 4px 0 14px; border-radius: 12px; border: {{borda}}; background: {{fundoCampo}}; box-sizing: border-box">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex: none" fill="none" stroke="#4A5862" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+<input id="jnc-senha" name="senha" type="{{tipoSenha}}" autocomplete="current-password" placeholder="Sua senha" value="{{senha}}" onChange="{{onSenha}}" disabled="{{carregando}}" aria-invalid="{{ariaInvalid}}" aria-describedby="{{descricao}}" style="flex: 1; min-width: 0; height: 100%; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #142028">
+<button type="button" onClick="{{alternar}}" aria-label="{{rotuloOlho}}" aria-pressed="{{ariaMostrar}}" style="flex: none; display: flex; align-items: center; gap: 6px; height: {{alturaOlho}}; min-width: 44px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: #142028; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer">
+<sc-if value="{{olhoAberto}}" hint-placeholder-val="{{ true }}">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#142028" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</sc-if>
+<sc-if value="{{olhoFechado}}" hint-placeholder-val="{{ false }}">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#142028" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"></path><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1"></path><path d="M6.6 6.6C3.7 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>
+</sc-if>
+<span>{{textoOlho}}</span>
+</button>
+</div>
+</div>
+</div>
+<button type="submit" disabled="{{carregando}}" aria-busy="{{ariaBusy}}" style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 52px; border: 0; border-radius: 12px; background: #157A2E; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; cursor: {{cursor}}">
+<sc-if value="{{carregando}}" hint-placeholder-val="{{ false }}">
+<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none"><circle cx="12" cy="12" r="9" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="3"></circle><path d="M21 12a9 9 0 0 0-9-9" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"></animateTransform></path></svg>
+<span>Entrando…</span>
+</sc-if>
+<sc-if value="{{naoCarregando}}" hint-placeholder-val="{{ true }}">
+<span>Entrar</span>
+</sc-if>
+</button>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: #4A5862">
+<span aria-hidden="true" style="flex: 1; height: 1px; background: {{corDivisor}}"></span>
+<span>ou</span>
+<span aria-hidden="true" style="flex: 1; height: 1px; background: {{corDivisor}}"></span>
+</div>
+<button type="button" onClick="{{demo}}" disabled="{{carregando}}" style="display: flex; align-items: center; gap: 14px; min-height: 68px; padding: 10px 16px 10px 12px; border-radius: 16px; border: 2.5px solid #142028; background: #F8D428; color: #142028; text-align: left; font-family: inherit; box-shadow: 0 4px 0 #142028; opacity: {{opacDemo}}; cursor: {{cursor}}">
+<span aria-hidden="true" style="flex: none; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: #142028">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="#F8D428"><path d="M8 5.5v13l10.5-6.5z"></path></svg>
+</span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; font-weight: 800; line-height: 1.2">Entrar como demonstração</span>
+<span style="font-size: 13px; font-weight: 600; line-height: 1.3; color: #3D3410">Explore com dados de exemplo, sem cadastro</span>
+</span>
+<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none" fill="none" stroke="#142028" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</form>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"estado":{"editor":"enum","options":["padrao","carregando","erro"],"default":"padrao"},"onEntrar":{"editor":null},"onDemo":{"editor":null},"superficie":{"editor":"enum","options":["branco","areia"],"default":"branco"},"$preview":{"width":400,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const estado = this.props.estado ?? 'padrao';
+    const carregando = estado === 'carregando';
+    const erro = estado === 'erro';
+    const preenchido = estado !== 'padrao';
+    const mostrar = !!this.state.mostrar;
+    const areia = this.props.superficie === 'areia';
+    return {
+      erro,
+      carregando,
+      naoCarregando: !carregando,
+      usuario: this.state.usuario ?? (preenchido ? 'guilherme.s' : ''),
+      senha: this.state.senha ?? (preenchido ? 'praia2026' : ''),
+      tipoSenha: mostrar ? 'text' : 'password',
+      rotuloOlho: mostrar ? 'Ocultar senha' : 'Mostrar senha',
+      textoOlho: mostrar ? 'Ocultar' : 'Mostrar',
+      ariaMostrar: mostrar ? 'true' : 'false',
+      olhoAberto: !mostrar,
+      olhoFechado: mostrar,
+      borda: erro ? '2px solid #B42318' : (areia ? '1.5px solid #8F7B55' : '1.5px solid #7C8A93'),
+      corDivisor: areia ? '#D8C298' : '#DCE3E7',
+      alturaOlho: areia ? '44px' : '40px',
+      fundoCampo: erro ? '#FFF8F7' : (carregando ? '#F3F6F7' : '#FFFFFF'),
+      ariaInvalid: erro ? 'true' : 'false',
+      descricao: erro ? 'erro-login' : undefined,
+      ariaBusy: carregando ? 'true' : 'false',
+      opacDemo: carregando ? '0.55' : '1',
+      cursor: carregando ? 'progress' : 'pointer',
+      onUsuario: (e) => this.setState({ usuario: e.target.value }),
+      onSenha: (e) => this.setState({ senha: e.target.value }),
+      alternar: () => this.setState({ mostrar: !mostrar }),
+      enviar: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!carregando && this.props.onEntrar) this.props.onEntrar();
+      },
+      demo: () => {
+        if (!carregando && this.props.onDemo) this.props.onDemo();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

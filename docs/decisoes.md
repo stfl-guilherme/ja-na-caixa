@@ -93,3 +93,13 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Decisão:** Manter o `oxlint` do template, com os plugins `react`, `typescript` e `oxc`. A checagem de tipos continua no `npm run build` (`tsc -b`, `strict: true`).
 - **Alternativas descartadas:** substituir por ESLint (mais configuração, sem ganho para o escopo).
 - **Consequências:** `npm run lint` roda `oxlint`; a definição de pronto do `CLAUDE.md` continua valendo.
+
+## ADR-012 — Organização do material de design importado
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** O export do Claude Design chegou em `docs/design-import/` e foi reorganizado em `docs/design/` (especificação), `frontend/src/styles/tokens.css` (tokens vivos) e `frontend/src/assets/` (PNGs dos personagens), conforme `docs/ia/prompt-design.md`.
+- **Decisão:** Cada arquivo tem um único lugar; `tokens.css` só existe no frontend, para não haver duas cópias divergentes.
+- **Pendências registradas na importação:**
+  - `referencias/` (componentes de referência do 21st.dev, `.tsx`) veio **vazia** no export. A seção 5 de `decisoes-de-design.md` e as telas (`Painel.dc.html`, que traz o `squarify()`, as escalas dos gráficos e a contagem animada) descrevem o que foi usado, adaptado e descartado; a implementação segue essas descrições. Quando os arquivos forem adicionados em `docs/design/referencias/`, conferir origem e licença e completar a seção "Créditos de componentes" do README.
+  - `decisoes-de-design.md` e `prompt-design-claude-code.md` não estavam dentro de `docs/design-import/`, e sim na pasta acima do repositório. Foram **copiados** (não movidos) para `docs/design/decisoes-de-design.md` e `docs/ia/prompt-design.md`, porque apagar arquivos fora do repositório exige confirmação do autor (`CLAUDE.md`). Os originais podem ser apagados manualmente.
+- **Consequências:** `docs/design/README.md` e `decisoes-de-design.md` citam os caminhos novos.

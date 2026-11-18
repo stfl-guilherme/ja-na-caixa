@@ -111,7 +111,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Teste primeiro:** testes atuais adaptados (seções, vazio, criar, erro no campo, tipo bloqueado); novos: quantidade e total do mês por categoria vindos do resumo; 10 cores como radios; exclusão de categoria em uso abre diálogo informativo (sem botão excluir, com `papo-preocupado`) usando o número de transações; exclusão livre confirma e chama a API.
 - **Commit:** `feat(frontend): aplicar novo design na tela de categorias`
 
-### [ ] NF12 — Créditos e limpeza
+### [x] NF12 — Créditos e limpeza
 - **Arquivos:** `README.md`, componentes antigos sem uso (`GraficoDespesas`, `SeletorMes`, `CategoriaForm`, `TransacaoForm`).
 - **Teste primeiro:** não se aplica (remoção de código morto); suíte completa verde.
 - **Commit:** `refactor(frontend): remover componentes substituídos pelo novo design`

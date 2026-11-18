@@ -6,14 +6,6 @@ afterEach(() => {
   cleanup()
 })
 
-// O jsdom não implementa ResizeObserver, usado pelo ResponsiveContainer do Recharts.
-class ResizeObserverFalso {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-globalThis.ResizeObserver ??= ResizeObserverFalso as unknown as typeof ResizeObserver
-
 // O jsdom não implementa matchMedia. Padrão dos testes: tela larga (≥ 720px) e
 // movimento reduzido, para as páginas renderizarem os valores finais sem esperar animação.
 if (typeof window.matchMedia !== 'function') {

@@ -44,7 +44,9 @@ export function Legenda({ itens }: { itens: { cor: string; rotulo: string }[] })
 /** Tabela equivalente ao gráfico, só para leitores de tela (README do design, Acessibilidade). */
 export function TabelaOculta({ rotulo, colunas, linhas }: { rotulo: string; colunas: string[]; linhas: string[][] }) {
   return (
-    <table className="sr-only" aria-label={rotulo}>
+    // O recorte fica num div: <table> ignora width/height de 1px e esticaria a página.
+    <div className="sr-only">
+    <table aria-label={rotulo}>
       <thead>
         <tr>
           {colunas.map((c) => (
@@ -64,6 +66,7 @@ export function TabelaOculta({ rotulo, colunas, linhas }: { rotulo: string; colu
         ))}
       </tbody>
     </table>
+    </div>
   )
 }
 

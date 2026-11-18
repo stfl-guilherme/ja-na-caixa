@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils'
 import { EixoY, Legenda, LinhasGrade, SecaoPainel, TabelaOculta, type Marca } from './partes'
 
 const ABREV = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+/** No celular, só a inicial: as abreviações de 3 letras se sobrepõem em 375px. */
+const INICIAL = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 const NOMES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
 interface Props {
@@ -62,7 +64,7 @@ export function AnoBarChart({ anual, mes, hoje, progresso, compacto }: Props) {
         <div aria-hidden="true" className="grid h-[22px] grid-cols-12 pt-1.5 text-center text-[11px] font-semibold text-texto-2">
           {meses.map((m, i) => (
             <span key={m.mes} className={cn(m.mes === mes && 'font-extrabold text-tinta')}>
-              {m.futuro ? `${ABREV[i]} —` : ABREV[i]}
+              {compacto ? INICIAL[i] : m.futuro ? `${ABREV[i]} —` : ABREV[i]}
             </span>
           ))}
         </div>

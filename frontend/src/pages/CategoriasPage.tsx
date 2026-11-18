@@ -92,7 +92,7 @@ export default function CategoriasPage() {
                     Nenhuma categoria de {titulo.toLowerCase()}.
                   </p>
                 ) : (
-                  <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 largo:grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+                  <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 largo:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
                     {itens.map((c) => {
                       const mesCat = doMes(c.id)
                       const quantidade = mesCat?.quantidade ?? 0

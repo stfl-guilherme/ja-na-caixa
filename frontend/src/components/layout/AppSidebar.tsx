@@ -18,10 +18,9 @@ interface AppSidebarProps {
 export function AppSidebar({ usuario, mostrarPapo, onNova, onSair, saindo }: AppSidebarProps) {
   const { comMes } = useMesSelecionado()
   return (
-    <nav
-      aria-label="Menu principal"
-      className="sticky top-0 flex h-screen min-h-[640px] w-[248px] shrink-0 flex-col gap-6 border-r border-borda-sutil bg-branco px-5 pt-7 pb-5"
-    >
+    // O fundo branco acompanha a página inteira; o conteúdo do menu fica fixo ao rolar.
+    <div className="w-[248px] shrink-0 border-r border-borda-sutil bg-branco">
+    <nav aria-label="Menu principal" className="sticky top-0 flex h-screen min-h-[640px] flex-col gap-6 px-5 pt-7 pb-5">
       <Link to={comMes('/')} aria-label="JáNaCaixa, ir para o Painel" className="px-2 no-underline">
         <Logo className="text-[30px]" />
       </Link>
@@ -78,5 +77,6 @@ export function AppSidebar({ usuario, mostrarPapo, onNova, onSair, saindo }: App
         </Espiando>
       </div>
     </nav>
+    </div>
   )
 }

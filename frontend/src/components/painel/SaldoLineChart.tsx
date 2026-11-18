@@ -69,9 +69,9 @@ export function SaldoLineChart({ serie, ultimoDia, mes, progresso, compacto }: P
               strokeLinejoin="round"
               strokeLinecap="round"
               vectorEffect="non-scaling-stroke"
-              pathLength={1}
-              strokeDasharray="1"
-              strokeDashoffset={(1 - progresso).toFixed(3)}
+              // Tracejado só durante a animação: com non-scaling-stroke, o Chromium mede
+              // pathLength errado e a linha final sairia com falhas.
+              {...(progresso < 1 && { pathLength: 1, strokeDasharray: '1', strokeDashoffset: (1 - progresso).toFixed(3) })}
             />
           </svg>
           <div

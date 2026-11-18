@@ -1,31 +1,45 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Categoria, Transacao } from '@/api/types'
-import { chamadas, mockFetch, renderComRotas } from '@/test/utils'
+import type { Categoria, ListaTransacoes, Transacao } from '@/api/types'
+import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import TransacoesPage from './TransacoesPage'
 
 const categorias: Categoria[] = [
-  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#22C55E', transacoes: 1, criado_em: '' },
+  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 1, criado_em: '' },
+  { id: 2, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', transacoes: 1, criado_em: '' },
 ]
 const transacao: Transacao = {
   id: 10,
   categoria: 1,
   categoria_nome: 'Mercado',
-  categoria_cor: '#22C55E',
+  categoria_cor: '#B5541A',
   tipo: 'DESPESA',
   descricao: 'Supermercado',
   valor: '123.45',
   data: '2026-11-10',
-  observacao: '',
+  observacao: 'Compra do mês',
   criado_em: '',
   atualizado_em: '',
 }
-const pagina = (results: Transacao[], count = results.length) => ({ count, next: null, previous: null, results })
+const pagina = (results: Transacao[], count = results.length): ListaTransacoes => ({
+  count,
+  next: null,
+  previous: null,
+  results,
+  totais: { receitas: '5200.00', despesas: '123.45', saldo: '5076.55' },
+  totais_por_dia: [{ data: '2026-11-10', saldo: '-123.45' }],
+})
 const semNbsp = (texto: string | null) => (texto ?? '').replace(/ /g, ' ')
+const queryDe = (url: unknown) => new URL(String(url), 'http://localhost').searchParams
+const parametros = (fetchMock: ReturnType<typeof mockFetch>, nome: string) =>
+  chamadas(fetchMock, 'GET', '/api/transacoes/').map(([url]) => queryDe(url).get(nome))
 
-function queryDe(url: unknown) {
-  return new URL(String(url), 'http://localhost').searchParams
+function rotas(lista: ListaTransacoes = pagina([transacao])) {
+  return mockFetch([
+    { caminho: '/api/categorias/', corpo: categorias },
+    { caminho: '/api/transacoes/', corpo: lista },
+  ])
 }
 
 describe('TransacoesPage', () => {
@@ -38,81 +52,90 @@ describe('TransacoesPage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('lista as transações do mês atual com valor formatado', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([transacao]) },
-    ])
+  it('lista as transações do mês com valor, categoria, data e observação', async () => {
+    const fetchMock = rotas()
     renderComRotas(<TransacoesPage />)
-    const linha = (await screen.findByText('Supermercado')).closest('tr')!
-    expect(within(linha).getAllByText('Mercado').length).toBeGreaterThan(0)
-    expect(semNbsp(within(linha).getByText(/123,45/).textContent)).toBe('\u2212 R$ 123,45')
+    const linha = (await screen.findByText('Supermercado')).closest('[role="row"]') as HTMLElement
+    expect(within(linha).getByText('Mercado')).toBeInTheDocument()
+    expect(within(linha).getByText('Compra do mês')).toBeInTheDocument()
+    expect(semNbsp(within(linha).getByText(/123,45/).textContent)).toBe('− R$ 123,45')
     expect(within(linha).getByText('10/11/2026')).toBeInTheDocument()
-    const [[url]] = chamadas(fetchMock, 'GET', '/api/transacoes/')
-    expect(queryDe(url).get('mes')).toBe('2026-11')
+    expect(parametros(fetchMock, 'mes')[0]).toBe('2026-11')
   })
 
-  it('troca o mês do filtro', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([]) },
-    ])
+  it('mostra os totais do filtro vindos da API', async () => {
+    rotas()
     renderComRotas(<TransacoesPage />)
-    expect(await screen.findByText('novembro de 2026')).toBeInTheDocument()
+    expect(semNbsp((await screen.findByTestId('resumo-filtro')).textContent)).toBe(
+      '1 transação · Receitas + R$ 5.200,00 · Despesas − R$ 123,45',
+    )
+  })
+
+  it('troca o mês pelo seletor global', async () => {
+    const fetchMock = rotas()
+    renderComRotas(<TransacoesPage />)
+    expect(await screen.findByText('Novembro 2026')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Mês anterior' }))
-    expect(await screen.findByText('outubro de 2026')).toBeInTheDocument()
-    await vi.waitFor(() => {
-      const meses = chamadas(fetchMock, 'GET', '/api/transacoes/').map(([url]) => queryDe(url).get('mes'))
-      expect(meses).toContain('2026-10')
-    })
+    expect(await screen.findByText('Outubro 2026')).toBeInTheDocument()
+    await vi.waitFor(() => expect(parametros(fetchMock, 'mes')).toContain('2026-10'))
   })
 
-  it('filtra por tipo', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([]) },
-    ])
+  it('filtra por tipo com os botões segmentados', async () => {
+    const fetchMock = rotas()
     renderComRotas(<TransacoesPage />)
-    await userEvent.selectOptions(await screen.findByLabelText('Tipo'), 'RECEITA')
-    await vi.waitFor(() => {
-      const tipos = chamadas(fetchMock, 'GET', '/api/transacoes/').map(([url]) => queryDe(url).get('tipo'))
-      expect(tipos).toContain('RECEITA')
-    })
+    const receitas = await screen.findByRole('button', { name: 'Receitas' })
+    await userEvent.click(receitas)
+    expect(receitas).toHaveAttribute('aria-pressed', 'true')
+    await vi.waitFor(() => expect(parametros(fetchMock, 'tipo')).toContain('RECEITA'))
   })
 
-  it('mostra o estado vazio', async () => {
-    mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([]) },
-    ])
-    renderComRotas(<TransacoesPage />)
-    expect(await screen.findByText('Nenhuma transação encontrada')).toBeInTheDocument()
+  it('aceita o tipo vindo da URL (cartão do Painel)', async () => {
+    const fetchMock = rotas()
+    renderComRotas(<TransacoesPage />, { caminho: '/transacoes?mes=2026-11&tipo=DESPESA' })
+    expect(await screen.findByRole('button', { name: 'Despesas' })).toHaveAttribute('aria-pressed', 'true')
+    expect(parametros(fetchMock, 'tipo')[0]).toBe('DESPESA')
   })
 
-  it('exclui após confirmação', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([transacao]) },
-      { metodo: 'DELETE', caminho: '/api/transacoes/10/', status: 204 },
-    ])
+  it('filtra por categoria e limpa os filtros', async () => {
+    const fetchMock = rotas()
     renderComRotas(<TransacoesPage />)
-    await userEvent.click(await screen.findByRole('button', { name: 'Excluir Supermercado' }))
-    const dialogo = await screen.findByRole('alertdialog')
-    await userEvent.click(within(dialogo).getByRole('button', { name: 'Excluir' }))
-    await vi.waitFor(() => expect(chamadas(fetchMock, 'DELETE', '/api/transacoes/10/')).toHaveLength(1))
+    await screen.findByRole('option', { name: 'Salário' })
+    await userEvent.selectOptions(screen.getByLabelText('Categoria'), '2')
+    await vi.waitFor(() => expect(parametros(fetchMock, 'categoria')).toContain('2'))
+    await userEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }))
+    expect(screen.getByLabelText('Categoria')).toHaveValue('')
+  })
+
+  it('o Papo espia os filtros', async () => {
+    rotas()
+    renderComRotas(<TransacoesPage />)
+    await screen.findByText('Supermercado')
+    expect(personagensNaTela()).toEqual(['papo-espiando'])
+  })
+
+  it('mostra o estado vazio com o Papo de lado e a gaivota', async () => {
+    rotas(pagina([]))
+    const { interfaceApp } = renderComRotas(<TransacoesPage />, { caminho: '/transacoes?mes=2026-11&tipo=RECEITA' })
+    expect(await screen.findByRole('heading', { name: 'Nenhuma transação encontrada com esses filtros.' })).toBeInTheDocument()
+    expect(personagensNaTela()).toEqual(['papo-espiando-lado', 'gaivota'])
+    expect(interfaceApp.setOcultarPapoDoMenu).toHaveBeenCalledWith(true)
+  })
+
+  it('editar e excluir usam o modal e a confirmação do layout', async () => {
+    rotas()
+    const { interfaceApp } = renderComRotas(<TransacoesPage />)
+    await userEvent.click(await screen.findByRole('button', { name: /^Editar Supermercado/ }))
+    expect(interfaceApp.abrirTransacao).toHaveBeenCalledWith(transacao)
+    await userEvent.click(screen.getByRole('button', { name: /^Excluir Supermercado/ }))
+    expect(interfaceApp.pedirExclusao).toHaveBeenCalledWith(transacao)
   })
 
   it('pagina os resultados', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/categorias/', corpo: categorias },
-      { caminho: '/api/transacoes/', corpo: pagina([transacao], 45) },
-    ])
+    const fetchMock = rotas(pagina([transacao], 45))
     renderComRotas(<TransacoesPage />)
-    expect(await screen.findByText('Página 1 de 3')).toBeInTheDocument()
+    expect(await screen.findByText('Mostrando 1–20 de 45')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Página 1' })).toHaveAttribute('aria-current', 'page')
     await userEvent.click(screen.getByRole('button', { name: 'Próxima página' }))
-    await vi.waitFor(() => {
-      const paginas = chamadas(fetchMock, 'GET', '/api/transacoes/').map(([url]) => queryDe(url).get('page'))
-      expect(paginas).toContain('2')
-    })
+    await vi.waitFor(() => expect(parametros(fetchMock, 'page')).toContain('2'))
   })
 })

@@ -101,7 +101,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Teste primeiro:** testes atuais adaptados (totais, só despesas no gráfico, 5 últimas, troca de mês, vazio); novos: **troca para `papo-preocupado` quando o saldo é negativo**; estado vazio com `papo-cadeira-acenando` + `caranguejo` e botão "Nova transação"; no máximo 2 personagens.
 - **Commit:** `feat(frontend): montar o painel bento com estados vazio e negativo`
 
-### [ ] NF10 — Transações
+### [x] NF10 — Transações
 - **Arquivos:** `frontend/src/pages/TransacoesPage.tsx` (+ teste), `TransacaoModal.tsx` (+ teste, substitui `TransacaoForm`), `ConfirmDialog.tsx`, `Toast.tsx`.
 - **Teste primeiro:** testes atuais adaptados (lista, mês, tipo, vazio, exclusão, paginação, erros da API no campo, edição preenchida); novos: filtros segmentados e `?tipo=` da URL; linha de totais do filtro vinda da API; máscaras e mensagens exatas de validação; exclusão pelo modal de edição; toast com `papo-joinha`; Papo dos filtros some no vazio e com toast.
 - **Commit:** `feat(frontend): aplicar novo design na tela de transações`

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -7,6 +7,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from financas.demo import MODO_PADRAO, USUARIO_DO_MODO, recriar_demo
 
 
 def _usuario_json(user) -> dict:
@@ -41,12 +43,9 @@ class LoginView(APIView):
         return Response(_usuario_json(user))
 
 
-DEMO_USERNAME = "demo"
-
-
 @method_decorator(csrf_protect, name="dispatch")
 class DemoLoginView(APIView):
-    """Autentica no usuário demo sem senha no front (ADR-003, ADR-009)."""
+    """Recria os dados do modo escolhido e autentica no usuário dele (ADR-003, ADR-009, ADR-018)."""
 
     authentication_classes: list = []
     permission_classes = [AllowAny]
@@ -54,12 +53,10 @@ class DemoLoginView(APIView):
     def post(self, request):
         if not settings.DEMO_ENABLED:
             raise Http404
-        user = get_user_model().objects.filter(username=DEMO_USERNAME, is_active=True).first()
-        if user is None:
-            return Response(
-                {"detail": "Usuário de demonstração não encontrado. Rode: python manage.py seed_demo"},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
-            )
+        modo = request.data.get("modo", MODO_PADRAO) if hasattr(request.data, "get") else MODO_PADRAO
+        if modo not in USUARIO_DO_MODO:
+            return Response({"modo": ['Use "vazio" ou "exemplo".']}, status=status.HTTP_400_BAD_REQUEST)
+        user = recriar_demo(modo)
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         return Response(_usuario_json(user))
 

@@ -11,7 +11,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Backend
 
-### [ ] B1 — Scaffold do backend
+### [x] B1 — Scaffold do backend
 - **Arquivos:** `backend/manage.py`, `backend/config/{settings,urls,wsgi,asgi}.py`, `backend/financas/` (app), `backend/requirements.txt`, `backend/pytest.ini`, `backend/conftest.py`.
 - **Teste primeiro:** `financas/tests/test_smoke.py` — `GET /api/auth/me/` sem login não retorna `500` (rota ainda inexistente → `404`, confirmando que o projeto sobe).
 - **Pronto quando:** `pytest` roda e passa; settings com DRF, `SessaoAuthentication` (ADR-008), `IsAuthenticated` padrão, `DEMO_ENABLED`, idioma `pt-br`, fuso `America/Sao_Paulo`.

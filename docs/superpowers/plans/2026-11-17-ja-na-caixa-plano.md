@@ -17,7 +17,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** `pytest` roda e passa; settings com DRF, `SessaoAuthentication` (ADR-008), `IsAuthenticated` padrão, `DEMO_ENABLED`, idioma `pt-br`, fuso `America/Sao_Paulo`.
 - **Commit:** `chore(backend): criar projeto Django com DRF e pytest`
 
-### [ ] B2 — Modelo `Categoria`
+### [x] B2 — Modelo `Categoria`
 - **Arquivos:** `financas/models.py`, migração, `financas/tests/test_models.py`.
 - **Teste primeiro:** cor padrão `#64748B`; nome duplicado ignorando maiúsculas no mesmo usuário gera `IntegrityError`; mesmo nome em usuários diferentes é permitido.
 - **Pronto quando:** testes verdes; `UniqueConstraint(Lower("nome"), "usuario")`.

@@ -42,8 +42,11 @@ const vazio: Resumo = {
   serie_diaria: serieNovembro(),
 }
 
-function rotas(resumo: Resumo = resumoNovembro, transacoes = lista(0)) {
+const CATEGORIA_USADA = { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 3, criado_em: '' }
+
+function rotas(resumo: Resumo = resumoNovembro, transacoes = lista(0), categorias: unknown[] = [CATEGORIA_USADA]) {
   return mockFetch([
+    { caminho: '/api/categorias/', corpo: categorias },
     { caminho: '/api/resumo/', corpo: resumo },
     { caminho: '/api/resumo/anual/', corpo: resumoAnual2026 },
     { caminho: '/api/transacoes/', corpo: transacoes },
@@ -124,6 +127,31 @@ describe('DashboardPage', () => {
     expect(personagensNaTela()).toEqual(['papo-cadeira-acenando', 'caranguejo'])
     expect(interfaceApp.setOcultarPapoDoMenu).toHaveBeenCalledWith(true)
     await userEvent.click(screen.getByRole('button', { name: 'Nova transação' }))
+    expect(interfaceApp.abrirTransacao).toHaveBeenCalled()
+  })
+
+  it('sem nenhuma categoria, guia em 2 passos com o passo 1 em destaque', async () => {
+    rotas(vazio, lista(0), [])
+    const { interfaceApp } = renderComRotas(<DashboardPage />)
+    const guia = await screen.findByRole('list', { name: 'Primeiros passos' })
+    const passos = within(guia).getAllByRole('listitem')
+    expect(passos[0]).toHaveTextContent('1. Crie uma categoria')
+    expect(passos[1]).toHaveTextContent('2. Lance sua primeira transação')
+    expect(passos[0]).toHaveAttribute('aria-current', 'step')
+    expect(passos[1]).not.toHaveAttribute('aria-current')
+    await userEvent.click(screen.getByRole('button', { name: 'Criar categoria' }))
+    expect(interfaceApp.abrirCategoria).toHaveBeenCalled()
+    expect(personagensNaTela().length).toBeLessThanOrEqual(2)
+  })
+
+  it('com categoria mas sem nenhuma transação, destaca o passo 2', async () => {
+    rotas(vazio, lista(0), [{ ...CATEGORIA_USADA, transacoes: 0 }])
+    const { interfaceApp } = renderComRotas(<DashboardPage />)
+    const guia = await screen.findByRole('list', { name: 'Primeiros passos' })
+    const passos = within(guia).getAllByRole('listitem')
+    expect(passos[1]).toHaveAttribute('aria-current', 'step')
+    expect(passos[0]).toHaveTextContent('feito')
+    await userEvent.click(screen.getByRole('button', { name: 'Lançar transação' }))
     expect(interfaceApp.abrirTransacao).toHaveBeenCalled()
   })
 })

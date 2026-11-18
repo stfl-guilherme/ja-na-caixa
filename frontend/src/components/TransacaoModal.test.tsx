@@ -1,9 +1,11 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError } from '@/api/client'
 import type { Categoria, Transacao } from '@/api/types'
 import { MENSAGENS } from '@/lib/mensagens'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { chamadas, criarQueryClient, mockFetch } from '@/test/utils'
 import { FormularioTransacao } from './TransacaoModal'
 
 const categorias: Categoria[] = [
@@ -14,7 +16,9 @@ const categorias: Categoria[] = [
 function renderForm(props: Partial<Parameters<typeof FormularioTransacao>[0]> = {}) {
   const onSalvar = vi.fn()
   render(
-    <FormularioTransacao categorias={categorias} onSalvar={onSalvar} onCancelar={vi.fn()} salvando={false} erroApi={null} {...props} />,
+    <QueryClientProvider client={criarQueryClient()}>
+      <FormularioTransacao categorias={categorias} onSalvar={onSalvar} onCancelar={vi.fn()} salvando={false} erroApi={null} {...props} />
+    </QueryClientProvider>,
   )
   return { onSalvar }
 }
@@ -66,7 +70,7 @@ describe('FormularioTransacao', () => {
     expect(campo(/^Descrição/)).toHaveAccessibleDescription(MENSAGENS.descricao)
     expect(campo(/^Valor/)).toHaveAccessibleDescription(MENSAGENS.valor)
     expect(campo(/^Data/)).toHaveAccessibleDescription(MENSAGENS.data)
-    expect(campo(/^Categoria/)).toHaveAccessibleDescription(`Tipo vem da categoria ${MENSAGENS.categoria}`)
+    expect(campo(/^Categoria/)).toHaveAccessibleDescription(`Despesa: sai do saldo ${MENSAGENS.categoria}`)
     for (const rotulo of [/^Descrição/, /^Valor/, /^Data/, /^Categoria/]) {
       expect(campo(rotulo)).toHaveAttribute('aria-invalid', 'true')
     }
@@ -78,13 +82,45 @@ describe('FormularioTransacao', () => {
     })
   })
 
-  it('o tipo vem da categoria escolhida', async () => {
+  it('o tipo escolhido filtra as categorias', async () => {
     renderForm()
-    expect(screen.getByText('Tipo vem da categoria')).toBeInTheDocument()
-    await userEvent.selectOptions(campo(/^Categoria/), '2')
-    expect(screen.getByText('Receita: entra no saldo')).toBeInTheDocument()
-    await userEvent.selectOptions(campo(/^Categoria/), '1')
+    expect(screen.getByRole('radio', { name: 'Despesa' })).toBeChecked()
     expect(screen.getByText('Despesa: sai do saldo')).toBeInTheDocument()
+    expect(within(campo(/^Categoria/)).queryByRole('option', { name: 'Salário' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('radio', { name: 'Receita' }))
+    expect(screen.getByText('Receita: entra no saldo')).toBeInTheDocument()
+    expect(within(campo(/^Categoria/)).getByRole('option', { name: 'Salário' })).toBeInTheDocument()
+    expect(within(campo(/^Categoria/)).queryByRole('option', { name: 'Mercado' })).not.toBeInTheDocument()
+  })
+
+  it('sem categoria do tipo, oferece criar uma e volta com ela selecionada', async () => {
+    const fetchMock = mockFetch([
+      {
+        metodo: 'POST',
+        caminho: '/api/categorias/',
+        status: 201,
+        corpo: { id: 7, nome: 'Freelance', tipo: 'RECEITA', cor: '#2F6FB2', transacoes: 0, criado_em: '' },
+      },
+    ])
+    const { onSalvar } = renderForm({ categorias: [categorias[0]] })
+    await userEvent.click(screen.getByRole('radio', { name: 'Receita' }))
+    expect(screen.queryByLabelText(/^Categoria/)).not.toBeInTheDocument()
+    expect(screen.getByText('Você ainda não tem categorias de receita')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Criar categoria' }))
+
+    const dialogo = await screen.findByRole('dialog', { name: 'Nova categoria' })
+    expect(within(dialogo).getByRole('radio', { name: /Receita/ })).toBeChecked()
+    await userEvent.type(within(dialogo).getByLabelText(/^Nome/), 'Freelance')
+    await userEvent.click(within(dialogo).getByRole('button', { name: 'Salvar' }))
+
+    await vi.waitFor(() => expect(screen.queryByRole('dialog', { name: 'Nova categoria' })).not.toBeInTheDocument())
+    expect(JSON.parse(String(chamadas(fetchMock, 'POST', '/api/categorias/')[0][1]?.body))).toMatchObject({ nome: 'Freelance', tipo: 'RECEITA' })
+    expect(campo(/^Categoria/)).toHaveValue('7')
+    await userEvent.type(campo(/^Descrição/), 'Site')
+    await userEvent.type(campo(/^Valor/), '50000')
+    await userEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    expect(onSalvar).toHaveBeenCalledWith(expect.objectContaining({ categoria: 7, valor: '500.00' }))
+    vi.unstubAllGlobals()
   })
 
   it('exibe os erros retornados pela API em cada campo', () => {

@@ -48,6 +48,7 @@ export function renderComRotas(
 export function interfaceFalsa(): InterfaceApp {
   return {
     abrirTransacao: vi.fn(),
+    abrirCategoria: vi.fn(),
     pedirExclusao: vi.fn(),
     avisar: vi.fn(),
     avisoAberto: false,

@@ -5,6 +5,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import type { Transacao } from '@/api/types'
 import { useLogout, useUsuario } from '@/auth/useAuth'
 import { Aviso } from '@/components/Aviso'
+import { CategoriaModal } from '@/components/CategoriaModal'
 import { ExcluirTransacaoDialog } from '@/components/ExcluirTransacaoDialog'
 import { AppSidebar } from '@/components/layout/AppSidebar'
 import { BottomNav } from '@/components/layout/BottomNav'
@@ -22,6 +23,7 @@ export function Layout() {
 
   const [modal, setModal] = useState<{ aberto: boolean; transacao?: Transacao }>({ aberto: false })
   const [excluindo, setExcluindo] = useState<Transacao | null>(null)
+  const [criandoCategoria, setCriandoCategoria] = useState(false)
   const [aviso, setAviso] = useState<string | null>(null)
   const [ocultarPapoDoMenu, setOcultarPapoDoMenu] = useState(false)
   const temporizador = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -36,6 +38,7 @@ export function Layout() {
   const contexto = useMemo<InterfaceApp>(
     () => ({
       abrirTransacao: (transacao) => setModal({ aberto: true, transacao }),
+      abrirCategoria: () => setCriandoCategoria(true),
       pedirExclusao: setExcluindo,
       avisar,
       avisoAberto: aviso !== null,
@@ -84,6 +87,14 @@ export function Layout() {
         onExcluida={() => {
           setExcluindo(null)
           avisar('Transação excluída.')
+        }}
+      />
+      <CategoriaModal
+        aberto={criandoCategoria}
+        onFechar={() => setCriandoCategoria(false)}
+        onSalva={() => {
+          setCriandoCategoria(false)
+          avisar('Categoria salva.')
         }}
       />
       {aviso && <Aviso mensagem={aviso} onFechar={() => setAviso(null)} />}

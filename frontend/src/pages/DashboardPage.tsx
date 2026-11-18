@@ -14,6 +14,7 @@ import { Personagem } from '@/components/Personagem'
 import { ValorTransacao } from '@/components/ValorTransacao'
 import { botao } from '@/components/ui/botao'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useCategorias } from '@/hooks/useCategorias'
 import { useEntrada } from '@/hooks/useEntrada'
 import { useMesSelecionado } from '@/hooks/useMesSelecionado'
 import { useResumo, useResumoAnual } from '@/hooks/useResumo'
@@ -79,7 +80,49 @@ function UltimasTransacoes({ mes }: { mes: string }) {
   )
 }
 
-function EstadoVazioPainel({ mes, larga }: { mes: string; larga: boolean }) {
+const PASSOS = [
+  { titulo: '1. Crie uma categoria', descricao: 'Ex.: Salário para o que entra, Mercado para o que sai.', acao: 'Criar categoria' },
+  { titulo: '2. Lance sua primeira transação', descricao: 'Escolha a categoria, o valor e a data.', acao: 'Lançar transação' },
+]
+
+/** Onboarding do modo vazio (spec, seção 8): passo atual destacado, com botão para ele. */
+function PrimeirosPassos({ passoAtual }: { passoAtual: 0 | 1 }) {
+  const { abrirCategoria, abrirTransacao } = useInterface()
+  return (
+    <ol aria-label="Primeiros passos" className="m-0 grid w-full max-w-[560px] list-none gap-3 p-0 text-left">
+      {PASSOS.map((passo, i) => {
+        const atual = i === passoAtual
+        const feito = i < passoAtual
+        return (
+          <li
+            key={passo.titulo}
+            aria-current={atual ? 'step' : undefined}
+            className={cn(
+              'flex flex-wrap items-center gap-x-4 gap-y-2 rounded-cartao px-4 py-3.5',
+              atual ? 'border-2 border-verde-700 bg-verde-ativo-bg' : 'border border-borda-sutil bg-branco',
+            )}
+          >
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <strong className={cn('text-base font-extrabold', !atual && 'text-texto-2')}>
+                {passo.titulo}
+                {feito && <span className="ml-2 text-sm font-bold text-receita">✓ feito</span>}
+              </strong>
+              <span className="text-[13px] font-medium text-texto-2">{passo.descricao}</span>
+            </span>
+            {atual && (
+              <button type="button" onClick={() => (i === 0 ? abrirCategoria() : abrirTransacao())} className={botao({ tipo: 'primario' })}>
+                <Plus strokeWidth={2.5} aria-hidden="true" />
+                {passo.acao}
+              </button>
+            )}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
+function EstadoVazioPainel({ mes, larga, passoAtual }: { mes: string; larga: boolean; passoAtual: 0 | 1 | null }) {
   const { abrirTransacao } = useInterface()
   return (
     <section
@@ -90,16 +133,30 @@ function EstadoVazioPainel({ mes, larga }: { mes: string; larga: boolean }) {
         <Personagem pose="papo-cadeira-acenando" altura={larga ? 220 : 150} />
         <Personagem pose="caranguejo" altura={larga ? 84 : 58} />
       </div>
-      <h2 id="vazio-titulo" className="m-0 text-[22px] leading-[1.3] font-extrabold">
-        Nada lançado em {nomeDoMes(mes)}. Bora começar?
-      </h2>
-      <p className="m-0 max-w-[420px] text-[15px] leading-normal font-medium text-texto-2">
-        Registre a primeira receita ou despesa do mês e o painel se monta sozinho.
-      </p>
-      <button type="button" onClick={() => abrirTransacao()} className={botao({ tipo: 'primario' })}>
-        <Plus strokeWidth={2.5} aria-hidden="true" />
-        <span>Nova transação</span>
-      </button>
+      {passoAtual !== null ? (
+        <>
+          <h2 id="vazio-titulo" className="m-0 text-[22px] leading-[1.3] font-extrabold">
+            Bem-vindo! Vamos montar seu painel?
+          </h2>
+          <p className="m-0 max-w-[420px] text-[15px] leading-normal font-medium text-texto-2">
+            São só dois passos. Depois disso, os gráficos aparecem sozinhos.
+          </p>
+          <PrimeirosPassos passoAtual={passoAtual} />
+        </>
+      ) : (
+        <>
+          <h2 id="vazio-titulo" className="m-0 text-[22px] leading-[1.3] font-extrabold">
+            Nada lançado em {nomeDoMes(mes)}. Bora começar?
+          </h2>
+          <p className="m-0 max-w-[420px] text-[15px] leading-normal font-medium text-texto-2">
+            Registre a primeira receita ou despesa do mês e o painel se monta sozinho.
+          </p>
+          <button type="button" onClick={() => abrirTransacao()} className={botao({ tipo: 'primario' })}>
+            <Plus strokeWidth={2.5} aria-hidden="true" />
+            <span>Nova transação</span>
+          </button>
+        </>
+      )}
     </section>
   )
 }
@@ -108,6 +165,15 @@ export default function DashboardPage() {
   const larga = useTelaLarga()
   const { mes } = useMesSelecionado()
   const resumo = useResumo(mes)
+  const categorias = useCategorias()
+  // Sem categoria: passo 1. Com categoria mas sem nenhuma transação em nenhum mês: passo 2.
+  const passoAtual: 0 | 1 | null = !categorias.data
+    ? null
+    : categorias.data.length === 0
+      ? 0
+      : categorias.data.every((c) => c.transacoes === 0)
+        ? 1
+        : null
   const anual = useResumoAnual(Number(mes.slice(0, 4)))
   const progresso = useEntrada()
 
@@ -134,7 +200,7 @@ export default function DashboardPage() {
       ) : resumo.error ? (
         <EstadoErro erro={resumo.error} onTentarNovamente={() => resumo.refetch()} />
       ) : vazio ? (
-        <EstadoVazioPainel mes={mes} larga={larga} />
+        <EstadoVazioPainel mes={mes} larga={larga} passoAtual={passoAtual} />
       ) : (
         <div className={cn('grid', larga ? 'grid-cols-12 gap-6' : 'grid-cols-1 gap-4')}>
           {(['receita', 'despesa', 'saldo'] as const).map((metrica) => {

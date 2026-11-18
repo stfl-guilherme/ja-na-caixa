@@ -17,10 +17,20 @@ function plural(n: number) {
   return n === 1 ? '1 transação' : `${n} transações`
 }
 
-function Formulario({ categoria, onFechar, onSalva }: { categoria?: Categoria; onFechar: () => void; onSalva: () => void }) {
+function Formulario({
+  categoria,
+  tipoInicial,
+  onFechar,
+  onSalva,
+}: {
+  categoria?: Categoria
+  tipoInicial?: Tipo
+  onFechar: () => void
+  onSalva: (categoria: Categoria) => void
+}) {
   const salvar = useSalvarCategoria()
   const [nome, setNome] = useState(categoria?.nome ?? '')
-  const [tipo, setTipo] = useState<Tipo>(categoria?.tipo ?? 'DESPESA')
+  const [tipo, setTipo] = useState<Tipo>(categoria?.tipo ?? tipoInicial ?? 'DESPESA')
   const [cor, setCor] = useState(categoria?.cor ?? PALETA[0].hex)
   const [tentou, setTentou] = useState(false)
   const bloqueado = (categoria?.transacoes ?? 0) > 0
@@ -168,18 +178,20 @@ function Formulario({ categoria, onFechar, onSalva }: { categoria?: Categoria; o
 interface CategoriaModalProps {
   aberto: boolean
   categoria?: Categoria
+  /** Tipo já marcado ao criar (ex.: vindo do modal de transação). */
+  tipoInicial?: Tipo
   onFechar: () => void
-  onSalva: () => void
+  onSalva: (categoria: Categoria) => void
 }
 
-export function CategoriaModal({ aberto, categoria, onFechar, onSalva }: CategoriaModalProps) {
+export function CategoriaModal({ aberto, categoria, tipoInicial, onFechar, onSalva }: CategoriaModalProps) {
   return (
     <Dialog open={aberto} onOpenChange={(abrir) => !abrir && onFechar()}>
       <DialogContent aria-describedby={undefined} className="max-w-[520px]">
         <DialogHeader className="mb-[18px]">
           <DialogTitle>{categoria ? 'Editar categoria' : 'Nova categoria'}</DialogTitle>
         </DialogHeader>
-        {aberto && <Formulario key={categoria?.id ?? 'nova'} categoria={categoria} onFechar={onFechar} onSalva={onSalva} />}
+        {aberto && <Formulario key={categoria?.id ?? 'nova'} categoria={categoria} tipoInicial={tipoInicial} onFechar={onFechar} onSalva={onSalva} />}
       </DialogContent>
     </Dialog>
   )

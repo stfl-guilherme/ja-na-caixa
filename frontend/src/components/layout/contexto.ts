@@ -4,6 +4,8 @@ import type { Transacao } from '@/api/types'
 export interface InterfaceApp {
   /** Abre o modal de transação: sem argumento cria, com transação edita. */
   abrirTransacao: (transacao?: Transacao) => void
+  /** Abre o modal de nova categoria (onboarding do Painel). */
+  abrirCategoria: () => void
   /** Abre a confirmação de exclusão da transação. */
   pedirExclusao: (transacao: Transacao) => void
   /** Aviso de sucesso com o Papo joinha (some sozinho em 5s). */

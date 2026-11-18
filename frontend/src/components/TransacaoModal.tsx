@@ -1,8 +1,9 @@
 // Modal de nova/editar transação (docs/design/telas/app/transacoes/Transacoes.dc.html).
-import { ArrowDownLeft, ArrowUpRight, Trash2 } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Plus, Tag, Trash2 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { ApiError } from '@/api/client'
-import type { Categoria, Transacao, TransacaoInput } from '@/api/types'
+import type { Categoria, Tipo, Transacao, TransacaoInput } from '@/api/types'
+import { CategoriaModal } from '@/components/CategoriaModal'
 import { CampoFormulario } from '@/components/CampoFormulario'
 import { ariaDoCampo, classeInputLimpo, molduraCampo } from '@/lib/campos'
 import { MENSAGENS } from '@/lib/mensagens'
@@ -49,8 +50,7 @@ function errosDaApi(erro: unknown): Erros {
   return Object.fromEntries(campos.map((c) => [c, erro.fieldErrors[c]?.[0]]).filter(([, msg]) => msg))
 }
 
-function SeloTipo({ categoria }: { categoria?: Categoria }) {
-  const tipo = categoria?.tipo
+function SeloTipo({ tipo }: { tipo?: Tipo }) {
   return (
     <span
       id="m-tipo"
@@ -87,6 +87,10 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
     observacao: transacao?.observacao ?? '',
   }))
   const [tentou, setTentou] = useState(false)
+  const [tipo, setTipo] = useState<Tipo>(transacao?.tipo ?? 'DESPESA')
+  // Categorias criadas por aqui entram na lista antes de a consulta ser recarregada.
+  const [criadas, setCriadas] = useState<Categoria[]>([])
+  const [criandoCategoria, setCriandoCategoria] = useState(false)
 
   // Erros locais (após a primeira tentativa) têm prioridade sobre os da API.
   const erros: Erros = { ...errosDaApi(erroApi), ...(tentou ? validar(f) : {}) }
@@ -107,9 +111,13 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
     })
   }
 
-  const receitas = categorias.filter((c) => c.tipo === 'RECEITA')
-  const despesas = categorias.filter((c) => c.tipo === 'DESPESA')
-  const escolhida = categorias.find((c) => String(c.id) === f.categoria)
+  const todas = [...categorias, ...criadas.filter((nova) => !categorias.some((c) => c.id === nova.id))]
+  const doTipo = todas.filter((c) => c.tipo === tipo)
+  const escolherTipo = (novo: Tipo) => {
+    setTipo(novo)
+    // A categoria escolhida deixa de valer se for do outro tipo (o tipo vem da categoria, ADR-004).
+    if (!todas.some((c) => String(c.id) === f.categoria && c.tipo === novo)) atualizar('categoria', '')
+  }
 
   return (
     <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
@@ -162,41 +170,74 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
         </CampoFormulario>
       </div>
 
-      <CampoFormulario id="m-cat" rotulo="Categoria" obrigatorio erro={erros.categoria}>
+      <fieldset className="m-0 flex flex-col gap-1.5 border-0 p-0">
+        <legend className="mb-1.5 p-0 text-sm font-semibold">
+          Tipo <span aria-hidden="true">*</span>
+        </legend>
         <div className="flex flex-wrap items-center gap-2.5">
+          <div className="grid grid-cols-2 gap-0.5 rounded-campo bg-segmentado-bg p-0.5">
+            {(['DESPESA', 'RECEITA'] as const).map((opcao) => (
+              <label
+                key={opcao}
+                className={cn(
+                  'flex min-h-11 cursor-pointer items-center justify-center rounded-[10px] px-4 text-sm focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-tinta',
+                  tipo === opcao ? 'bg-branco font-bold shadow-[0_1px_3px_rgba(20,32,40,0.15)]' : 'font-semibold text-texto-3',
+                )}
+              >
+                <input type="radio" name="m-tipo-radio" value={opcao} checked={tipo === opcao} onChange={() => escolherTipo(opcao)} className="sr-only" />
+                {opcao === 'DESPESA' ? 'Despesa' : 'Receita'}
+              </label>
+            ))}
+          </div>
+          <SeloTipo tipo={tipo} />
+        </div>
+      </fieldset>
+
+      {doTipo.length === 0 ? (
+        <div className="flex flex-col items-start gap-2.5 rounded-campo bg-fundo-app px-3.5 py-3">
+          <p className="m-0 flex items-center gap-2 text-sm font-semibold">
+            <Tag className="size-4 shrink-0 text-texto-2" aria-hidden="true" />
+            Você ainda não tem categorias de {tipo === 'RECEITA' ? 'receita' : 'despesa'}
+          </p>
+          <button type="button" onClick={() => setCriandoCategoria(true)} className={botao({ tipo: 'secundario' })}>
+            <Plus strokeWidth={2.5} aria-hidden="true" />
+            Criar categoria
+          </button>
+          {erros.categoria && <p className="m-0 text-[13px] font-semibold text-erro">{erros.categoria}</p>}
+        </div>
+      ) : (
+        <CampoFormulario id="m-cat" rotulo="Categoria" obrigatorio erro={erros.categoria}>
           <select
             id="m-cat"
             value={f.categoria}
             onChange={(e) => atualizar('categoria', e.target.value)}
             className={cn(
-              'h-12 flex-[1_1_220px] cursor-pointer rounded-campo bg-branco px-3 text-base font-medium text-tinta',
+              'h-12 cursor-pointer rounded-campo bg-branco px-3 text-base font-medium text-tinta',
               erros.categoria ? 'border-2 border-erro' : 'border-[1.5px] border-borda-campo',
             )}
             {...ariaDoCampo('m-cat', erros.categoria, 'm-tipo')}
           >
             <option value="">Selecione…</option>
-            {receitas.length > 0 && (
-              <optgroup label="Receitas">
-                {receitas.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-            {despesas.length > 0 && (
-              <optgroup label="Despesas">
-                {despesas.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome}
-                  </option>
-                ))}
-              </optgroup>
-            )}
+            {doTipo.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
           </select>
-          <SeloTipo categoria={escolhida} />
-        </div>
-      </CampoFormulario>
+        </CampoFormulario>
+      )}
+
+      <CategoriaModal
+        aberto={criandoCategoria}
+        tipoInicial={tipo}
+        onFechar={() => setCriandoCategoria(false)}
+        onSalva={(nova) => {
+          setCriadas((atuais) => [...atuais, nova])
+          setTipo(nova.tipo)
+          atualizar('categoria', String(nova.id))
+          setCriandoCategoria(false)
+        }}
+      />
 
       <CampoFormulario
         id="m-obs"

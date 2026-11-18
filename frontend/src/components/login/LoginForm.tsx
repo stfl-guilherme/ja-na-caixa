@@ -146,11 +146,18 @@ const classeInput =
 export function LoginForm({ estado, erro, superficie, onEntrar, onDemo, modoCarregando = null }: LoginFormProps) {
   const [escolhendo, setEscolhendo] = useState(false)
   const botaoDemo = useRef<HTMLButtonElement>(null)
+  const devolverFoco = useRef(false)
   const voltar = () => {
+    devolverFoco.current = true
     setEscolhendo(false)
-    // Devolve o foco ao botão que abriu a escolha, depois que ele volta a existir.
-    requestAnimationFrame(() => botaoDemo.current?.focus())
   }
+  // Devolve o foco ao botão que abriu a escolha assim que ele volta a existir.
+  useEffect(() => {
+    if (!escolhendo && devolverFoco.current) {
+      devolverFoco.current = false
+      botaoDemo.current?.focus()
+    }
+  }, [escolhendo])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [mostrar, setMostrar] = useState(false)

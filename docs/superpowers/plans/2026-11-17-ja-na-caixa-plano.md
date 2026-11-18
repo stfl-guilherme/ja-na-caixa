@@ -102,7 +102,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** build/lint/test verdes (ADR-007).
 - **Commit:** `feat(frontend): adicionar componentes de UI no padrão shadcn`
 
-### [ ] F5 — Tela de login
+### [x] F5 — Tela de login
 - **Arquivos:** `src/auth/useAuth.ts`, `src/pages/LoginPage.tsx`, `src/pages/LoginPage.test.tsx`.
 - **Teste primeiro:** clicar em "Entrar como demonstração" chama `POST /api/auth/demo/` e navega para `/`; login inválido exibe a mensagem.
 - **Pronto quando:** teste de spec do front nº 3 verde.

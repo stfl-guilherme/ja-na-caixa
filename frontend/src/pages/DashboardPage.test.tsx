@@ -2,31 +2,18 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Resumo, Transacao } from '@/api/types'
-import { chamadas, mockFetch, renderComRotas } from '@/test/utils'
+import { resumoAnual2026, resumoNovembro, serieNovembro } from '@/test/fixtures'
+import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import DashboardPage from './DashboardPage'
 
 const semNbsp = (texto: string | null) => (texto ?? '').replace(/ /g, ' ')
-
-const resumo: Resumo = {
-  mes: '2026-11',
-  receitas: '4500.00',
-  despesas: '2310.45',
-  saldo: '2189.55',
-  por_categoria: [
-    { categoria_id: 1, nome: 'Salário', cor: '#16A34A', tipo: 'RECEITA', total: '4500.00', quantidade: 1 },
-    { categoria_id: 2, nome: 'Lazer', cor: '#A855F7', tipo: 'DESPESA', total: '1390.15', quantidade: 1 },
-    { categoria_id: 3, nome: 'Mercado', cor: '#22C55E', tipo: 'DESPESA', total: '920.30', quantidade: 2 },
-  ],
-  mes_anterior: { mes: '2026-10', receitas: '4000.00', despesas: '2000.00', saldo: '2000.00' },
-  serie_diaria: [],
-}
 
 function transacao(id: number): Transacao {
   return {
     id,
     categoria: 3,
     categoria_nome: 'Mercado',
-    categoria_cor: '#22C55E',
+    categoria_cor: '#B5541A',
     tipo: 'DESPESA',
     descricao: `Compra ${id}`,
     valor: '10.00',
@@ -42,7 +29,26 @@ const lista = (n: number) => ({
   next: null,
   previous: null,
   results: Array.from({ length: n }, (_, i) => transacao(i + 1)),
+  totais: { receitas: '0.00', despesas: '0.00', saldo: '0.00' },
+  totais_por_dia: [],
 })
+
+const vazio: Resumo = {
+  ...resumoNovembro,
+  receitas: '0.00',
+  despesas: '0.00',
+  saldo: '0.00',
+  por_categoria: [],
+  serie_diaria: serieNovembro(),
+}
+
+function rotas(resumo: Resumo = resumoNovembro, transacoes = lista(0)) {
+  return mockFetch([
+    { caminho: '/api/resumo/', corpo: resumo },
+    { caminho: '/api/resumo/anual/', corpo: resumoAnual2026 },
+    { caminho: '/api/transacoes/', corpo: transacoes },
+  ])
+}
 
 describe('DashboardPage', () => {
   beforeEach(() => {
@@ -54,35 +60,30 @@ describe('DashboardPage', () => {
     vi.unstubAllGlobals()
   })
 
-  it('mostra receitas, despesas e saldo vindos do resumo', async () => {
-    mockFetch([
-      { caminho: '/api/resumo/', corpo: resumo },
-      { caminho: '/api/transacoes/', corpo: lista(0) },
-    ])
+  it('mostra receitas, despesas e saldo vindos do resumo, com comparação', async () => {
+    rotas()
     renderComRotas(<DashboardPage />)
-    const receitas = await screen.findByRole('region', { name: 'Receitas' })
-    await vi.waitFor(() => expect(semNbsp(receitas.textContent)).toContain('R$ 4.500,00'))
-    expect(semNbsp(screen.getByRole('region', { name: 'Despesas' }).textContent)).toContain('R$ 2.310,45')
-    expect(semNbsp(screen.getByRole('region', { name: 'Saldo' }).textContent)).toContain('R$ 2.189,55')
+    const receitas = await screen.findByRole('link', { name: /^Receitas de novembro/ })
+    expect(semNbsp(receitas.textContent)).toContain('+ R$ 6.686,42')
+    expect(semNbsp(screen.getByRole('link', { name: /^Despesas de novembro/ }).textContent)).toContain('− R$ 3.711,81')
+    const saldo = screen.getByRole('link', { name: /^Saldo de novembro/ })
+    expect(semNbsp(saldo.textContent)).toContain('+ R$ 2.974,61')
+    expect(saldo).toHaveTextContent('vs outubro · sobrou mais')
   })
 
-  it('lista somente despesas no gráfico por categoria', async () => {
-    mockFetch([
-      { caminho: '/api/resumo/', corpo: resumo },
-      { caminho: '/api/transacoes/', corpo: lista(0) },
-    ])
+  it('mostra os gráficos com resumo acessível', async () => {
+    rotas()
     renderComRotas(<DashboardPage />)
-    const grafico = await screen.findByRole('region', { name: 'Despesas por categoria' })
-    expect(await within(grafico).findByText('Lazer')).toBeInTheDocument()
-    expect(within(grafico).getByText('Mercado')).toBeInTheDocument()
-    expect(within(grafico).queryByText('Salário')).not.toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: /saldo acumulado em novembro/ })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /Gráfico espelhado/ })).toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: /Gráfico de barras de 2026/ })).toBeInTheDocument()
+    const mapa = screen.getByRole('region', { name: 'Para onde foi o dinheiro' })
+    expect(within(mapa).getAllByText('Moradia').length).toBeGreaterThan(0)
+    expect(within(mapa).queryByText('Salário')).not.toBeInTheDocument()
   })
 
   it('mostra as 5 últimas transações do mês', async () => {
-    mockFetch([
-      { caminho: '/api/resumo/', corpo: resumo },
-      { caminho: '/api/transacoes/', corpo: lista(8) },
-    ])
+    rotas(resumoNovembro, lista(8))
     renderComRotas(<DashboardPage />)
     const ultimas = await screen.findByRole('region', { name: 'Últimas transações' })
     expect(await within(ultimas).findByText('Compra 1')).toBeInTheDocument()
@@ -90,11 +91,8 @@ describe('DashboardPage', () => {
     expect(within(ultimas).queryByText('Compra 6')).not.toBeInTheDocument()
   })
 
-  it('consulta o mês escolhido', async () => {
-    const fetchMock = mockFetch([
-      { caminho: '/api/resumo/', corpo: resumo },
-      { caminho: '/api/transacoes/', corpo: lista(0) },
-    ])
+  it('consulta o mês escolhido no seletor global', async () => {
+    const fetchMock = rotas()
     renderComRotas(<DashboardPage />)
     await userEvent.click(await screen.findByRole('button', { name: 'Próximo mês' }))
     await vi.waitFor(() => {
@@ -105,13 +103,27 @@ describe('DashboardPage', () => {
     })
   })
 
-  it('mostra estados vazios quando o mês não tem movimento', async () => {
-    mockFetch([
-      { caminho: '/api/resumo/', corpo: { ...resumo, receitas: '0.00', despesas: '0.00', saldo: '0.00', por_categoria: [] } },
-      { caminho: '/api/transacoes/', corpo: lista(0) },
-    ])
+  it('o Papo espia o cartão Saldo e troca para preocupado com saldo negativo', async () => {
+    rotas()
+    const { unmount } = renderComRotas(<DashboardPage />)
+    await screen.findByRole('link', { name: /^Saldo de novembro/ })
+    expect(personagensNaTela()).toEqual(['papo-espiando'])
+    unmount()
+
+    rotas({ ...resumoNovembro, saldo: '-625.39' })
     renderComRotas(<DashboardPage />)
-    expect(await screen.findByText('Nenhuma despesa neste mês.')).toBeInTheDocument()
-    expect(await screen.findByText('Nenhuma transação neste mês.')).toBeInTheDocument()
+    const saldo = await screen.findByRole('link', { name: /^Saldo de novembro/ })
+    expect(personagensNaTela()).toEqual(['papo-preocupado'])
+    expect(semNbsp(saldo.textContent)).toContain('− R$ 625,39')
+  })
+
+  it('mostra o estado vazio com o Papo na cadeira e o caranguejo, e esconde o Papo do menu', async () => {
+    rotas(vazio)
+    const { interfaceApp } = renderComRotas(<DashboardPage />)
+    expect(await screen.findByRole('heading', { name: 'Nada lançado em novembro. Bora começar?' })).toBeInTheDocument()
+    expect(personagensNaTela()).toEqual(['papo-cadeira-acenando', 'caranguejo'])
+    expect(interfaceApp.setOcultarPapoDoMenu).toHaveBeenCalledWith(true)
+    await userEvent.click(screen.getByRole('button', { name: 'Nova transação' }))
+    expect(interfaceApp.abrirTransacao).toHaveBeenCalled()
   })
 })

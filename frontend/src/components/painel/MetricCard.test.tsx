@@ -67,6 +67,7 @@ describe('MetricCard', () => {
   })
 
   it('a contagem animada termina exatamente no valor da API', () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('min-width'), addEventListener() {}, removeEventListener() {} }))
     let quadro: FrameRequestCallback = () => {}
     vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
       quadro = cb

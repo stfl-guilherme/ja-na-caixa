@@ -3,6 +3,7 @@ import { render } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { vi } from 'vitest'
+import { InterfaceContext, type InterfaceApp } from '@/components/layout/contexto'
 
 export function criarQueryClient() {
   return new QueryClient({
@@ -21,21 +22,36 @@ export function renderComRotas(
   }: { caminho?: string; rota?: string; extras?: Record<string, ReactElement>; filhos?: ReactNode } = {},
 ) {
   const queryClient = criarQueryClient()
+  const interfaceApp = interfaceFalsa()
   return {
     queryClient,
+    interfaceApp,
     ...render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={[caminho]}>
-          <Routes>
-            <Route path={rota} element={ui} />
-            {filhos}
-            {Object.entries(extras).map(([path, elemento]) => (
-              <Route key={path} path={path} element={elemento} />
-            ))}
-          </Routes>
-        </MemoryRouter>
+        <InterfaceContext.Provider value={interfaceApp}>
+          <MemoryRouter initialEntries={[caminho]}>
+            <Routes>
+              <Route path={rota} element={ui} />
+              {filhos}
+              {Object.entries(extras).map(([path, elemento]) => (
+                <Route key={path} path={path} element={elemento} />
+              ))}
+            </Routes>
+          </MemoryRouter>
+        </InterfaceContext.Provider>
       </QueryClientProvider>,
     ),
+  }
+}
+
+/** Contexto do Layout com funções espiãs, para testar páginas isoladas. */
+export function interfaceFalsa(): InterfaceApp {
+  return {
+    abrirTransacao: vi.fn(),
+    pedirExclusao: vi.fn(),
+    avisar: vi.fn(),
+    avisoAberto: false,
+    setOcultarPapoDoMenu: vi.fn(),
   }
 }
 

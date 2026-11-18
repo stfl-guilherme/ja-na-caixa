@@ -96,7 +96,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Teste primeiro:** `squarify` cobre a área total sem sobreposição; `textoSobre` escolhe branco/tinta pelo contraste; cada gráfico tem `role="img"` com `aria-label` e tabela equivalente escondida; tooltip do saldo responde às setas do teclado; treemap mostra só despesas e a tabela das 5 maiores.
 - **Commit:** `feat(frontend): adicionar gráficos do painel em SVG`
 
-### [ ] NF9 — Painel: página completa
+### [x] NF9 — Painel: página completa
 - **Arquivos:** `frontend/src/pages/DashboardPage.tsx` (+ teste).
 - **Teste primeiro:** testes atuais adaptados (totais, só despesas no gráfico, 5 últimas, troca de mês, vazio); novos: **troca para `papo-preocupado` quando o saldo é negativo**; estado vazio com `papo-cadeira-acenando` + `caranguejo` e botão "Nova transação"; no máximo 2 personagens.
 - **Commit:** `feat(frontend): montar o painel bento com estados vazio e negativo`

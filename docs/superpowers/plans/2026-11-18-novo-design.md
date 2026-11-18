@@ -74,7 +74,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** tipos novos (`serie_diaria`, `mes_anterior`, `quantidade`, `totais`, `totais_por_dia`, `ResumoAnual`) e testes verdes.
 - **Commit:** `feat(frontend): consumir novos dados do resumo e guardar o mês na URL`
 
-### [ ] NF5 — Login
+### [x] NF5 — Login
 - **Arquivos:** `frontend/src/pages/LoginPage.tsx` (+ teste), `frontend/src/components/login/CenaPraia.tsx`, `CenaPraiaMobile.tsx`.
 - **Teste primeiro:** testes atuais de login continuam (demo, usuário/senha, erro, redirecionamento); novos: estado carregando (botão "Entrando…", campos desabilitados, Papo animado), estado de erro (banner `role="alert"` com "Usuário ou senha inválidos", campos `aria-invalid`, Papo preocupado), mostrar/ocultar senha.
 - **Pronto quando:** desktop (cena + cartão) e mobile (cena no topo sobre areia contínua, sem cartão) conforme `docs/design/telas/login/`.

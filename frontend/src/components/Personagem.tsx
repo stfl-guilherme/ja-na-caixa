@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils'
 
 interface PersonagemProps {
   pose: Pose
-  /** Altura da imagem em px; a largura segue a proporção do PNG. */
-  altura: number
+  /** Altura da imagem em px; a largura segue a proporção do PNG. Sem altura, o tamanho vem da classe. */
+  altura?: number
   className?: string
   style?: CSSProperties
 }
@@ -23,7 +23,7 @@ export function Personagem({ pose, altura, className, style }: PersonagemProps) 
       draggable={false}
       data-personagem={pose}
       className={cn('pointer-events-none block w-auto select-none', className)}
-      style={{ height: `${altura}px`, ...style }}
+      style={{ ...(altura !== undefined && { height: `${altura}px` }), ...style }}
     />
   )
 }

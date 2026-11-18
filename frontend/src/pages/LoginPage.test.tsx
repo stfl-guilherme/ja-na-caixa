@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { chamadas, mockFetch, renderComRotas } from '@/test/utils'
+import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import LoginPage from './LoginPage'
 
 const extras = { '/': <p>Página inicial</p> }
@@ -9,10 +9,41 @@ const extras = { '/': <p>Página inicial</p> }
 describe('LoginPage', () => {
   afterEach(() => vi.unstubAllGlobals())
 
-  it('exibe o espaço reservado do nome', () => {
+  it('exibe o nome, o título e o Papo acenando na cadeira', () => {
     mockFetch([])
     renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
-    expect(screen.getByRole('heading', { name: 'JáNaCaixa' })).toBeInTheDocument()
+    expect(screen.getAllByText((_, el) => el?.textContent === 'JáNaCaixa' && el.tagName === 'P').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'Entre na sua conta' })).toBeInTheDocument()
+    expect(personagensNaTela()).toContain('papo-cadeira-acenando')
+  })
+
+  it('mostra o estado de carregando com o Papo animado', async () => {
+    let liberar: (r: Response) => void = () => {}
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise<Response>((resolve) => (liberar = resolve))),
+    )
+    document.cookie = 'csrftoken=teste; path=/'
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    await userEvent.type(screen.getByLabelText('Usuário'), 'ana')
+    await userEvent.type(screen.getByLabelText('Senha'), 'segredo')
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
+    expect(await screen.findByRole('button', { name: /Entrando/ })).toBeDisabled()
+    expect(screen.getByLabelText('Usuário')).toBeDisabled()
+    expect(screen.getByLabelText('Senha')).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Entrar como demonstração/ })).toBeDisabled()
+    expect(personagensNaTela()).toContain('papo-animado')
+    liberar(new Response(null, { status: 401 }))
+  })
+
+  it('mostra e oculta a senha', async () => {
+    mockFetch([])
+    renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
+    const senha = screen.getByLabelText('Senha')
+    expect(senha).toHaveAttribute('type', 'password')
+    await userEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }))
+    expect(senha).toHaveAttribute('type', 'text')
+    expect(screen.getByRole('button', { name: 'Ocultar senha' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('entra como demonstração e redireciona para o dashboard', async () => {
@@ -21,7 +52,7 @@ describe('LoginPage', () => {
     ])
     renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Entrar como demonstração' }))
+    await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
 
     expect(await screen.findByText('Página inicial')).toBeInTheDocument()
     expect(chamadas(fetchMock, 'POST', '/api/auth/demo/')).toHaveLength(1)
@@ -52,8 +83,12 @@ describe('LoginPage', () => {
     await userEvent.type(screen.getByLabelText('Senha'), 'errada')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Usuário ou senha inválidos.')
+    expect(await screen.findByRole('alert')).toHaveTextContent('Usuário ou senha inválidos')
     expect(screen.queryByText('Página inicial')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Usuário')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Senha')).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText('Usuário')).toHaveAccessibleDescription(/Usuário ou senha inválidos/)
+    expect(personagensNaTela()).toContain('papo-preocupado')
   })
 
   it('mostra o erro quando o demo não está disponível', async () => {
@@ -66,7 +101,7 @@ describe('LoginPage', () => {
       },
     ])
     renderComRotas(<LoginPage />, { caminho: '/login', rota: '/login', extras })
-    await userEvent.click(screen.getByRole('button', { name: 'Entrar como demonstração' }))
+    await userEvent.click(screen.getByRole('button', { name: /Entrar como demonstração/ }))
     expect(await screen.findByRole('alert')).toHaveTextContent('seed_demo')
   })
 

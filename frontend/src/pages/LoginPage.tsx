@@ -1,86 +1,75 @@
-import { Sparkles } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+// Login (docs/design/telas/login/): cena de praia + cartão no desktop; cena no topo sobre areia no celular.
 import { Navigate, useNavigate } from 'react-router-dom'
+import { ApiError } from '@/api/client'
 import { useLogin, useLoginDemo, useUsuario } from '@/auth/useAuth'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
-import { Field } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+import { CenaPraia, CenaPraiaMobile } from '@/components/login/CenaPraia'
+import { LoginForm, type EstadoLogin } from '@/components/login/LoginForm'
+import { useTelaLarga } from '@/hooks/useTelaLarga'
 import { mensagemDeErro } from '@/lib/erros'
+import type { Pose } from '@/lib/personagens'
+
+const CENA: Record<EstadoLogin, { pose: Pose; fala: string }> = {
+  padrao: { pose: 'papo-cadeira-acenando', fala: 'Bom dia! O mar tá calmo, pode entrar.' },
+  carregando: { pose: 'papo-animado', fala: 'Abrindo a caixa…' },
+  erro: { pose: 'papo-preocupado', fala: 'Hmm… não achei essa conta.' },
+}
+
+function descreverErro(erro: unknown) {
+  if (erro instanceof ApiError && erro.status === 400) {
+    return { titulo: 'Usuário ou senha inválidos', detalhe: 'Confira os dados e tente de novo.' }
+  }
+  return { titulo: 'Não foi possível entrar', detalhe: mensagemDeErro(erro) }
+}
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const larga = useTelaLarga()
   const { data: usuario } = useUsuario()
   const login = useLogin()
   const demo = useLoginDemo()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const entrar = (evento: FormEvent) => {
-    evento.preventDefault()
-    demo.reset()
-    login.mutate({ username, password }, { onSuccess: () => navigate('/', { replace: true }) })
-  }
-
-  const entrarDemo = () => {
-    login.reset()
-    demo.mutate(undefined, { onSuccess: () => navigate('/', { replace: true }) })
-  }
-
-  const erro = login.error ?? demo.error
-  const ocupado = login.isPending || demo.isPending
 
   if (usuario) return <Navigate to="/" replace />
 
+  const erro = login.error ?? demo.error
+  const estado: EstadoLogin = login.isPending || demo.isPending ? 'carregando' : erro ? 'erro' : 'padrao'
+  const irParaPainel = () => navigate('/', { replace: true })
+
+  const formulario = (
+    <LoginForm
+      estado={estado}
+      erro={estado === 'erro' ? descreverErro(erro) : null}
+      superficie={larga ? 'branco' : 'areia'}
+      onEntrar={(username, password) => {
+        demo.reset()
+        login.mutate({ username, password }, { onSuccess: irParaPainel })
+      }}
+      onDemo={() => {
+        login.reset()
+        demo.mutate(undefined, { onSuccess: irParaPainel })
+      }}
+    />
+  )
+  const rodape = <footer className="text-[13px] font-medium text-texto-2">Projeto acadêmico — AMF</footer>
+
+  if (larga) {
+    return (
+      <main className="relative flex min-h-[max(100vh,760px)] items-center justify-end overflow-hidden bg-ceu px-[clamp(16px,6vw,96px)] py-8">
+        <CenaPraia {...CENA[estado]} />
+        <div className="relative flex w-full max-w-[440px] flex-col items-center gap-6 rounded-cartao bg-branco px-8 pt-9 pb-6 shadow-[0_24px_60px_rgba(20,32,40,0.18)]">
+          {formulario}
+          {rodape}
+        </div>
+      </main>
+    )
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-50 via-background to-emerald-50 px-4 py-10">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="items-center text-center">
-          {/* Espaço reservado para logo/mascote (fora do escopo da IA). */}
-          <h1 className="text-3xl font-bold tracking-tight text-primary">JáNaCaixa</h1>
-          <CardDescription>Seu controle financeiro pessoal</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <form className="grid gap-4" onSubmit={entrar} noValidate>
-            <Field id="username" label="Usuário">
-              <Input
-                id="username"
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </Field>
-            <Field id="password" label="Senha">
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </Field>
-            {erro && (
-              <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {mensagemDeErro(erro)}
-              </p>
-            )}
-            <Button type="submit" loading={login.isPending} disabled={ocupado}>
-              Entrar
-            </Button>
-          </form>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            ou
-            <span className="h-px flex-1 bg-border" />
-          </div>
-          <Button variant="outline" onClick={entrarDemo} loading={demo.isPending} disabled={ocupado}>
-            {!demo.isPending && <Sparkles aria-hidden="true" />}
-            Entrar como demonstração
-          </Button>
-        </CardContent>
-      </Card>
+    <main className="flex min-h-screen flex-col overflow-x-hidden bg-areia bg-[radial-gradient(circle,rgba(150,110,50,0.14)_0.9px,transparent_1.4px),radial-gradient(circle,rgba(255,255,255,0.35)_0.9px,transparent_1.4px)] [background-position:0_0,9px_13px] [background-size:18px_18px,27px_27px]">
+      <CenaPraiaMobile {...CENA[estado]} />
+      <div className="flex flex-col items-center gap-6 px-5 pt-3 pb-8">
+        <div className="w-full max-w-[440px]">{formulario}</div>
+        {rodape}
+      </div>
     </main>
   )
 }

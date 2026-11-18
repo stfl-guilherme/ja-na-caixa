@@ -77,6 +77,9 @@
   --color-divisor-areia: var(--jnc-divisor-areia);
   --color-toast-borda: var(--jnc-toast-borda);
 
+  /* Breakpoint único do design: 720px (variante `largo:`). */
+  --breakpoint-largo: 720px;
+
   --font-sans: var(--jnc-fonte);
   --font-logo: var(--jnc-fonte-logo);
 

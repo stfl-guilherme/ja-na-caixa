@@ -133,3 +133,21 @@ def test_sem_login_retorna_401(api_client):
     assert api_client.get(URL).status_code == 401
     assert api_client.post(URL, {}, format="json").status_code == 401
     assert api_client.get(url_item(1)).status_code == 401
+
+
+@pytest.mark.django_db
+class TestRevisaoCategorias:
+    def test_resposta_de_edicao_traz_quantidade_real_de_transacoes(self, cliente_logado, usuario):
+        categoria = criar_categoria(usuario)
+        criar_transacao(categoria)
+        resposta = cliente_logado.patch(url_item(categoria.pk), {"nome": "Feira"}, format="json")
+        assert resposta.json()["transacoes"] == 1
+
+    def test_resposta_de_criacao_traz_zero_transacoes(self, cliente_logado):
+        resposta = cliente_logado.post(URL, {"nome": "Nova", "tipo": "DESPESA"}, format="json")
+        assert resposta.json()["transacoes"] == 0
+
+    def test_filtro_tipo_invalido_retorna_400(self, cliente_logado):
+        resposta = cliente_logado.get(URL, {"tipo": "OUTRO"})
+        assert resposta.status_code == 400
+        assert "tipo" in resposta.json()

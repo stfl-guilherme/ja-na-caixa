@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db.models import Count, ProtectedError
 from django.utils import timezone
 from rest_framework import status, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,7 +22,9 @@ class CategoriaViewSet(viewsets.ModelViewSet):
             num_transacoes=Count("transacoes")
         )
         tipo = self.request.query_params.get("tipo")
-        if tipo in TipoCategoria.values:
+        if tipo and self.action == "list":
+            if tipo not in TipoCategoria.values:
+                raise ValidationError({"tipo": ["Use RECEITA ou DESPESA."]})
             queryset = queryset.filter(tipo=tipo)
         return queryset
 

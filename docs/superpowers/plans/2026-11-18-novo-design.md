@@ -12,7 +12,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Backend
 
-### [ ] NB1 — Série diária no resumo
+### [x] NB1 — Série diária no resumo
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/tests/test_resumo.py`.
 - **Teste primeiro:** `serie_diaria` tem um item por dia do mês (30 em novembro, 29 em fevereiro de 2028); receitas, despesas e `saldo_acumulado` corretos; dia sem transação com `"0.00"` e acumulado repetido; mês sem transações → todos os itens zerados; precisão decimal (`0.10 + 0.20`); isolamento (transações de outro usuário não entram).
 - **Pronto quando:** testes verdes; campos antigos do resumo inalterados.

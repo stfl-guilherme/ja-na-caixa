@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.db.models import Count, ProtectedError
@@ -105,5 +106,32 @@ class ResumoView(APIView):
                 "despesas": _dinheiro(despesas),
                 "saldo": _dinheiro(receitas - despesas),
                 "por_categoria": [{**i, "total": _dinheiro(i["total"])} for i in itens],
+                "serie_diaria": _serie_diaria(transacoes, inicio, fim),
             }
         )
+
+
+def _serie_diaria(transacoes, inicio, fim) -> list[dict]:
+    """Um item por dia do mês, com o saldo acumulado só dentro do mês (spec 6.4)."""
+    por_dia: dict = {}
+    for transacao in transacoes:
+        dia = por_dia.setdefault(transacao.data, {TipoCategoria.RECEITA: Decimal("0"), TipoCategoria.DESPESA: Decimal("0")})
+        dia[transacao.categoria.tipo] += transacao.valor
+
+    serie = []
+    acumulado = Decimal("0")
+    data = inicio
+    while data < fim:
+        dia = por_dia.get(data, {TipoCategoria.RECEITA: Decimal("0"), TipoCategoria.DESPESA: Decimal("0")})
+        receitas, despesas = dia[TipoCategoria.RECEITA], dia[TipoCategoria.DESPESA]
+        acumulado += receitas - despesas
+        serie.append(
+            {
+                "data": data.isoformat(),
+                "receitas": _dinheiro(receitas),
+                "despesas": _dinheiro(despesas),
+                "saldo_acumulado": _dinheiro(acumulado),
+            }
+        )
+        data += timedelta(days=1)
+    return serie

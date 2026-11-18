@@ -35,7 +35,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes de spec nº 7 (parcial) verdes.
 - **Commit:** `feat(api): adicionar autenticação por sessão`
 
-### [ ] B5 — Login de demonstração
+### [x] B5 — Login de demonstração
 - **Arquivos:** `financas/views_auth.py`, `financas/tests/test_auth.py`.
 - **Teste primeiro:** com usuário `demo` → `200` e sessão ativa; `DEMO_ENABLED=False` → `404`; sem usuário `demo` → `503`.
 - **Pronto quando:** teste de spec nº 8 verde.

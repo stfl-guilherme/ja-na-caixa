@@ -60,3 +60,37 @@ class TestAutenticacao:
 
     def test_logout_sem_login_retorna_401(self, api_client):
         assert api_client.post("/api/auth/logout/").status_code == 401
+
+
+@pytest.mark.django_db
+class TestLoginDemo:
+    def _criar_demo(self):
+        from django.contrib.auth.models import User
+
+        demo = User.objects.create(username="demo")
+        demo.set_unusable_password()
+        demo.save()
+        return demo
+
+    def test_login_demo(self, api_client):
+        demo = self._criar_demo()
+        resposta = api_client.post("/api/auth/demo/")
+        assert resposta.status_code == 200
+        assert resposta.json() == {"id": demo.id, "username": "demo"}
+        assert api_client.get("/api/auth/me/").json()["username"] == "demo"
+
+    def test_demo_desligado_retorna_404(self, api_client, settings):
+        settings.DEMO_ENABLED = False
+        self._criar_demo()
+        assert api_client.post("/api/auth/demo/").status_code == 404
+        assert api_client.get("/api/auth/me/").status_code == 401
+
+    def test_sem_usuario_demo_retorna_503(self, api_client):
+        resposta = api_client.post("/api/auth/demo/")
+        assert resposta.status_code == 503
+        assert "seed_demo" in resposta.json()["detail"]
+
+    def test_demo_nao_entra_pelo_formulario(self, api_client):
+        self._criar_demo()
+        resposta = api_client.post("/api/auth/login/", {"username": "demo", "password": ""}, format="json")
+        assert resposta.status_code == 400

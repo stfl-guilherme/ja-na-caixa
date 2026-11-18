@@ -1,4 +1,6 @@
-from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from rest_framework import status
@@ -36,6 +38,29 @@ class LoginView(APIView):
                 {"detail": "Usuário ou senha inválidos."}, status=status.HTTP_400_BAD_REQUEST
             )
         login(request, user)
+        return Response(_usuario_json(user))
+
+
+DEMO_USERNAME = "demo"
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class DemoLoginView(APIView):
+    """Autentica no usuário demo sem senha no front (ADR-003, ADR-009)."""
+
+    authentication_classes: list = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if not settings.DEMO_ENABLED:
+            raise Http404
+        user = get_user_model().objects.filter(username=DEMO_USERNAME, is_active=True).first()
+        if user is None:
+            return Response(
+                {"detail": "Usuário de demonstração não encontrado. Rode: python manage.py seed_demo"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         return Response(_usuario_json(user))
 
 

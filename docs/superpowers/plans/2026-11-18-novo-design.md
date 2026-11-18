@@ -24,7 +24,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes.
 - **Commit:** `feat(api): adicionar totais do mês anterior ao resumo`
 
-### [ ] NB3 — Quantidade de transações por categoria no mês
+### [x] NB3 — Quantidade de transações por categoria no mês
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/tests/test_resumo.py`.
 - **Teste primeiro:** `por_categoria[].quantidade` conta só transações do mês consultado (transação de outro mês não conta).
 - **Pronto quando:** teste verde; o teste antigo de `por_categoria` passa a incluir `quantidade`.

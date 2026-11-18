@@ -27,9 +27,9 @@ class TestResumo:
         assert corpo["despesas"] == "2310.45"
         assert corpo["saldo"] == "2189.55"
         assert corpo["por_categoria"] == [
-            {"categoria_id": salario.pk, "nome": "Salário", "cor": "#16A34A", "tipo": "RECEITA", "total": "4500.00"},
-            {"categoria_id": lazer.pk, "nome": "Lazer", "cor": "#A855F7", "tipo": "DESPESA", "total": "1390.15"},
-            {"categoria_id": mercado.pk, "nome": "Mercado", "cor": "#22C55E", "tipo": "DESPESA", "total": "920.30"},
+            {"categoria_id": salario.pk, "nome": "Salário", "cor": "#16A34A", "tipo": "RECEITA", "total": "4500.00", "quantidade": 1},
+            {"categoria_id": lazer.pk, "nome": "Lazer", "cor": "#A855F7", "tipo": "DESPESA", "total": "1390.15", "quantidade": 1},
+            {"categoria_id": mercado.pk, "nome": "Mercado", "cor": "#22C55E", "tipo": "DESPESA", "total": "920.30", "quantidade": 2},
         ]
 
     def test_precisao_decimal(self, cliente_logado, usuario):
@@ -159,3 +159,13 @@ class TestMesAnterior:
         anterior = cliente_logado.get(URL, {"mes": "2026-11"}).json()["mes_anterior"]
         assert anterior["despesas"] == "0.00"
 
+
+
+@pytest.mark.django_db
+def test_quantidade_por_categoria_conta_so_o_mes(cliente_logado, usuario):
+    mercado = criar_categoria(usuario, nome="Mercado", tipo="DESPESA")
+    criar_transacao(mercado, valor="10.00", data=date(2026, 11, 1))
+    criar_transacao(mercado, valor="20.00", data=date(2026, 11, 30))
+    criar_transacao(mercado, valor="30.00", data=date(2026, 10, 31))
+    itens = cliente_logado.get(URL, {"mes": "2026-11"}).json()["por_categoria"]
+    assert [(i["nome"], i["quantidade"], i["total"]) for i in itens] == [("Mercado", 2, "30.00")]

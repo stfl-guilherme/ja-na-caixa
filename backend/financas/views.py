@@ -92,9 +92,11 @@ class ResumoView(APIView):
                     "cor": categoria.cor,
                     "tipo": categoria.tipo,
                     "total": Decimal("0"),
+                    "quantidade": 0,
                 },
             )
             item["total"] += transacao.valor
+            item["quantidade"] += 1
 
         itens = sorted(por_categoria.values(), key=lambda i: (-i["total"], i["nome"]))
         receitas = totais[TipoCategoria.RECEITA]

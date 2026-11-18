@@ -103,3 +103,53 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
   - `referencias/` (componentes de referência do 21st.dev, `.tsx`) veio **vazia** no export. A seção 5 de `decisoes-de-design.md` e as telas (`Painel.dc.html`, que traz o `squarify()`, as escalas dos gráficos e a contagem animada) descrevem o que foi usado, adaptado e descartado; a implementação segue essas descrições. Quando os arquivos forem adicionados em `docs/design/referencias/`, conferir origem e licença e completar a seção "Créditos de componentes" do README.
   - `decisoes-de-design.md` e `prompt-design-claude-code.md` não estavam dentro de `docs/design-import/`, e sim na pasta acima do repositório. Foram **copiados** (não movidos) para `docs/design/decisoes-de-design.md` e `docs/ia/prompt-design.md`, porque apagar arquivos fora do repositório exige confirmação do autor (`CLAUDE.md`). Os originais podem ser apagados manualmente.
 - **Consequências:** `docs/design/README.md` e `decisoes-de-design.md` citam os caminhos novos.
+
+## ADR-013 — Direção visual do novo design
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** O autor definiu o visual do JáNaCaixa no Claude Design e num gerador de imagens. O processo e as regras estão em `docs/design/decisoes-de-design.md`, que passa a ser a fonte da verdade do design. O `CLAUDE.md` diz que mascote e logo não são escopo da IA.
+- **Decisão (resumo de `decisoes-de-design.md`):**
+  - *Ilustração cartunesca, dados sóbrios.* Personagem e cenário são cartoon; números, tabelas, gráficos e formulários são limpos. O traço forte (contorno escuro) é exclusivo do mascote; na interface, o único elemento com traço cartunesco é o botão "Entrar como demonstração".
+  - *A praia é a vitrine.* A cena de praia existe só no login. As telas internas usam fundo areia clara (`#FBF6EC`), cartões brancos com raio de 20px e sombra suave.
+  - *O personagem decora, não informa.* O Papo (jacaré-de-papo-amarelo) e os coadjuvantes (caranguejo e gaivota) são PNGs fornecidos pelo autor, sempre com `alt=""` e `aria-hidden="true"`, nas bordas, com no máximo 72px visíveis e no máximo 2 personagens por tela. A única exceção informativa (Papo preocupado com saldo negativo) repete uma informação que já está no texto.
+  - *Acessibilidade como requisito.* WCAG AA, foco visível, alvos ≥ 44px, cor nunca como único sinal (sinal + seta + texto).
+  - Tokens (cores, tipografia, raios, sombras, espaços) em `frontend/src/styles/tokens.css`, mapeados no tema do Tailwind; nenhum valor inventado.
+- **Escopo da IA:** a IA **não desenha** mascote nem logo. Os PNGs entram como assets e o logotipo é o texto "JáNaCaixa" em Baloo 2, como no design. Isso mantém a regra do `CLAUDE.md`, que tratava do *desenho* do mascote e do logo.
+- **Alternativas descartadas:** manter o visual neutro do shadcn (sem identidade); usar a ilustração também nas telas internas (polui os dados).
+- **Consequências:** o tema do Tailwind troca as cores neutras do shadcn pelos tokens do design; os testes de interface passam a cobrir as regras do personagem e de cor.
+
+## ADR-014 — Adaptação dos componentes de referência do 21st.dev
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** A seção 5 de `decisoes-de-design.md` lista componentes do 21st.dev avaliados como referência visual para o Painel. Os arquivos `.tsx` não vieram no export (`docs/design/referencias/` vazia, ADR-012) e o ADR-007 proíbe rodar a CLI do shadcn. O prompt do design proíbe `framer-motion`.
+- **Decisão:** os componentes de referência **não são instalados nem copiados**. Os gráficos e cartões são escritos no projeto, em React + SVG, a partir do comportamento descrito nas telas (`Painel.dc.html`) e na seção 5:
+
+  | Referência | Uso no JáNaCaixa | Motivo |
+  |---|---|---|
+  | Linha de receita (Analytics Bento) | **Adaptado:** linha do saldo acumulado por dia, com área suave, tooltip por mouse e teclado | É o gráfico mais útil para quem controla o mês |
+  | Ondas espelhadas desktop × mobile | **Adaptado:** barras de receitas acima e despesas abaixo do eixo, por dia; sem animação contínua | Animação em loop faz dado financeiro parecer instável |
+  | Treemap por categoria | **Adaptado:** despesas por categoria com a cor da categoria e cor do texto escolhida por contraste (`squarify` + `textoSobre`) | Lê melhor que pizza com muitas categorias |
+  | Radar de sazonalidade | **Descartado**, substituído por barras dos 12 meses | Suaviza a forma (ajuste de Fourier): o desenho não representa os valores reais |
+  | Contagem animada dos números | **Adaptado:** formatação BRL com 2 casas, termina exatamente no valor da API, desligada com `prefers-reduced-motion` | O original arredondava para inteiro |
+  | Cartão de métrica (DashboardMetricCard) | **Adaptado:** semântica invertida em Despesas (subir = vermelho), texto explicativo, cartão clicável | No original, subir era sempre verde |
+  | Hover "levantar" + cursor de clique | **Mantido** só nos cartões de métrica, que são clicáveis | Evitar affordance falsa |
+  | framer-motion | **Não adotado** | Dependência inteira para efeitos resolvíveis em CSS e `requestAnimationFrame` |
+
+- **Alternativas descartadas:** Recharts para todos os gráficos (não tem treemap com contraste automático nem barras espelhadas sem customização pesada; continua no projeto); copiar os `.tsx` de referência (não disponíveis e dependem de `framer-motion`).
+- **Consequências:** nenhum código de terceiros entra; a seção "Créditos de componentes" do README registra o 21st.dev como **referência visual**, com a licença a confirmar quando os arquivos forem adicionados a `docs/design/referencias/`.
+
+## ADR-015 — Fontes instaladas via npm (`@fontsource`)
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** O design usa Baloo 2 (só o logotipo, peso 800) e Plus Jakarta Sans (500 a 800). As telas exportadas carregam as fontes do Google Fonts.
+- **Decisão:** instalar `@fontsource/baloo-2` e `@fontsource/plus-jakarta-sans` pelo npm e importar só os pesos usados. O Vite empacota os arquivos de fonte.
+- **Alternativas descartadas:** link para o Google Fonts (dependência de rede em tempo de execução e envio de requisições a terceiros num app local).
+- **Consequências:** o app funciona sem internet; as fontes têm licença SIL Open Font License, registrada no README.
+
+## ADR-016 — Seletor de mês global na URL
+
+- **Status:** Aceita — 18/11/2026
+- **Contexto:** O design pede um seletor de mês que vale para todas as telas internas. Antes, cada página tinha o próprio estado.
+- **Decisão:** o mês fica no parâmetro `?mes=AAAA-MM` da URL, lido por um hook (`useMesSelecionado`). Os links do menu preservam o parâmetro. Sem o parâmetro, vale o mês atual.
+- **Alternativas descartadas:** contexto React em memória (perde o mês ao recarregar a página e não gera links compartilháveis).
+- **Consequências:** clicar num cartão do Painel abre `/transacoes?mes=…&tipo=…` já filtrado; os testes de página passam o mês pela rota inicial.

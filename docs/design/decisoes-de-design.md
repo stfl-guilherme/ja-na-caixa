@@ -36,6 +36,7 @@ A ideia inicial partiu de mascotes de marcas conhecidas (ex.: o jacaré da HostG
 |---|---|---|---|
 | 1 | Claude Design desenhando o mascote em SVG | Genérico e "cartoon demais", sem o acabamento desejado | Rejeitado. Ferramentas de layout não são adequadas para ilustração de personagem. |
 | 2 | Gerador de imagens ([FERRAMENTA]) com prompt de estilo: cartoon anos 90/2000, formas orgânicas, contorno limpo, cores chapadas, cel shading mínimo | Folha com 6 poses consistentes | **Aprovado.** O mascote passou a ser um asset (PNG) usado pelas telas, nunca redesenhado. |
+| 3 | Mesmo gerador e mesmo prompt de estilo, pedindo poses pensadas para a interface: espiando (atrás da borda de um cartão), espiando de lado, sentado com moeda, na cadeira de praia acenando, animado, joinha e preocupado. No mesmo estilo, dois coadjuvantes: caranguejo e gaivota | A folha original de 6 poses não tinha poses que funcionassem nas bordas dos cartões nem nos estados vazios; as novas poses foram recortadas com fundo transparente | **Aprovado.** São estes os PNGs usados pelo app (`frontend/src/assets/papo/` e `frontend/src/assets/personagens/`). As poses da folha original não são usadas na interface. |
 
 ### Limitação conhecida
 Todas as poses da folha usam óculos escuros. Em tamanhos pequenos (≤ 72px), o rosto perde expressão. Se necessário, gerar poses com os óculos na testa.
@@ -95,22 +96,35 @@ Créditos e licenças dos componentes de referência: ver README.
 ## 6. Regras do personagem nas telas internas
 
 - Sempre nas bordas; nunca sobre textos, números, gráficos, tabelas, botões ou campos.
+- Vale para o Papo e para os coadjuvantes (caranguejo e gaivota).
 - Efeito "espiando": imagem atrás do cartão, só cabeça e ombros acima da borda.
-- Máximo de 72px visíveis no desktop; no máximo 2 aparições por tela.
+- Máximo de 72px visíveis no desktop (o espiando aparece só até a altura dos ombros).
+- No máximo **2 personagens visíveis por tela**, contando o Papo do menu lateral e os coadjuvantes. Nunca 2 no mesmo cartão, com uma exceção: no estado vazio, o Papo e o coadjuvante dividem o cartão em bordas opostas, e por isso o Papo do menu lateral é ocultado nesses estados (o export mostrava 3; a regra de 2 prevalece).
 - Sem animação contínua; `aria-hidden`.
 - Mobile: só em estados vazios, diálogos e topo do Painel.
 - Única exceção informativa: com saldo negativo, o Papo do Painel troca para a pose preocupada. O saldo continua em vermelho e com sinal de menos, então a informação não depende do personagem.
 
-| Local | Pose |
-|---|---|
-| Menu lateral | `papo-coco` |
-| Painel (cartão Saldo) | `papo-bracos-cruzados` / `papo-preocupado` se saldo < 0 |
-| Transações (filtros) | `papo-regata` |
-| Categorias (título Receitas) | `papo-prancha` |
-| Estado vazio do Painel | `papo-cadeira` |
-| Estado vazio de Transações | `papo-melancia` |
-| Diálogo de categoria em uso | `papo-preocupado` |
-| Toast de sucesso | `papo-joinha` |
+Coadjuvantes (caranguejo e gaivota):
+- São **decorativos** e aparecem só nos estados vazios, sempre nas bordas do cartão, nunca sobre texto ou botão.
+- Contam no limite de **2 personagens por tela**: num estado vazio com coadjuvante, o Papo espiando dos filtros e o do menu lateral somem.
+- Mesmo tratamento do Papo: `alt=""`, `aria-hidden="true"`, sem animação.
+
+Posições lidas nas telas de `docs/design/telas/` (arquivos em `frontend/src/assets/papo/` e `frontend/src/assets/personagens/`):
+
+| Local | Arquivo | Tela de referência |
+|---|---|---|
+| Menu lateral, atrás do cartão do usuário (desktop) | `papo-espiando.png` (oculto nos estados vazios com coadjuvante) | `componentes/Sidebar.dc.html` |
+| Painel, atrás do cartão Saldo (desktop) | `papo-espiando.png`; `papo-preocupado.png` se saldo < 0 | `app/painel/Painel.dc.html`, `Painel_Negativo.dc.html` |
+| Painel mobile, ao lado do seletor de mês | `papo-espiando.png` (pequeno) | `app/painel/Painel_Mobile.dc.html` |
+| Estado vazio do Painel | `papo-cadeira-acenando.png` + `caranguejo.png` | `app/painel/Painel_Vazio.dc.html`, `Painel_Mobile_Vazio.dc.html` |
+| Transações, atrás da borda dos filtros (desktop) | `papo-espiando.png` (some no estado vazio e com o toast aberto) | `app/transacoes/Transacoes.dc.html` |
+| Estado vazio de Transações | `papo-espiando-lado.png` (borda esquerda) + `gaivota.png` (borda direita) | `app/transacoes/Transacoes_Vazio.dc.html`, `Transacoes_Mobile_Vazio.dc.html` |
+| Categorias, ao lado do título Receitas (desktop) | `papo-sentado-moeda.png` (some com diálogo de exclusão ou toast aberto) | `app/categorias/Categorias.dc.html` |
+| Diálogo de categoria em uso (exclusão bloqueada) | `papo-preocupado.png` | `app/categorias/Categorias_Excluir.dc.html` |
+| Toast de sucesso | `papo-joinha.png` (40px) | `app/transacoes/Transacoes_Salva.dc.html` |
+| Login: padrão / carregando / erro | `papo-cadeira-acenando.png` / `papo-animado.png` / `papo-preocupado.png` | `login/Main.dc.html`, `LoginB_*`, `Mobile_*` |
+
+No login o personagem faz parte da cena de praia, que é a vitrine (princípio 3); o limite de 72px vale só para as telas internas.
 
 ## 7. Ferramentas
 

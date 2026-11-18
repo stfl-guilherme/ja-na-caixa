@@ -9,7 +9,7 @@
 | Modalidade | Individual (autorizado pela professora) |
 | Data da spec | 17/11/2026 |
 | Apresentação | 24/11/2026 |
-| Status | Revisada na Fase 1 (17/11/2026). Ver seção 14 e `docs/ia/registro-uso-ia.md` |
+| Status | Revisada na Fase 1 (17/11/2026) e ampliada para o novo design (18/11/2026). Ver seções 14 e 15 e `docs/ia/registro-uso-ia.md` |
 
 ---
 
@@ -95,7 +95,7 @@ ja-na-caixa/
 | UI | Tailwind CSS + componentes no padrão shadcn/ui (escritos no projeto, ADR-007) + sonner (toasts) | Visual polido; componentes copiáveis |
 | Estado do servidor | TanStack Query | Loading, erro e cache sem código manual repetido |
 | Rotas | React Router | Navegação entre páginas da SPA |
-| Gráficos | Recharts | Base dos gráficos do shadcn |
+| Gráficos | SVG próprio (novo design, ADR-014); Recharts continua instalado | Os gráficos do design (linha, barras espelhadas, treemap, barras anuais) são desenhados à mão em SVG com escalas próprias |
 | Testes backend | pytest + pytest-django | |
 | Testes frontend | Vitest + React Testing Library | |
 
@@ -192,7 +192,20 @@ Validação: `categoria` deve pertencer ao usuário logado (`400` caso contrári
 
 Filtros: `mes` no formato `AAAA-MM` (inválido → `400 {"mes": [...]}`); `categoria` = id; `tipo` = `RECEITA`/`DESPESA` (tipo da categoria); `busca` = trecho da descrição, sem diferenciar maiúsculas.
 
-Resposta paginada: `{"count", "next", "previous", "results"}`. Cada transação traz, além dos campos do modelo, os campos somente leitura `categoria_nome`, `categoria_cor` e `tipo` (derivados da categoria).
+Resposta paginada: `{"count", "next", "previous", "results", "totais", "totais_por_dia"}`. Cada transação traz, além dos campos do modelo, os campos somente leitura `categoria_nome`, `categoria_cor` e `tipo` (derivados da categoria).
+
+Totais da listagem (novo design, seção 15), calculados no backend sobre **todas** as transações que passam pelos filtros, não só sobre a página:
+
+```json
+"totais": {"receitas": "6686.42", "despesas": "3711.81", "saldo": "2974.61"},
+"totais_por_dia": [
+  {"data": "2026-11-17", "saldo": "-81.60"},
+  {"data": "2026-11-16", "saldo": "-189.33"}
+]
+```
+
+- `totais` alimenta a linha "24 transações · Receitas + R$ … · Despesas − R$ …" do cartão de filtros.
+- `totais_por_dia` traz o saldo do dia (receitas − despesas que passam pelos filtros) **só para as datas presentes na página atual**, em ordem decrescente de data. Alimenta o total de cada grupo de dia na lista do celular.
 
 ### 6.4 Resumo (dashboard)
 
@@ -201,47 +214,83 @@ Resposta paginada: `{"count", "next", "previous", "results"}`. Cada transação 
 ```json
 {
   "mes": "2026-11",
-  "receitas": "4500.00",
-  "despesas": "2310.45",
-  "saldo": "2189.55",
+  "receitas": "6686.42",
+  "despesas": "3711.81",
+  "saldo": "2974.61",
   "por_categoria": [
-    {"categoria_id": 3, "nome": "Mercado", "cor": "#22C55E", "tipo": "DESPESA", "total": "820.30"}
+    {"categoria_id": 3, "nome": "Moradia", "cor": "#2F6FB2", "tipo": "DESPESA", "total": "1830.00", "quantidade": 2}
+  ],
+  "mes_anterior": {"mes": "2026-10", "receitas": "6420.00", "despesas": "4105.60", "saldo": "2314.40"},
+  "serie_diaria": [
+    {"data": "2026-11-01", "receitas": "5200.00", "despesas": "1450.00", "saldo_acumulado": "3750.00"},
+    {"data": "2026-11-02", "receitas": "0.00", "despesas": "380.00", "saldo_acumulado": "3370.00"}
   ]
 }
 ```
 
-`por_categoria` lista as categorias, dos dois tipos, que têm transações no mês, em ordem decrescente de total. O gráfico do dashboard usa só as de tipo `DESPESA`.
+- `por_categoria` lista as categorias, dos dois tipos, que têm transações no mês, em ordem decrescente de total. `quantidade` é o número de transações da categoria **no mês** (a tela de Categorias mostra "N transações em novembro"). O treemap do painel usa só as de tipo `DESPESA`.
+- `mes_anterior` traz os totais do mês imediatamente anterior, para a comparação dos cartões de métrica. Em janeiro, o mês anterior é dezembro do ano anterior (`2026-01` → `2025-12`). Mês anterior sem transações → totais `"0.00"`.
+- `serie_diaria` tem **um item por dia do mês**, do dia 1 ao último dia (28 a 31 itens), inclusive dias sem transações (`"0.00"`). `saldo_acumulado` é a soma de `receitas − despesas` do dia 1 até aquele dia, **só dentro do mês** (não carrega saldo de meses anteriores). Alimenta o gráfico "Saldo do mês" e o gráfico espelhado "Entradas e saídas por dia". No mês corrente, o front desenha a linha só até a data de hoje (corte de exibição, sem conta).
+- Os campos antigos (`mes`, `receitas`, `despesas`, `saldo`, `por_categoria`) não mudam de formato; os novos são acréscimos.
 
 ### 6.5 Convenções
-- Valores monetários trafegam como **string** decimal (`"1234.56"`), que é o padrão do DRF. O frontend **não soma dinheiro**: todo total vem do backend.
+- Valores monetários trafegam como **string** decimal (`"1234.56"`), que é o padrão do DRF. O frontend **não soma dinheiro**: todo total, inclusive saldo acumulado, totais por dia, por mês e por filtro, vem do backend. O front só faz contas de **exibição** que não produzem valores em reais: percentuais (variação vs mês anterior, fatia de cada categoria), escala dos gráficos e a contagem animada, que sempre termina exatamente no valor recebido.
 - Objeto de outro usuário retorna **`404`**, não `403`, para não revelar que o objeto existe.
 - Erros de validação no formato padrão do DRF: `{"campo": ["mensagem"]}`.
 
+### 6.6 Resumo anual
+
+`GET /api/resumo/anual/?ano=AAAA` (sem `ano`, usa o ano atual; `ano` fora do formato de 4 dígitos ou menor que 1 → `400 {"ano": [...]}`)
+
+```json
+{
+  "ano": 2026,
+  "receitas": "71000.00",
+  "despesas": "54107.41",
+  "saldo": "16892.59",
+  "meses": [
+    {"mes": "2026-01", "receitas": "6100.00", "despesas": "4890.00", "saldo": "1210.00"},
+    {"mes": "2026-12", "receitas": "0.00", "despesas": "0.00", "saldo": "0.00"}
+  ]
+}
+```
+
+- `meses` tem sempre **12 itens**, de janeiro a dezembro, inclusive meses sem transações (`"0.00"`). Alimenta o gráfico "Ano em resumo".
+- `ano` vem como número; os valores, como string decimal.
+- Mesmas regras de isolamento e de autenticação das outras rotas (`401` sem login; só as transações do usuário logado entram na soma).
+
 ## 7. Usuário de demonstração
 
-- Comando `python manage.py seed_demo` cria o usuário `demo`, cerca de 8 categorias e cerca de 60 transações distribuídas nos últimos 3 meses.
+- Comando `python manage.py seed_demo` cria o usuário `demo`, 8 categorias e cerca de 240 transações (20 por mês) distribuídas nos **últimos 12 meses**, incluindo o mês atual até hoje. Doze meses são necessários para o gráfico "Ano em resumo" e para a comparação com o mês anterior também em janeiro.
+- As cores das categorias do `demo` são da paleta fixa de 10 cores do design (`--jnc-cat-*`, ver `frontend/src/styles/tokens.css`). O cenário é parecido com `docs/design/dados-exemplo.json` (salário, freelance, moradia, mercado etc.), sem copiá-lo.
 - `--reset` apaga e recria os dados do `demo`.
 - Setting `DEMO_ENABLED` (padrão `True` em desenvolvimento) liga ou desliga `/api/auth/demo/`.
 - A senha do `demo` **não** fica no frontend. O backend autentica direto no endpoint. O `demo` é criado com senha inutilizável (`set_unusable_password`), então só entra pelo botão (ADR-009).
 
 ## 8. Telas
 
+O visual segue `docs/design/decisoes-de-design.md` (fonte da verdade do design) e as telas exportadas em `docs/design/telas/`. Resumo:
+
 | Rota | Tela | Conteúdo |
 |---|---|---|
-| `/login` | Login | Formulário usuário/senha + botão "Entrar como demonstração" |
-| `/` | Dashboard | Seletor de mês; cards Receitas / Despesas / Saldo; gráfico de despesas por categoria; 5 últimas transações |
-| `/transacoes` | Transações | Tabela paginada; filtros (mês, categoria, tipo, busca); modal criar/editar; confirmação ao excluir |
-| `/categorias` | Categorias | Lista com cor e tipo; modal criar/editar; exclusão bloqueada com mensagem quando há transações |
+| `/login` | Login | Cena de praia + cartão (desktop) ou cena no topo sobre areia (mobile < 720px); formulário usuário/senha; botão "Entrar como demonstração"; estados padrão, carregando e erro |
+| `/` | Painel | Cartões Receitas / Despesas / Saldo com comparação ao mês anterior (clicáveis: abrem Transações filtrada); "Saldo do mês" (linha do saldo acumulado); "Últimas transações" (5); "Entradas e saídas por dia" (barras espelhadas); "Para onde foi o dinheiro" (treemap de despesas + 5 maiores); "Ano em resumo" (barras dos 12 meses); estado vazio; estado de saldo negativo |
+| `/transacoes` | Transações | Filtros (tipo em botões segmentados, categoria, busca) com totais do filtro; tabela (desktop) ou lista agrupada por dia (mobile); paginação (20/página); modal criar/editar; confirmação ao excluir; estados carregando, vazio e toast |
+| `/categorias` | Categorias | Seções Receitas e Despesas com total do mês; cartões com quantidade e total do mês; modal com 10 cores fixas; tipo bloqueado quando há transações; diálogo informativo quando a exclusão é bloqueada |
 
 Regras de interface:
-- Cabeçalho e tela de login exibem o texto **"JáNaCaixa"** como espaço reservado para logo/mascote (fora do escopo da IA).
-- Somente tema claro (ADR-010).
+- Layout: menu lateral (248px) no desktop e barra inferior + botão flutuante "+" abaixo de 720px. O **seletor de mês é global** (vale para Painel, Transações e Categorias, guardado na URL como `?mes=AAAA-MM`). A ação "+ Nova transação" abre o modal a partir de qualquer tela.
+- Nome "JáNaCaixa" no menu e no login, em Baloo 2. Os personagens são PNGs fornecidos pelo autor (`frontend/src/assets/`); a IA só os posiciona, nunca os redesenha (ADR-013).
+- Somente tema claro (ADR-010). Fundo areia clara nas telas internas; cena de praia só no login.
 - Rotas protegidas: sem sessão (`/auth/me` → 401), redireciona para `/login`.
-- Toda tela tem estados de **carregando** (skeleton), **vazio** (mensagem + ação) e **erro** (toast).
+- Toda tela tem estados de **carregando** (skeleton estático), **vazio** (mensagem + ação) e **erro**.
 - Erros de validação do backend aparecem no campo correspondente do formulário.
-- Moeda exibida com `Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"})`.
-- Entrada de valor aceita formato brasileiro (`1.234,56`) e é convertida para `"1234.56"` antes do envio.
-- Responsivo: funcional a partir de 375 px de largura.
+- Moeda sempre `Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"})`, com 2 casas, sinal explícito (`+ R$ 5.200,00` / `− R$ 1.450,00`, com o caractere U+2212) e seta; a cor nunca é o único sinal.
+- Valor no modal com máscara de centavos (o usuário digita só números); data no formato `dd/mm/aaaa` com máscara. Ambos convertidos para o formato da API (`"1234.56"`, `"AAAA-MM-DD"`) antes do envio.
+- Comparação com o mês anterior: em **Despesas**, subir é ruim (vermelho) e cair é bom (verde); em Receitas e Saldo, o contrário. Sempre com texto ("gastou mais", "sobrou menos").
+- Animação só na entrada do Painel (≈900ms), nada em loop, desligada com `prefers-reduced-motion`.
+- Acessibilidade: WCAG AA, foco visível, alvos ≥ 44px (campos 48px), `aria-label` com resumo em cada gráfico e tabela equivalente escondida visualmente.
+- Responsivo: funcional a partir de 375 px de largura; breakpoint único de 720px.
 
 ## 9. Testes
 
@@ -256,12 +305,21 @@ Regras de interface:
 8. Login demo funciona; com `DEMO_ENABLED=False` → `404`.
 9. Filtro `mes` retorna apenas transações do mês.
 10. Resumo calcula com precisão decimal (ex.: `0.10 + 0.20 == 0.30`).
+11. Série diária: um item por dia do mês, saldo acumulado correto, mês sem transações com zeros, precisão decimal, isolamento.
+12. Mês anterior: totais corretos e virada de ano (`2026-01` compara com `2025-12`).
+13. `quantidade` por categoria conta só as transações do mês.
+14. Resumo anual: 12 meses, meses vazios com zeros, precisão decimal, isolamento, `ano` inválido → `400`, sem login → `401`.
+15. Totais da listagem de transações respeitam os filtros e somam todas as páginas; `totais_por_dia` cobre as datas da página.
 
 ### Frontend
 1. Formatação de moeda pt-BR.
 2. Conversão da entrada `1.234,56` → `"1234.56"` (incluindo entradas inválidas).
 3. Botão "Entrar como demonstração" chama o endpoint e redireciona.
 4. Formulário de transação exibe os erros retornados pela API.
+5. Componente `Personagem` renderiza o PNG com `alt=""` e `aria-hidden="true"`; no Painel, troca para `papo-preocupado` com saldo negativo.
+6. Comparação com o mês anterior: em Despesas, aumento é vermelho e queda é verde.
+7. Máscaras de valor (centavos) e data (`dd/mm/aaaa`) e mensagens de validação do modal.
+8. Seletor de mês global: trocar o mês numa tela vale para as outras.
 
 ## 10. Critérios de aceite
 
@@ -326,3 +384,21 @@ A skill `brainstorming` do Superpowers não estava instalada no ambiente. A revi
 | 9 | Como usar shadcn/ui se a CLI baixa de fora do npm? | Componentes no padrão shadcn escritos no projeto, dependências do npm (ADR-007). |
 | 10 | Tema escuro? | Não (ADR-010). |
 | 11 | Logo e mascote? | Texto "JáNaCaixa" como espaço reservado. |
+
+## 15. Novo design (18/11/2026)
+
+O design visual aprovado (`docs/design/`) pede dados que a API da seção 6 não tinha. Perguntas e respostas desta revisão:
+
+| # | Pergunta | Resposta |
+|---|---|---|
+| 1 | De onde vem a linha "saldo acumulado dia a dia"? | De `serie_diaria` em `GET /api/resumo/` (6.4). O front não acumula valores. |
+| 2 | Como os cartões comparam com o mês anterior sem o front subtrair valores de dois meses? | `mes_anterior` em `GET /api/resumo/` traz os três totais prontos. O front só calcula o **percentual** de variação, que é exibição. |
+| 3 | E em janeiro? | `mes_anterior` é dezembro do ano anterior. Coberto por teste. |
+| 4 | De onde vem o "Ano em resumo"? | Novo `GET /api/resumo/anual/?ano=AAAA` (6.6), com os 12 meses. |
+| 5 | A tela de Categorias mostra "N transações em novembro" e o total do mês. De onde? | `por_categoria[].quantidade` e `por_categoria[].total` do resumo do mês; o total de cada seção é `receitas`/`despesas` do mesmo resumo. |
+| 6 | O cartão de filtros de Transações e os grupos por dia do celular mostram totais. Quem soma? | O backend, em `totais` e `totais_por_dia` da listagem (6.3). |
+| 7 | O protótipo pagina de 10 em 10; a spec diz 20. | Mantidos 20 por página (6.3). Diferença registrada. |
+| 8 | O seed tinha 3 meses e cores fora da paleta. | Seed com 12 meses e cores da paleta (seção 7). |
+| 9 | Fontes Baloo 2 e Plus Jakarta Sans vêm do Google Fonts nas telas exportadas. | Instaladas via npm (`@fontsource`), sem depender de rede em tempo de execução (ADR-015). |
+| 10 | O mascote estava fora do escopo da IA. | Continua: o autor forneceu os PNGs; a IA só os posiciona conforme a seção 6 de `decisoes-de-design.md` (ADR-013). |
+

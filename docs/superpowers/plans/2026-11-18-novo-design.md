@@ -50,7 +50,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Frontend
 
-### [ ] NF1 — Tema: tokens, Tailwind e fontes
+### [x] NF1 — Tema: tokens, Tailwind e fontes
 - **Arquivos:** `frontend/src/index.css`, `frontend/src/styles/tokens.css` (só importado), `frontend/package.json` (`@fontsource/baloo-2`, `@fontsource/plus-jakarta-sans`), `frontend/src/main.tsx`.
 - **Teste primeiro:** `src/styles/tema.test.ts` lê `index.css` e confirma que as cores do tema do Tailwind apontam para variáveis `--jnc-*` existentes em `tokens.css` (nenhum hexadecimal solto no tema).
 - **Pronto quando:** tema mapeado (`bg-fundo-app`, `text-tinta`, `text-receita`, `bg-verde-700` etc.), `tabular-nums` no `body`, fundo areia nas telas internas, fontes empacotadas; build/lint/test verdes.

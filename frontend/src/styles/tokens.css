@@ -76,4 +76,32 @@
   --jnc-esp-1: 4px; --jnc-esp-2: 8px; --jnc-esp-3: 12px; --jnc-esp-4: 16px;
   --jnc-esp-5: 24px; --jnc-esp-6: 32px; --jnc-esp-7: 48px;
   --jnc-alvo-toque: 44px;   /* mínimo; campos 48px, botão principal 48–52px */
+
+  /* Complementares: valores que aparecem nas telas exportadas (docs/design/telas/)
+     mas não estavam no tokens.css original. Nenhum valor foi inventado. */
+  --jnc-borda-botao: #C9D2D7;      /* botão secundário (Cancelar, Limpar filtros) */
+  --jnc-borda-sair: #D5DCE0;       /* botão Sair do menu */
+  --jnc-segmentado-bg: #F3EEE3;    /* fundo do filtro de tipo */
+  --jnc-esqueleto-1: #EFE9DD;      /* skeleton estático */
+  --jnc-esqueleto-2: #F4EFE6;
+  --jnc-grade: #E8E1D3;            /* linhas tracejadas dos gráficos */
+  --jnc-eixo-zero: #9AA6AD;        /* linha do zero nos gráficos */
+  --jnc-guia-dica: #8A98A0;        /* guia vertical do tooltip */
+  --jnc-despesa-bg: #FBE9E5;       /* ícone do cartão Despesas, selo de tipo */
+  --jnc-despesa-tx: #B3361F;       /* texto do selo/rádio de despesa */
+  --jnc-neutro-bg: #EEF2F4;        /* ícone do cartão Saldo */
+  --jnc-selo-bg: #F1F3F4;          /* selo "Tipo vem da categoria" */
+  --jnc-bloqueado-bg: #F3F6F7;     /* tipo bloqueado, campo carregando */
+  --jnc-erro-borda: #F4C7C3;       /* banner de erro do login */
+  --jnc-erro-tx: #7A1A12;
+  --jnc-erro-campo-bg: #FFF8F7;    /* fundo de campo com erro */
+  --jnc-demo-tx: #3D3410;          /* subtítulo do botão de demonstração */
+  --jnc-divisor-claro: #DCE3E7;    /* "ou" do login no cartão branco */
+  --jnc-divisor-areia: #D8C298;    /* "ou" do login sobre a areia */
+  --jnc-toast-borda: #E3EDE5;
+  --jnc-ceu-claro: #DDF4FD;        /* faixa do horizonte na cena */
+  --jnc-sol-halo: #FFE9A0;
+  --jnc-espuma: #7CCBEB;
+  --jnc-areia-escura: #EFD9AD;
+  --jnc-areia-risco: #EAD6AE;
 }

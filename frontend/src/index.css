@@ -1,40 +1,132 @@
 @import "tailwindcss";
+@import './styles/tokens.css';
+@import '@fontsource/plus-jakarta-sans/latin-500.css';
+@import '@fontsource/plus-jakarta-sans/latin-600.css';
+@import '@fontsource/plus-jakarta-sans/latin-700.css';
+@import '@fontsource/plus-jakarta-sans/latin-800.css';
+@import '@fontsource/baloo-2/latin-800.css';
 
-/* Tokens no padrão shadcn/ui (tema claro apenas — ADR-010). */
-@theme {
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
-  --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
-  --color-primary: #0f766e;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #0f172a;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
-  --color-accent: #e2e8f0;
-  --color-accent-foreground: #0f172a;
-  --color-destructive: #dc2626;
-  --color-destructive-foreground: #ffffff;
-  --color-receita: #16a34a;
-  --color-despesa: #dc2626;
-  --color-border: #e2e8f0;
-  --color-input: #cbd5e1;
-  --color-ring: #0f766e;
-  --radius-lg: 0.75rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.375rem;
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+/*
+ * Tema do Tailwind = tokens do design (frontend/src/styles/tokens.css, ADR-013).
+ * Só tema claro (ADR-010). Nenhuma cor solta: tudo aponta para --jnc-*.
+ */
+@theme inline {
+  /* Nomes semânticos usados pelos componentes no padrão shadcn/ui */
+  --color-background: var(--jnc-fundo-app);
+  --color-foreground: var(--jnc-tinta);
+  --color-card: var(--jnc-branco);
+  --color-card-foreground: var(--jnc-tinta);
+  --color-primary: var(--jnc-verde-700);
+  --color-primary-foreground: var(--jnc-branco);
+  --color-secondary: var(--jnc-fundo-app);
+  --color-secondary-foreground: var(--jnc-tinta);
+  --color-muted: var(--jnc-fundo-app);
+  --color-muted-foreground: var(--jnc-texto-2);
+  --color-accent: var(--jnc-verde-ativo-bg);
+  --color-accent-foreground: var(--jnc-verde-ativo-tx);
+  --color-destructive: var(--jnc-despesa);
+  --color-destructive-foreground: var(--jnc-branco);
+  --color-border: var(--jnc-borda-sutil);
+  --color-input: var(--jnc-borda-campo);
+  --color-ring: var(--jnc-tinta);
+
+  /* Tokens do design */
+  --color-tinta: var(--jnc-tinta);
+  --color-texto-2: var(--jnc-texto-2);
+  --color-texto-3: var(--jnc-texto-3);
+  --color-borda-campo: var(--jnc-borda-campo);
+  --color-borda-sutil: var(--jnc-borda-sutil);
+  --color-divisor: var(--jnc-divisor);
+  --color-branco: var(--jnc-branco);
+  --color-fundo-app: var(--jnc-fundo-app);
+  --color-areia: var(--jnc-areia);
+  --color-borda-areia: var(--jnc-borda-areia);
+  --color-verde-700: var(--jnc-verde-700);
+  --color-verde-ativo-bg: var(--jnc-verde-ativo-bg);
+  --color-verde-ativo-tx: var(--jnc-verde-ativo-tx);
+  --color-amarelo-papo: var(--jnc-amarelo-papo);
+  --color-receita: var(--jnc-receita);
+  --color-despesa: var(--jnc-despesa);
+  --color-receita-grafico: var(--jnc-receita-grafico);
+  --color-despesa-grafico: var(--jnc-despesa-grafico);
+  --color-erro: var(--jnc-erro);
+  --color-erro-bg: var(--jnc-erro-bg);
+  --color-ceu: var(--jnc-ceu);
+  --color-mar-1: var(--jnc-mar-1);
+  --color-mar-2: var(--jnc-mar-2);
+  --color-mar-3: var(--jnc-mar-3);
+  --color-sol: var(--jnc-sol);
+  --color-borda-botao: var(--jnc-borda-botao);
+  --color-borda-sair: var(--jnc-borda-sair);
+  --color-segmentado-bg: var(--jnc-segmentado-bg);
+  --color-esqueleto-1: var(--jnc-esqueleto-1);
+  --color-esqueleto-2: var(--jnc-esqueleto-2);
+  --color-grade: var(--jnc-grade);
+  --color-eixo-zero: var(--jnc-eixo-zero);
+  --color-guia-dica: var(--jnc-guia-dica);
+  --color-despesa-bg: var(--jnc-despesa-bg);
+  --color-despesa-tx: var(--jnc-despesa-tx);
+  --color-neutro-bg: var(--jnc-neutro-bg);
+  --color-selo-bg: var(--jnc-selo-bg);
+  --color-bloqueado-bg: var(--jnc-bloqueado-bg);
+  --color-erro-borda: var(--jnc-erro-borda);
+  --color-erro-tx: var(--jnc-erro-tx);
+  --color-erro-campo-bg: var(--jnc-erro-campo-bg);
+  --color-demo-tx: var(--jnc-demo-tx);
+  --color-divisor-claro: var(--jnc-divisor-claro);
+  --color-divisor-areia: var(--jnc-divisor-areia);
+  --color-toast-borda: var(--jnc-toast-borda);
+
+  --font-sans: var(--jnc-fonte);
+  --font-logo: var(--jnc-fonte-logo);
+
+  --radius-campo: var(--jnc-raio-campo);
+  --radius-botao: var(--jnc-raio-botao);
+  --radius-demo: var(--jnc-raio-demo);
+  --radius-cartao: var(--jnc-raio-cartao);
+  --radius-painel: var(--jnc-raio-painel);
+  /* Raios usados pelos componentes no padrão shadcn/ui */
+  --radius-sm: 8px;
+  --radius-md: var(--jnc-raio-campo);
+  --radius-lg: var(--jnc-raio-cartao);
+
+  --shadow-cartao: var(--jnc-sombra-cartao);
+  --shadow-modal: var(--jnc-sombra-modal);
+  --shadow-cartum: var(--jnc-sombra-cartum);
 }
 
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--jnc-borda-sutil);
   }
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
+    background-color: var(--jnc-fundo-app);
+    color: var(--jnc-tinta);
+    font-family: var(--jnc-fonte);
+    font-size: var(--jnc-fs-corpo);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
+  }
+  input,
+  select,
+  textarea {
+    font-size: var(--jnc-fs-campo);
+  }
+  /* Foco sempre visível (WCAG 2.4.7). */
+  :focus-visible {
+    outline: 3px solid var(--jnc-tinta);
+    outline-offset: 2px;
+  }
+}
+
+/* Animação só de entrada; nada em loop com movimento reduzido (ADR-013). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

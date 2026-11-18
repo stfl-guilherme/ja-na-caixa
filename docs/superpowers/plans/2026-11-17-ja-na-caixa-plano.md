@@ -114,7 +114,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** build/lint/test verdes.
 - **Commit:** `feat(frontend): adicionar layout e rotas protegidas`
 
-### [ ] F7 — Tela de categorias
+### [x] F7 — Tela de categorias
 - **Arquivos:** `src/pages/CategoriasPage.tsx`, `src/components/CategoriaForm.tsx`, testes.
 - **Teste primeiro:** lista categorias; estado vazio; exclusão com `409` mostra a mensagem do backend.
 - **Pronto quando:** CRUD de categorias pela interface (ponto de controle do dia 3).

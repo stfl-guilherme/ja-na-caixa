@@ -120,7 +120,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** CRUD de categorias pela interface (ponto de controle do dia 3).
 - **Commit:** `feat(frontend): adicionar tela de categorias`
 
-### [ ] F8 — Formulário de transação
+### [x] F8 — Formulário de transação
 - **Arquivos:** `src/components/TransacaoForm.tsx`, `src/components/TransacaoForm.test.tsx`.
 - **Teste primeiro:** erros `400` da API aparecem no campo correspondente; valor `1.234,56` é enviado como `"1234.56"`; valor inválido bloqueia o envio.
 - **Pronto quando:** teste de spec do front nº 4 verde.

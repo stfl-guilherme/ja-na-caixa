@@ -1,84 +1,58 @@
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+// Categorias (docs/design/telas/app/categorias/Categorias.dc.html).
+import { ArrowDownLeft, ArrowUpRight, Pencil, Plus, Tag, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { toast } from 'sonner'
-import type { Categoria, CategoriaInput, Tipo } from '@/api/types'
-import { CategoriaForm } from '@/components/CategoriaForm'
-import { ConfirmDialog } from '@/components/ConfirmDialog'
+import type { Categoria, Tipo } from '@/api/types'
+import { CategoriaModal } from '@/components/CategoriaModal'
 import { EstadoErro, EstadoVazio } from '@/components/Estados'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ExcluirCategoriaDialog } from '@/components/ExcluirCategoriaDialog'
+import { CabecalhoPagina } from '@/components/layout/CabecalhoPagina'
+import { useInterface } from '@/components/layout/contexto'
+import { Personagem } from '@/components/Personagem'
+import { botao, botaoIcone } from '@/components/ui/botao'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useCategorias, useExcluirCategoria, useSalvarCategoria } from '@/hooks/useCategorias'
-import { mensagemDeErro } from '@/lib/erros'
+import { useCategorias } from '@/hooks/useCategorias'
+import { useMesSelecionado } from '@/hooks/useMesSelecionado'
+import { useResumo } from '@/hooks/useResumo'
+import { useTelaLarga } from '@/hooks/useTelaLarga'
+import { formatarComSinal, formatarMoeda, nomeDoMes } from '@/lib/format'
+import { nomeDaCor } from '@/lib/paleta'
+import { cn } from '@/lib/utils'
 
-const SECOES: { tipo: Tipo; titulo: string }[] = [
-  { tipo: 'RECEITA', titulo: 'Receitas' },
-  { tipo: 'DESPESA', titulo: 'Despesas' },
+const SECOES: { tipo: Tipo; titulo: string; id: string }[] = [
+  { tipo: 'RECEITA', titulo: 'Receitas', id: 's-receitas' },
+  { tipo: 'DESPESA', titulo: 'Despesas', id: 's-despesas' },
 ]
 
-function rotuloTransacoes(n: number) {
-  return n === 1 ? '1 transação' : `${n} transações`
-}
+const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`
 
 export default function CategoriasPage() {
+  const larga = useTelaLarga()
+  const { mes } = useMesSelecionado()
+  const { avisar, avisoAberto } = useInterface()
   const { data: categorias, isPending, error, refetch } = useCategorias()
-  const salvar = useSalvarCategoria()
-  const excluir = useExcluirCategoria()
-  const [formAberto, setFormAberto] = useState(false)
-  const [editando, setEditando] = useState<Categoria | undefined>()
+  const resumo = useResumo(mes)
+  const [modal, setModal] = useState<{ aberto: boolean; categoria?: Categoria }>({ aberto: false })
   const [excluindo, setExcluindo] = useState<Categoria | null>(null)
+  const nomeMes = nomeDoMes(mes)
 
-  const abrirForm = (categoria?: Categoria) => {
-    salvar.reset()
-    setEditando(categoria)
-    setFormAberto(true)
-  }
+  /** Quantidade e total do mês vêm do resumo calculado no backend (spec 6.4). */
+  const doMes = (id: number) => resumo.data?.por_categoria.find((c) => c.categoria_id === id)
 
-  const enviar = (dados: CategoriaInput) => {
-    salvar.mutate(
-      { id: editando?.id, dados },
-      {
-        onSuccess: () => {
-          toast.success(editando ? 'Categoria atualizada.' : 'Categoria criada.')
-          setFormAberto(false)
-        },
-      },
-    )
-  }
-
-  const abrirExclusao = (categoria: Categoria) => {
-    excluir.reset()
-    setExcluindo(categoria)
-  }
-
-  const confirmarExclusao = () => {
-    if (!excluindo) return
-    excluir.mutate(excluindo.id, {
-      onSuccess: () => {
-        toast.success('Categoria excluída.')
-        setExcluindo(null)
-      },
-    })
-  }
+  const novaCategoria = (
+    <button type="button" onClick={() => setModal({ aberto: true })} className={botao({ tipo: 'secundario' })}>
+      <Plus strokeWidth={2.5} aria-hidden="true" />
+      <span>Nova categoria</span>
+    </button>
+  )
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Categorias</h1>
-          <p className="text-sm text-muted-foreground">Organize suas receitas e despesas.</p>
-        </div>
-        <Button onClick={() => abrirForm()}>
-          <Plus aria-hidden="true" />
-          Nova categoria
-        </Button>
-      </div>
+    <>
+      <CabecalhoPagina titulo="Categorias" acao={novaCategoria} />
 
       {isPending ? (
-        <div className="grid gap-3 sm:grid-cols-2" aria-label="Carregando">
-          {Array.from({ length: 4 }, (_, i) => (
-            <Skeleton key={i} className="h-16" />
+        <div className="grid gap-4 largo:grid-cols-3" aria-label="Carregando">
+          {Array.from({ length: 6 }, (_, i) => (
+            <Skeleton key={i} className="h-32 rounded-cartao bg-esqueleto-1" />
           ))}
         </div>
       ) : error ? (
@@ -87,55 +61,75 @@ export default function CategoriasPage() {
         <EstadoVazio
           titulo="Nenhuma categoria cadastrada"
           descricao="Crie categorias como Salário, Mercado ou Lazer para organizar suas transações."
-          acao={<Button onClick={() => abrirForm()}>Criar primeira categoria</Button>}
+          acao={
+            <button type="button" onClick={() => setModal({ aberto: true })} className={botao({ tipo: 'primario' })}>
+              Criar primeira categoria
+            </button>
+          }
         />
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {SECOES.map(({ tipo, titulo }) => {
+        <div className="flex flex-col gap-8">
+          {SECOES.map(({ tipo, titulo, id }) => {
             const itens = categorias.filter((c) => c.tipo === tipo)
-            const idTitulo = `secao-${tipo.toLowerCase()}`
+            const totalSecao = tipo === 'RECEITA' ? resumo.data?.receitas : resumo.data?.despesas
+            const comPapo = tipo === 'RECEITA' && larga && !excluindo && !avisoAberto
             return (
-              <section key={tipo} aria-labelledby={idTitulo} className="grid content-start gap-3">
-                <h2 id={idTitulo} className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {titulo}
-                </h2>
+              <section key={tipo} aria-labelledby={id} className="flex flex-col gap-3.5">
+                <div className={cn('flex items-end gap-3', tipo === 'RECEITA' && larga && 'min-h-[72px]')}>
+                  <h2 id={id} className="m-0 text-xl leading-tight font-extrabold">
+                    {titulo} <span className="text-sm font-semibold text-texto-2">· {plural(itens.length, 'categoria', 'categorias')}</span>
+                  </h2>
+                  {comPapo && <Personagem pose="papo-sentado-moeda" altura={72} className="-mb-0.5" />}
+                  <span className="flex-1" />
+                  {totalSecao !== undefined && (
+                    <span data-testid="total-secao" className={cn('text-sm font-bold whitespace-nowrap', tipo === 'RECEITA' ? 'text-receita' : 'text-despesa')}>
+                      {formatarComSinal(totalSecao, tipo)} em {nomeMes}
+                    </span>
+                  )}
+                </div>
                 {itens.length === 0 ? (
-                  <p className="rounded-lg border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+                  <p className="m-0 rounded-cartao border border-dashed border-borda-botao px-4 py-6 text-center text-sm font-medium text-texto-2">
                     Nenhuma categoria de {titulo.toLowerCase()}.
                   </p>
                 ) : (
-                  <ul className="grid gap-2">
-                    {itens.map((categoria) => (
-                      <li key={categoria.id}>
-                        <Card className="flex items-center gap-3 px-4 py-3">
-                          <span
-                            className="size-4 shrink-0 rounded-full"
-                            style={{ backgroundColor: categoria.cor }}
-                            aria-hidden="true"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate font-medium">{categoria.nome}</p>
-                            <p className="text-xs text-muted-foreground">{rotuloTransacoes(categoria.transacoes)}</p>
+                  <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 largo:grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+                    {itens.map((c) => {
+                      const mesCat = doMes(c.id)
+                      const quantidade = mesCat?.quantidade ?? 0
+                      const Seta = c.tipo === 'RECEITA' ? ArrowDownLeft : ArrowUpRight
+                      return (
+                        <li key={c.id} className="flex min-w-0 flex-col gap-3.5 rounded-cartao bg-branco py-4 pr-3.5 pl-[18px] shadow-cartao">
+                          <div className="flex items-center gap-3">
+                            <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full" style={{ background: c.cor }}>
+                              <Tag className="size-5 text-branco" strokeWidth={2.2} />
+                            </span>
+                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                              <strong className="truncate text-base font-bold">{c.nome}</strong>
+                              <span className="text-xs font-semibold text-texto-2">
+                                {c.tipo === 'RECEITA' ? 'Receita' : 'Despesa'} · cor {nomeDaCor(c.cor).toLowerCase()}
+                              </span>
+                            </span>
+                            <button type="button" className={botaoIcone} onClick={() => setModal({ aberto: true, categoria: c })} aria-label={`Editar categoria ${c.nome}`}>
+                              <Pencil aria-hidden="true" />
+                            </button>
+                            <button type="button" className={cn(botaoIcone, 'text-despesa')} onClick={() => setExcluindo(c)} aria-label={`Excluir categoria ${c.nome}`}>
+                              <Trash2 aria-hidden="true" />
+                            </button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => abrirForm(categoria)}
-                            aria-label={`Editar ${categoria.nome}`}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => abrirExclusao(categoria)}
-                            aria-label={`Excluir ${categoria.nome}`}
-                          >
-                            <Trash2 className="text-destructive" />
-                          </Button>
-                        </Card>
-                      </li>
-                    ))}
+                          <div className="flex items-center justify-between gap-2 border-t border-divisor pt-3">
+                            <span className="text-[13px] font-semibold text-texto-2">{plural(quantidade, 'transação', 'transações')} em {nomeMes}</span>
+                            {mesCat ? (
+                              <span className={cn('flex items-center gap-1 text-[15px] font-extrabold whitespace-nowrap', c.tipo === 'RECEITA' ? 'text-receita' : 'text-despesa')}>
+                                <Seta className="size-3.5" strokeWidth={2.6} aria-hidden="true" />
+                                <span>{formatarComSinal(mesCat.total, c.tipo)}</span>
+                              </span>
+                            ) : (
+                              <span className="text-[15px] font-extrabold text-texto-2">{formatarMoeda('0')}</span>
+                            )}
+                          </div>
+                        </li>
+                      )
+                    })}
                   </ul>
                 )}
               </section>
@@ -144,34 +138,24 @@ export default function CategoriasPage() {
         </div>
       )}
 
-      <Dialog open={formAberto} onOpenChange={setFormAberto}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editando ? 'Editar categoria' : 'Nova categoria'}</DialogTitle>
-            <DialogDescription>Defina o nome, o tipo e a cor usada nos gráficos.</DialogDescription>
-          </DialogHeader>
-          {formAberto && (
-            <CategoriaForm
-              key={editando?.id ?? 'nova'}
-              categoria={editando}
-              onSalvar={enviar}
-              onCancelar={() => setFormAberto(false)}
-              salvando={salvar.isPending}
-              erro={salvar.error}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <ConfirmDialog
-        aberto={excluindo !== null}
-        onAbertoChange={(aberto) => !aberto && setExcluindo(null)}
-        titulo={`Excluir "${excluindo?.nome ?? ''}"?`}
-        descricao="Esta ação não pode ser desfeita. Categorias com transações não podem ser excluídas."
-        onConfirmar={confirmarExclusao}
-        carregando={excluir.isPending}
-        erro={excluir.error ? mensagemDeErro(excluir.error) : null}
+      <CategoriaModal
+        aberto={modal.aberto}
+        categoria={modal.categoria}
+        onFechar={() => setModal({ aberto: false })}
+        onSalva={() => {
+          setModal({ aberto: false })
+          avisar('Categoria salva.')
+        }}
       />
-    </div>
+      <ExcluirCategoriaDialog
+        key={excluindo?.id ?? 'nenhuma'}
+        categoria={excluindo}
+        onFechar={() => setExcluindo(null)}
+        onExcluida={() => {
+          setExcluindo(null)
+          avisar('Categoria excluída.')
+        }}
+      />
+    </>
   )
 }

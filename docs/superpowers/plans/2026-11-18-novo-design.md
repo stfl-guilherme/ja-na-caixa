@@ -106,7 +106,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Teste primeiro:** testes atuais adaptados (lista, mês, tipo, vazio, exclusão, paginação, erros da API no campo, edição preenchida); novos: filtros segmentados e `?tipo=` da URL; linha de totais do filtro vinda da API; máscaras e mensagens exatas de validação; exclusão pelo modal de edição; toast com `papo-joinha`; Papo dos filtros some no vazio e com toast.
 - **Commit:** `feat(frontend): aplicar novo design na tela de transações`
 
-### [ ] NF11 — Categorias
+### [x] NF11 — Categorias
 - **Arquivos:** `frontend/src/pages/CategoriasPage.tsx` (+ teste), `CategoriaModal.tsx` (substitui `CategoriaForm`).
 - **Teste primeiro:** testes atuais adaptados (seções, vazio, criar, erro no campo, tipo bloqueado); novos: quantidade e total do mês por categoria vindos do resumo; 10 cores como radios; exclusão de categoria em uso abre diálogo informativo (sem botão excluir, com `papo-preocupado`) usando o número de transações; exclusão livre confirma e chama a API.
 - **Commit:** `feat(frontend): aplicar novo design na tela de categorias`

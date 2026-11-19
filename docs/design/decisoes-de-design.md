@@ -122,7 +122,7 @@ Motivos da escolha **A + B**: preserva a leitura (o conteúdo fica em cartões o
 - **Barra superior fixa:** transparente no topo da página; ao ficar fixa, ganha fundo sólido de areia, sombra suave e borda inferior.
 
 ### Dica do Papo como "cabeça de chat" (19/11/2026)
-O balão no topo do painel criava um espaço vazio grande acima dos cartões do Resumo. No desktop (≥ 1024px) ele é trocado pelo padrão "cabeça de chat": botão redondo flutuante com o Papo no canto inferior direito (24px das bordas), com selo da quantidade de dicas; o balão abre acima do botão. O Papo que espiava sobre o cartão Saldo sai e os cartões sobem. No mobile (< 1024px) continua o cartão abaixo do Resumo (o canto inferior direito é do botão "+"). Regras completas na spec, seção 17.2.
+O balão no topo do painel criava um espaço vazio grande acima dos cartões do Resumo. No desktop (≥ 1024px) ele é trocado pelo padrão "cabeça de chat": botão redondo flutuante com o Papo no canto superior direito, na barra fixa do título, com selo da quantidade de dicas; o balão abre abaixo do botão. *Ajuste do autor (19/11/2026):* a primeira versão ficava no canto inferior direito; foi movida para cima a pedido, e a pose passou a acompanhar a dica exibida, não só a primeira. O Papo que espiava sobre o cartão Saldo sai e os cartões sobem. No mobile (< 1024px) continua o cartão abaixo do Resumo (o canto inferior direito é do botão "+"). Regras completas na spec, seção 17.2.
 
 ### Barras de orçamento: cor do estado (19/11/2026)
 A cor da barra passa a indicar o estado: verde (dentro do limite), âmbar (atenção) e vermelho-coral (ultrapassado). A cor da categoria fica só no marcador redondo ao lado do nome. O estado continua em texto abaixo da barra. Vale no Painel e em Categorias. Motivo: com a cor da categoria na barra, uma categoria vermelha "dentro do limite" parecia estourada.
@@ -143,8 +143,8 @@ A cor da barra passa a indicar o estado: verde (dentro do limite), âmbar (aten�
 - Sem animação contínua; `aria-hidden`.
 - Mobile: só em estados vazios, diálogos e topo do Painel.
 - Única exceção informativa: com saldo negativo, o Papo do topo do Painel no celular troca para a pose preocupada. O saldo continua em vermelho e com sinal de menos, então a informação não depende do personagem. (Desde 19/11/2026 o cartão Saldo não tem mais Papo espiando; ver ADR-028.)
-- **Exceção das Dicas do Papo (19/11/2026, ADR-022):** o balão de dica é **informação real**. O texto fica numa região rotulada "Dicas do Papo" (`<section aria-label>`, `aria-live="polite"`), é lido pelo leitor de tela e **não** é `aria-hidden`. A imagem do Papo continua decorativa (`alt=""`, `aria-hidden`), e em todo o resto o Papo continua só decorando. A pose acompanha o tipo da dica (alerta → preocupado; parabéns → joinha; informação e primeiros passos → espiando), mas o tipo também está no texto, nunca só na pose. No botão flutuante, a pose segue a primeira dica.
-  - *Desktop (≥ 1024px, desde 19/11/2026):* botão flutuante "cabeça de chat" no canto inferior direito, com o balão abrindo acima dele (ver seção 5). A versão anterior (balão acima dos cartões, ligado ao Papo do cartão Saldo) foi substituída.
+- **Exceção das Dicas do Papo (19/11/2026, ADR-022):** o balão de dica é **informação real**. O texto fica numa região rotulada "Dicas do Papo" (`<section aria-label>`, `aria-live="polite"`), é lido pelo leitor de tela e **não** é `aria-hidden`. A imagem do Papo continua decorativa (`alt=""`, `aria-hidden`), e em todo o resto o Papo continua só decorando. A pose acompanha o tipo da dica (alerta → preocupado; parabéns → joinha; informação e primeiros passos → espiando), mas o tipo também está no texto, nunca só na pose. No botão flutuante, a pose segue a dica exibida no momento.
+  - *Desktop (≥ 1024px, desde 19/11/2026):* botão flutuante "cabeça de chat" no canto superior direito, com o balão abrindo abaixo dele (ver seção 5). A versão anterior (balão acima dos cartões, ligado ao Papo do cartão Saldo) foi substituída.
   - *Abaixo de 1024px:* cartão de largura total abaixo do Resumo, com o Papo pequeno (48px) à esquerda. Conta no limite de 2 personagens com o Papo do cabeçalho (celular) ou do menu lateral (720–1023px).
   - *Estado vazio do Painel:* o balão sai do Papo da cadeira que já está no cartão; nenhuma imagem nova (o caranguejo é o segundo personagem) e nenhum botão flutuante, em qualquer largura.
 
@@ -165,7 +165,7 @@ Posições lidas nas telas de `docs/design/telas/` (arquivos em `frontend/src/as
 | Categorias, ao lado do título Receitas (desktop) | `papo-sentado-moeda.png` (some com diálogo de exclusão ou toast aberto) | `app/categorias/Categorias.dc.html` |
 | Diálogo de categoria em uso (exclusão bloqueada) | `papo-preocupado.png` | `app/categorias/Categorias_Excluir.dc.html` |
 | Toast de sucesso | `papo-joinha.png` (40px) | `app/transacoes/Transacoes_Salva.dc.html` |
-| Dica do Papo, desktop ≥ 1024px (botão flutuante no canto inferior direito) | `papo-espiando.png`, `papo-preocupado.png` ou `papo-joinha.png`, conforme o tipo da primeira dica | — (19/11/2026, seção 5) |
+| Dica do Papo, desktop ≥ 1024px (botão flutuante no canto superior direito) | `papo-espiando.png`, `papo-preocupado.png` ou `papo-joinha.png`, conforme o tipo da dica exibida | — (19/11/2026, seção 5) |
 | Dica do Papo, abaixo de 1024px (cartão abaixo do Resumo) | mesma pose, 48px, à esquerda do texto | — (19/11/2026, seção 6) |
 | Login: padrão / carregando / erro | `papo-cadeira-acenando.png` / `papo-animado.png` / `papo-preocupado.png` | `login/Main.dc.html`, `LoginB_*`, `Mobile_*` |
 

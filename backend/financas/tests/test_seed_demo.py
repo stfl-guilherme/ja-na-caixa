@@ -102,3 +102,73 @@ class TestSeedDemoModos:
     def test_modo_invalido(self):
         with pytest.raises(CommandError):
             call_command("seed_demo", "--modo", "cheio")
+
+
+def _mes_atual():
+    return timezone.localdate().strftime("%Y-%m")
+
+
+@pytest.mark.django_db
+class TestSeedNovasFuncionalidades:
+    """Spec 17.5: o modo exemplo demonstra orçamento, dicas, formas e fixas no mês atual."""
+
+    def test_tres_limites_um_em_cada_situacao(self):
+        from financas.orcamentos import orcamentos_do_mes
+
+        call_command("seed_demo")
+        demo = User.objects.get(username="demo")
+        assert Categoria.objects.filter(usuario=demo, limite_mensal__isnull=False).count() == 3
+        situacoes = {o["categoria"].nome: o["situacao"] for o in orcamentos_do_mes(demo, _mes_atual())}
+        assert situacoes == {"Mercado": "ok", "Restaurantes": "atencao", "Lazer": "estourado"}
+        percentuais = {o["categoria"].nome: o["percentual"] for o in orcamentos_do_mes(demo, _mes_atual())}
+        assert 55 <= percentuais["Mercado"] <= 65
+        assert 80 <= percentuais["Restaurantes"] <= 90
+
+    def test_transporte_cresce_em_relacao_ao_mes_anterior(self):
+        from decimal import Decimal
+
+        from financas.filters import intervalo_do_mes, mes_anterior
+
+        call_command("seed_demo")
+
+        def gasto(mes):
+            inicio, fim = intervalo_do_mes(mes)
+            valores = Transacao.objects.filter(
+                categoria__usuario__username="demo", categoria__nome="Transporte", data__gte=inicio, data__lt=fim
+            ).values_list("valor", flat=True)
+            return sum(valores, Decimal("0"))
+
+        atual, anterior = gasto(_mes_atual()), gasto(mes_anterior(_mes_atual()))
+        assert atual - anterior >= Decimal("50")
+        assert (atual - anterior) * 100 / anterior >= 20
+
+    def test_formas_de_pagamento_variadas(self):
+        call_command("seed_demo")
+        formas = set(Transacao.objects.values_list("forma_pagamento", flat=True))
+        assert len(formas) >= 5
+        assert "NAO_INFORMADO" in formas
+
+    def test_fixas_encadeadas_e_duas_sem_repetir_no_mes_atual(self):
+        call_command("seed_demo")
+        hoje = timezone.localdate()
+        fixas = Transacao.objects.filter(categoria__usuario__username="demo", fixa=True)
+        assert set(fixas.values_list("descricao", flat=True)) == {"Salário mensal", "Aluguel", "Internet", "Streaming"}
+        do_mes = fixas.filter(data__year=hoje.year, data__month=hoje.month)
+        assert set(do_mes.values_list("descricao", flat=True)) == {"Salário mensal", "Aluguel"}
+        for copia in do_mes:
+            assert copia.repetida_de is not None
+            assert copia.repetida_de.descricao == copia.descricao
+            assert copia.repetida_de.data < hoje.replace(day=1)
+
+    def test_gera_dicas_e_fixas_para_repetir_no_mes_atual(self, api_client):
+        assert api_client.post("/api/auth/demo/", {"modo": "exemplo"}, format="json").status_code == 200
+        dicas = api_client.get("/api/dicas/", {"mes": _mes_atual()}).json()
+        assert len(dicas) >= 2
+        fixas = api_client.get("/api/transacoes/fixas-para-repetir/", {"mes": _mes_atual()}).json()
+        assert {t["descricao"] for t in fixas} >= {"Internet", "Streaming"}
+        assert len(fixas) >= 2
+
+    def test_modo_vazio_continua_vazio(self, api_client):
+        assert api_client.post("/api/auth/demo/", {"modo": "vazio"}, format="json").status_code == 200
+        assert api_client.get("/api/transacoes/fixas-para-repetir/", {"mes": _mes_atual()}).json() == []
+        assert [d["id"] for d in api_client.get("/api/dicas/").json()] == ["primeira_categoria"]

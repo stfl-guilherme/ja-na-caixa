@@ -87,7 +87,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Fase 7 — Seed de demonstração (spec 17.5, ADR-025)
 
-### [ ] S1 — Seed com limites, formas e fixas
+### [x] S1 — Seed com limites, formas e fixas
 - **Arquivos:** `backend/financas/demo.py`, `backend/financas/tests/test_seed_demo.py`.
 - **Teste primeiro:** 3 categorias com limite, uma em cada situação no mês atual; Transporte cresce ≥ 20% e ≥ R$ 50; formas variadas com algumas não informadas; fixas em todos os meses encadeadas; ao menos 2 dicas e ao menos 2 fixas para repetir no mês atual; modo vazio continua vazio; testes antigos do seed continuam verdes.
 - **Pronto quando:** testes verdes; `seed_demo --reset` roda no banco local.

@@ -4,6 +4,7 @@ import type {
   CategoriaInput,
   Dica,
   FiltrosTransacao,
+  FixaParaRepetir,
   ListaTransacoes,
   ModoDemo,
   Orcamento,
@@ -38,6 +39,9 @@ export const transacoesApi = {
   atualizar: (id: number, dados: TransacaoInput) =>
     api<Transacao>(`/transacoes/${id}/`, { method: 'PUT', body: dados }),
   excluir: (id: number) => api<void>(`/transacoes/${id}/`, { method: 'DELETE' }),
+  fixasParaRepetir: (mes: string) => api<FixaParaRepetir[]>('/transacoes/fixas-para-repetir/', { params: { mes } }),
+  repetirFixas: (mes: string, ids: number[]) =>
+    api<Transacao[]>('/transacoes/repetir-fixas/', { method: 'POST', body: { mes, ids } }),
 }
 
 export const resumoApi = {

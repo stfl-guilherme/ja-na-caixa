@@ -46,6 +46,10 @@ export interface Transacao {
   observacao: string
   forma_pagamento: FormaPagamento
   forma_pagamento_rotulo: string
+  /** Repete todo mês (spec 17.4). */
+  fixa: boolean
+  /** Original de que esta é cópia; `null` se não for repetição. */
+  repetida_de: number | null
   criado_em: string
   atualizado_em: string
 }
@@ -57,6 +61,12 @@ export interface TransacaoInput {
   data: string
   observacao: string
   forma_pagamento: FormaPagamento
+  fixa: boolean
+}
+
+/** Fixa do mês anterior que ainda pode ser repetida, com a data sugerida no mês de destino. */
+export interface FixaParaRepetir extends Transacao {
+  data_sugerida: string
 }
 
 export interface Paginado<T> {

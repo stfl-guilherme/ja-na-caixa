@@ -54,7 +54,18 @@ describe('FormularioTransacao', () => {
       categoria: 1,
       observacao: '',
       forma_pagamento: 'NAO_INFORMADO',
+      fixa: false,
     })
+  })
+
+  it('marca a transação como fixa', async () => {
+    const { onSalvar } = renderForm()
+    await preencher()
+    const fixa = screen.getByRole('checkbox', { name: 'Repete todo mês (fixa)' })
+    expect(fixa).not.toBeChecked()
+    await userEvent.click(fixa)
+    await userEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    expect(onSalvar).toHaveBeenCalledWith(expect.objectContaining({ fixa: true }))
   })
 
   it('envia a forma de pagamento escolhida; em receita, o rótulo vira "Forma de recebimento"', async () => {
@@ -162,6 +173,8 @@ describe('FormularioTransacao', () => {
       observacao: 'Novembro',
       forma_pagamento: 'NAO_INFORMADO',
       forma_pagamento_rotulo: 'Não informado',
+      fixa: false,
+      repetida_de: null,
       criado_em: '',
       atualizado_em: '',
     }

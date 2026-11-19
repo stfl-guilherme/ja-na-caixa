@@ -79,7 +79,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; migration reversível.
 - **Commit:** `feat(api): repetir transações fixas do mês anterior`
 
-### [ ] R2 — Repetir fixas na interface
+### [x] R2 — Repetir fixas na interface
 - **Arquivos:** `frontend/src/api/*`, `hooks/useTransacoes.ts`, `TransacaoModal.tsx`, `components/RepetirFixasDialog.tsx` e teste, `TransacoesPage.tsx` e teste.
 - **Teste primeiro:** checkbox "Repete todo mês (fixa)" envia `fixa`; botão "Repetir fixas de outubro"; diálogo lista todas marcadas; desmarcar muda "Lançar N transações"; lançar envia os ids e chama o aviso de sucesso; lista vazia mostra a mensagem.
 - **Pronto quando:** build, lint e testes verdes; push.

@@ -21,6 +21,8 @@ const transacao: Transacao = {
   observacao: 'Compra do mês',
   forma_pagamento: 'NAO_INFORMADO',
   forma_pagamento_rotulo: 'Não informado',
+  fixa: false,
+  repetida_de: null,
   criado_em: '',
   atualizado_em: '',
 }
@@ -149,5 +151,21 @@ describe('TransacoesPage', () => {
     expect(screen.getByRole('columnheader', { name: 'Forma' })).toBeInTheDocument()
     await userEvent.selectOptions(screen.getByLabelText('Forma de pagamento'), 'CARTAO_CREDITO')
     await vi.waitFor(() => expect(parametros(fetchMock, 'forma_pagamento')).toContain('CARTAO_CREDITO'))
+  })
+
+  it('repete as fixas do mês anterior e avisa com o Papo joinha', async () => {
+    const fixa = { ...transacao, id: 3, descricao: 'Aluguel', fixa: true, data: '2026-10-09', data_sugerida: '2026-11-09' }
+    const fetchMock = mockFetch([
+      { caminho: '/api/categorias/', corpo: categorias },
+      { caminho: '/api/transacoes/', corpo: pagina([transacao]) },
+      { caminho: '/api/transacoes/fixas-para-repetir/', corpo: [fixa] },
+      { metodo: 'POST', caminho: '/api/transacoes/repetir-fixas/', status: 201, corpo: [{ ...fixa, id: 4, repetida_de: 3 }] },
+    ])
+    const { interfaceApp } = renderComRotas(<TransacoesPage />, { caminho: '/?mes=2026-11' })
+    await userEvent.click(await screen.findByRole('button', { name: 'Repetir fixas de outubro' }))
+    const dialogo = await screen.findByRole('dialog', { name: 'Repetir fixas de outubro' })
+    await userEvent.click(await within(dialogo).findByRole('button', { name: 'Lançar 1 transação' }))
+    await vi.waitFor(() => expect(interfaceApp.avisar).toHaveBeenCalledWith('1 transação lançada.'))
+    expect(chamadas(fetchMock, 'POST', '/api/transacoes/repetir-fixas/')).toHaveLength(1)
   })
 })

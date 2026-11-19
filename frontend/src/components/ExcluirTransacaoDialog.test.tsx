@@ -17,6 +17,8 @@ const transacao: Transacao = {
   observacao: '',
   forma_pagamento: 'NAO_INFORMADO',
   forma_pagamento_rotulo: 'Não informado',
+  fixa: false,
+  repetida_de: null,
   criado_em: '',
   atualizado_em: '',
 }

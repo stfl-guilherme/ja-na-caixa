@@ -29,6 +29,23 @@ export function useSalvarTransacao() {
   })
 }
 
+/** Chave sob 'transacoes': lançar ou excluir transações a recarrega. */
+export function useFixasParaRepetir(mes: string, ativo: boolean) {
+  return useQuery({
+    queryKey: ['transacoes', 'fixas-para-repetir', mes],
+    queryFn: () => transacoesApi.fixasParaRepetir(mes),
+    enabled: ativo,
+  })
+}
+
+export function useRepetirFixas() {
+  const invalidar = useInvalidarFinancas()
+  return useMutation({
+    mutationFn: ({ mes, ids }: { mes: string; ids: number[] }) => transacoesApi.repetirFixas(mes, ids),
+    onSuccess: invalidar,
+  })
+}
+
 export function useExcluirTransacao() {
   const invalidar = useInvalidarFinancas()
   return useMutation({

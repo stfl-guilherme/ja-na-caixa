@@ -1,9 +1,10 @@
 // Transações (docs/design/telas/app/transacoes/Transacoes.dc.html).
-import { ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pencil, Plus, Repeat, Search, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { Tipo, Transacao } from '@/api/types'
 import { EstadoErro } from '@/components/Estados'
+import { RepetirFixasDialog } from '@/components/RepetirFixasDialog'
 import { CabecalhoPagina } from '@/components/layout/CabecalhoPagina'
 import { useInterface, useOcultarPapoDoMenu } from '@/components/layout/contexto'
 import { Espiando, Personagem } from '@/components/Personagem'
@@ -14,7 +15,7 @@ import { useDebounce } from '@/hooks/useDebounce'
 import { useMesSelecionado } from '@/hooks/useMesSelecionado'
 import { useTelaLarga } from '@/hooks/useTelaLarga'
 import { useTransacoes } from '@/hooks/useTransacoes'
-import { formatarComSinal, formatarData, nomeDoMes } from '@/lib/format'
+import { deslocarMes, formatarComSinal, formatarData, nomeDoMes } from '@/lib/format'
 import { ehFormaPagamento, FORMAS_PAGAMENTO, formaPagamento } from '@/lib/formasPagamento'
 import { cn } from '@/lib/utils'
 
@@ -56,7 +57,8 @@ function FormaNaLinha({ transacao }: { transacao: Transacao }) {
 export default function TransacoesPage() {
   const larga = useTelaLarga()
   const { mes } = useMesSelecionado()
-  const { abrirTransacao, pedirExclusao, avisoAberto } = useInterface()
+  const { abrirTransacao, pedirExclusao, avisar, avisoAberto } = useInterface()
+  const [repetindo, setRepetindo] = useState(false)
   const [params, setParams] = useSearchParams()
   const tipoUrl = params.get('tipo')
   const tipo: Tipo | '' = tipoUrl === 'RECEITA' || tipoUrl === 'DESPESA' ? tipoUrl : ''
@@ -108,7 +110,25 @@ export default function TransacoesPage() {
 
   return (
     <>
-      <CabecalhoPagina titulo="Transações" />
+      <CabecalhoPagina
+        titulo="Transações"
+        acao={
+          <button type="button" onClick={() => setRepetindo(true)} className={botao({ tipo: 'secundario' })}>
+            <Repeat aria-hidden="true" />
+            Repetir fixas de {nomeDoMes(deslocarMes(mes, -1))}
+          </button>
+        }
+      />
+      <RepetirFixasDialog
+        aberto={repetindo}
+        mes={mes}
+        onFechar={() => setRepetindo(false)}
+        onLancadas={(quantidade) => {
+          setRepetindo(false)
+          // Aviso de sucesso com o Papo joinha (spec 17.4).
+          avisar(quantidade === 1 ? '1 transação lançada.' : `${quantidade} transações lançadas.`)
+        }}
+      />
 
       <Espiando pose={larga && !vazio && !avisoAberto ? 'papo-espiando' : null} altura={80} direita={28} className="mb-5">
         <section aria-label="Filtros" className={cn('flex flex-col gap-3.5 rounded-cartao bg-branco shadow-cartao', larga ? 'px-[22px] py-5' : 'p-4')}>

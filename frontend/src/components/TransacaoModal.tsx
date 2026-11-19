@@ -31,6 +31,7 @@ interface Formulario {
   categoria: string
   observacao: string
   forma: FormaPagamento
+  fixa: boolean
 }
 
 type Campo = 'descricao' | 'valor' | 'data' | 'categoria' | 'observacao'
@@ -88,6 +89,7 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
     categoria: transacao ? String(transacao.categoria) : '',
     observacao: transacao?.observacao ?? '',
     forma: transacao?.forma_pagamento ?? 'NAO_INFORMADO',
+    fixa: transacao?.fixa ?? false,
   }))
   const [tentou, setTentou] = useState(false)
   const [tipo, setTipo] = useState<Tipo>(transacao?.tipo ?? 'DESPESA')
@@ -112,6 +114,7 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
       categoria: Number(f.categoria),
       observacao: f.observacao.trim(),
       forma_pagamento: f.forma,
+      fixa: f.fixa,
     })
   }
 
@@ -280,6 +283,16 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
           {...ariaDoCampo('m-obs', erros.observacao)}
         />
       </CampoFormulario>
+
+      <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-[15px] font-semibold">
+        <input
+          type="checkbox"
+          checked={f.fixa}
+          onChange={(e) => atualizar('fixa', e.target.checked)}
+          className="m-0 size-5 shrink-0 accent-verde-700"
+        />
+        Repete todo mês (fixa)
+      </label>
 
       {erroGeral && (
         <p role="alert" className="m-0 rounded-campo bg-erro-bg px-3.5 py-3 text-sm font-semibold text-erro-tx">

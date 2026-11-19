@@ -31,7 +31,7 @@ export function CabecalhoPagina({ titulo, acao, extraMobile }: CabecalhoPaginaPr
         <MonthPicker className="min-w-0 flex-1 justify-between" />
         {extraMobile}
       </div>
-      <header className="mb-4 flex items-center justify-between gap-3 pt-0.5">
+      <header className="mb-4 flex flex-wrap items-center justify-between gap-3 pt-0.5">
         <h1 className="m-0 text-2xl font-extrabold tracking-[-0.3px]">{titulo}</h1>
         {acao}
       </header>

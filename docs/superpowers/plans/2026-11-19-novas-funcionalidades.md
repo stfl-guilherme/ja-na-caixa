@@ -95,7 +95,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Fase 8 — Verificação e documentação
 
-### [ ] V1 — Verificação completa e documentação
+### [x] V1 — Verificação completa e documentação
 - Rodar `pytest`, `npm run build`, `npm run lint` e `npm test` e registrar a saída.
 - Roteiro manual no navegador com as duas demonstrações (barras nos 3 estados, dicas alternando, formas de pagamento, repetir fixas duas vezes sem duplicar; no modo vazio, primeiros passos e lista de fixas vazia).
 - Diagramas (`docs/diagramas/`): classes (`limite_mensal`, `fixa`, `forma_pagamento`, `repetida_de` 0..1 — 0..*, enumeração `FormaPagamento`, notas das restrições) e atividades (página "Repetir transações fixas"); validar o XML.

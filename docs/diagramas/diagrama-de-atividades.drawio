@@ -498,4 +498,159 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="atividade-fixas" name="Repetir transações fixas">
+    <mxGraphModel dx="1920" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="atividade-fixas-c1" value="Diagrama de atividades — Repetir transações fixas" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#142028;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1500" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c2" value="Tela Transações → RepetirFixasDialog (frontend) → GET /api/transacoes/fixas-para-repetir/ e POST /api/transacoes/repetir-fixas/ → TransacaoViewSet." style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#4A5862;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="46" width="1840" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-lane3" value="Usuário" style="swimlane;horizontal=0;html=1;startSize=50;fillColor=#157A2E;swimlaneFillColor=#FFFFFF;fontColor=#FFFFFF;strokeColor=#142028;fontSize=18;fontStyle=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1840" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-lane4" value="Frontend" style="swimlane;horizontal=0;html=1;startSize=50;fillColor=#157A2E;swimlaneFillColor=#FFFFFF;fontColor=#FFFFFF;strokeColor=#142028;fontSize=18;fontStyle=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="1840" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-lane5" value="Backend" style="swimlane;horizontal=0;html=1;startSize=50;fillColor=#157A2E;swimlaneFillColor=#FFFFFF;fontColor=#FFFFFF;strokeColor=#142028;fontSize=18;fontStyle=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="570" width="1840" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-lane6" value="Banco de dados" style="swimlane;horizontal=0;html=1;startSize=50;fillColor=#157A2E;swimlaneFillColor=#FFFFFF;fontColor=#FFFFFF;strokeColor=#142028;fontSize=18;fontStyle=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="1840" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c7" value="" style="ellipse;html=1;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-fixas-lane3">
+          <mxGeometry x="85" y="165" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c8" value="Clicar em “Repetir fixas de [mês anterior]”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane3">
+          <mxGeometry x="160" y="152" width="220" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c9" value="Abrir o diálogo e pedir as fixas: GET fixas-para-repetir/?mes=AAAA-MM" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="150" y="35" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c10" value="_fixas_para_repetir(): fixas do usuário no mês anterior, sem cópia no mês escolhido" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane5">
+          <mxGeometry x="135" y="35" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c11" value="SELECT das fixas do mês anterior, sem as que já são repetida_de de uma transação do mês" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane6">
+          <mxGeometry x="120" y="70" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c12" value="lista vazia?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="470" y="50" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c13" value="Mostrar “Nenhuma transação fixa de [mês] para repetir.”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="560" y="150" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c14" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="820" y="173" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c15" value="Listar descrição, categoria, valor e data sugerida, todas marcadas" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="600" y="35" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c16" value="Desmarcar as que não quer e clicar em “Lançar N transações”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane3">
+          <mxGeometry x="600" y="140" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c17" value="Enviar POST repetir-fixas/ com {mes, ids}" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="940" y="35" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c18" value="RepetirFixasSerializer: mes no formato AAAA-MM e ids, lista de inteiros" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane5">
+          <mxGeometry x="920" y="35" width="260" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c19" value="ids válidos?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-fixas-lane5">
+          <mxGeometry x="1220" y="60" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c20" value="Mostrar o erro do campo ids (400)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="1180" y="150" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c21" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="1410" y="168" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c22" value="Ignorar as originais que já têm cópia no mês (idempotência)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane5">
+          <mxGeometry x="1310" y="35" width="240" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c23" value="INSERT das cópias: mesmo dia (ou o último do mês), fixa = True, repetida_de = original" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane6">
+          <mxGeometry x="1280" y="70" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c24" value="Fechar o diálogo, atualizar as listas e mostrar o aviso com o Papo joinha (201)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-fixas-lane4">
+          <mxGeometry x="1600" y="35" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c25" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-fixas-lane3">
+          <mxGeometry x="1693" y="163" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c26" value="Ids de outro usuário, não fixos ou fora do mês anterior derrubam o pedido inteiro: nada é criado." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-fixas-lane5">
+          <mxGeometry x="520" y="140" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-c27" value="repetida_de: FK para a própria Transacao, on_delete=SET_NULL. Excluir a original não apaga a cópia (ADR-024)." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-fixas-lane6">
+          <mxGeometry x="560" y="70" width="560" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-fixas-e28" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c7" target="atividade-fixas-c8">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e29" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c8" target="atividade-fixas-c9">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e30" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c9" target="atividade-fixas-c10">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e31" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c10" target="atividade-fixas-c11">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e32" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c11" target="atividade-fixas-c12">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="485" y="945" /><mxPoint x="485" y="390" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e33" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c12" target="atividade-fixas-c13">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="530" y="440" /><mxPoint x="710" y="440" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-l34" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-fixas-e33">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-30" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e35" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c13" target="atividade-fixas-c14">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e36" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c12" target="atividade-fixas-c15">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-l37" value="[não]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-fixas-e36">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e38" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c15" target="atividade-fixas-c16">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e39" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c16" target="atividade-fixas-c17">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1090" y="255" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e40" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c17" target="atividade-fixas-c18">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e41" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c18" target="atividade-fixas-c19">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e42" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c19" target="atividade-fixas-c20">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-l43" value="[não]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-fixas-e42">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="22" y="10" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e44" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c20" target="atividade-fixas-c21">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e45" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c19" target="atividade-fixas-c22">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-l46" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-fixas-e45">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e47" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c22" target="atividade-fixas-c23">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1470" y="900" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e48" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c23" target="atividade-fixas-c24">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1750" y="945" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-fixas-e49" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-fixas-c24" target="atividade-fixas-c25">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
 </mxfile>

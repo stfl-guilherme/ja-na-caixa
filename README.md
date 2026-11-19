@@ -8,13 +8,16 @@ Controle financeiro pessoal: sistema web local para registrar receitas e despesa
 
 - Login por sessão com botão **Entrar como demonstração**, em dois modos: com dados de exemplo ou começando do zero (sem senha no front)
 - CRUD de categorias (nome, tipo receita/despesa, cor), com exclusão bloqueada quando há transações
-- CRUD de transações, com valor no formato brasileiro (`1.234,56`)
-- Filtros de transações por mês, categoria, tipo e busca na descrição, com paginação (20 por página)
-- Painel do mês em seções verticais, cada uma com título e descrição: resumo (receitas, despesas e saldo com comparação ao mês anterior), saldo acumulado dia a dia, entradas × saídas por dia, despesas por categoria (treemap + tabela), ano até agora e 5 últimas transações; eixos rotulados e tooltips; estados vazio e de saldo negativo
+- CRUD de transações, com valor no formato brasileiro (`1.234,56`) e forma de pagamento (Pix, cartão de crédito ou débito, dinheiro, boleto, transferência ou não informado)
+- Filtros de transações por mês, categoria, tipo, forma de pagamento e busca na descrição, com paginação (20 por página)
+- **Orçamento por categoria:** limite mensal opcional nas categorias de despesa, com barra de progresso e estado em texto ("Dentro do limite", "Atenção", "Limite ultrapassado em R$ X") no Painel e em Categorias
+- **Dicas do Papo:** até 3 avisos sobre o mês, gerados por regras fixas no backend (sem IA): orçamento estourado ou perto do limite, mês no vermelho, categoria que mais cresceu, concentração de gastos, despesas em queda e primeiros passos; uma por vez, num balão ligado ao mascote
+- **Transações fixas:** marque uma transação como "Repete todo mês" e lance as fixas do mês anterior com "Repetir fixas de [mês]", escolhendo quais; repetir de novo não duplica
+- Painel do mês em seções verticais, cada uma com título e descrição: resumo (receitas, despesas e saldo com comparação ao mês anterior), saldo acumulado dia a dia, entradas × saídas por dia, orçamentos do mês, despesas por categoria (treemap + tabela), como você pagou (despesas por forma de pagamento), ano até agora e 5 últimas transações; eixos rotulados e tooltips; estados vazio e de saldo negativo
 - Seletor de mês global (vale para Painel, Transações e Categorias) e "+ Nova transação" a partir de qualquer tela
 - Visual próprio: cena de praia no login, mascote Papo (jacaré-de-papo-amarelo) como decoração acessível, tokens de design em `frontend/src/styles/tokens.css`
 - Dados isolados por usuário (objetos de outro usuário retornam `404`)
-- Dados de demonstração recriados a cada entrada: ~240 transações nos últimos 12 meses (modo exemplo) ou conta vazia com guia de primeiros passos (modo vazio)
+- Dados de demonstração recriados a cada entrada: ~240 transações nos últimos 12 meses, com limites nos 3 estados, formas de pagamento variadas e 2 fixas para repetir no mês atual (modo exemplo) ou conta vazia com guia de primeiros passos (modo vazio)
 - Layout responsivo a partir de 375 px (menu lateral ≥ 720 px; barra inferior e botão "+" abaixo disso)
 
 ## Stack
@@ -25,7 +28,7 @@ Controle financeiro pessoal: sistema web local para registrar receitas e despesa
 
 ## Como rodar
 
-Pré-requisitos: Python 3.12 e Node.js 20 ou superior.
+Pré-requisitos: Python 3.12 e Node.js 22.19 ou superior (o `jsdom` dos testes do frontend não roda no Node 20; ADR-027).
 
 ### Depois de clonar
 
@@ -84,7 +87,7 @@ Na tela de login, **Entrar como demonstração** abre duas opções no próprio 
 
 | Opção | Usuário | O que você encontra |
 |---|---|---|
-| **Ver com dados de exemplo** (destacada) | `demo` | 8 categorias e cerca de 240 transações nos últimos 12 meses, com datas relativas ao mês atual: o Painel já abre com todos os gráficos |
+| **Ver com dados de exemplo** (destacada) | `demo` | 8 categorias e cerca de 240 transações nos últimos 12 meses, com datas relativas ao mês atual: o Painel já abre com todos os gráficos, orçamentos nos 3 estados e dicas do Papo; em Transações, internet e streaming do mês anterior esperam em "Repetir fixas" |
 | **Começar do zero** | `demo-vazio` | Uma conta vazia. O Painel guia em 2 passos: criar uma categoria e lançar a primeira transação. No modal "Nova transação", se não houver categoria do tipo escolhido, dá para criá-la ali mesmo |
 
 - **Os dados de demonstração são recriados a cada entrada** (ADR-018). Sair e entrar de novo apaga o que foi lançado. Para guardar dados, crie um usuário próprio com `python manage.py createsuperuser` e entre pelo formulário.
@@ -118,14 +121,16 @@ Navegador ──▶ Vite :5173 ──(proxy /api)──▶ Django + DRF :8000 �
 | [Decisões (ADR)](docs/decisoes.md) | Escolhas de arquitetura e por quê |
 | [Plano de implementação](docs/superpowers/plans/2026-11-17-ja-na-caixa-plano.md) | Tarefas, testes e commits previstos, com status |
 | [Plano do novo design](docs/superpowers/plans/2026-11-18-novo-design.md) | Tarefas do novo visual (backend e frontend), verificação e diferenças conhecidas |
+| [Plano das novas funcionalidades](docs/superpowers/plans/2026-11-19-novas-funcionalidades.md) | Orçamento, dicas do Papo, forma de pagamento e transações fixas |
 | [Decisões de design](docs/design/decisoes-de-design.md) | Princípios visuais, mascote, regras dos personagens (fonte da verdade do design) |
 | [Telas do design](docs/design/README.md) | Export do Claude Design (`docs/design/telas/`) e como lê-lo |
 | [Screenshots](docs/screenshots/) | Telas implementadas em 1440 px e 375 px |
-| [Diagramas UML](docs/diagramas/README.md) | Classes (domínio e camadas do backend) e atividades (entrar, registrar transação, excluir categoria) em .drawio |
+| [Diagramas UML](docs/diagramas/README.md) | Classes (domínio e camadas do backend) e atividades (entrar, registrar transação, excluir categoria, repetir transações fixas) em .drawio |
 | [Registro de uso de IA](docs/ia/registro-uso-ia.md) | Ferramentas, skills e revisão humana em cada etapa |
 | [Prompt inicial](docs/ia/prompt-inicial.md) | Instruções dadas ao Claude Code para a construção autônoma |
 | [Prompt do novo design](docs/ia/prompt-design.md) | Instruções para implementar o novo design |
 | [Prompt dos modos de demonstração](docs/ia/prompt-demo-painel.md) | Instruções para os modos de demonstração, o onboarding e o Painel em seções |
+| [Prompt das novas funcionalidades](docs/ia/prompt-novas-funcionalidades.md) | Instruções para orçamento, dicas, forma de pagamento e transações fixas |
 
 ## Uso de IA
 

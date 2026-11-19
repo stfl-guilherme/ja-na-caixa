@@ -8,7 +8,7 @@
         <mxCell id="classes-dominio-c1" value="Diagrama de classes — domínio do JáNaCaixa" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#142028;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="40" y="16" width="1500" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-c2" value="Fonte: backend/financas/models.py. Só os atributos de User usados pelo sistema." style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#4A5862;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="classes-dominio-c2" value="Fonte: backend/financas/models.py. Só os atributos de User usados pelo sistema. Inclui orçamento, forma de pagamento e transações fixas (spec 17)." style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#4A5862;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="40" y="46" width="1840" height="24" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-c3" value='User&lt;br&gt;&lt;span style="font-size:14px;font-weight:normal"&gt;django.contrib.auth&lt;/span&gt;' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="1">
@@ -24,7 +24,7 @@
           <mxGeometry y="116" width="280" height="8" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-c7" value="Categoria" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="640" y="140" width="380" height="228" as="geometry" />
+          <mxGeometry x="640" y="140" width="380" height="258" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-r8" value="+ id: int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
           <mxGeometry y="40" width="380" height="30" as="geometry" />
@@ -38,17 +38,20 @@
         <mxCell id="classes-dominio-r11" value='+ cor: str = "#64748B" {#RRGGBB}' style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
           <mxGeometry y="130" width="380" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-r12" value="+ criado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
+        <mxCell id="classes-dominio-r51" value="+ limite_mensal: Decimal(12,2) [0..1]" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
           <mxGeometry y="160" width="380" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="classes-dominio-r12" value="+ criado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
+          <mxGeometry y="190" width="380" height="30" as="geometry" />
+        </mxCell>
         <mxCell id="classes-dominio-r13" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#142028;" vertex="1" parent="classes-dominio-c7">
-          <mxGeometry y="190" width="380" height="8" as="geometry" />
+          <mxGeometry y="220" width="380" height="8" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-r14" value="+ __str__(): str" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c7">
-          <mxGeometry y="198" width="380" height="30" as="geometry" />
+          <mxGeometry y="228" width="380" height="30" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-c15" value="Transacao" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="140" width="500" height="348" as="geometry" />
+          <mxGeometry x="1320" y="140" width="500" height="408" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-r16" value="+ id: int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="40" width="500" height="30" as="geometry" />
@@ -65,23 +68,29 @@
         <mxCell id="classes-dominio-r20" value='+ observacao: str = ""' style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="160" width="500" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-r21" value="+ criado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+        <mxCell id="classes-dominio-r52" value="+ forma_pagamento: FormaPagamento = NAO_INFORMADO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="190" width="500" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-r22" value="+ atualizado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+        <mxCell id="classes-dominio-r53" value="+ fixa: bool = False" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="220" width="500" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-r23" value="+ /tipo: TipoCategoria {readOnly}" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+        <mxCell id="classes-dominio-r21" value="+ criado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="250" width="500" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-r24" value="+ /usuario: User {readOnly}" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+        <mxCell id="classes-dominio-r22" value="+ atualizado_em: datetime" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
           <mxGeometry y="280" width="500" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="classes-dominio-r23" value="+ /tipo: TipoCategoria {readOnly}" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+          <mxGeometry y="310" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r24" value="+ /usuario: User {readOnly}" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
+          <mxGeometry y="340" width="500" height="30" as="geometry" />
+        </mxCell>
         <mxCell id="classes-dominio-r25" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=#142028;" vertex="1" parent="classes-dominio-c15">
-          <mxGeometry y="310" width="500" height="8" as="geometry" />
+          <mxGeometry y="370" width="500" height="8" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-r26" value="+ __str__(): str" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c15">
-          <mxGeometry y="318" width="500" height="30" as="geometry" />
+          <mxGeometry y="378" width="500" height="30" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-c27" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«enumeration»&lt;/span&gt;&lt;br&gt;TipoCategoria' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="1">
           <mxGeometry x="710" y="620" width="240" height="122" as="geometry" />
@@ -107,7 +116,7 @@
         <mxCell id="classes-dominio-l34" value="on_delete=CASCADE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e31">
           <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="22" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="classes-dominio-e35" value="" style="html=1;rounded=0;endArrow=none;strokeColor=#142028;strokeWidth=1.5;exitX=1;exitY=0.350877;exitDx=0;exitDy=0;entryX=0;entryY=0.229885;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c7" target="classes-dominio-c15">
+        <mxCell id="classes-dominio-e35" value="" style="html=1;rounded=0;endArrow=none;strokeColor=#142028;strokeWidth=1.5;exitX=1;exitY=0.310077;exitDx=0;exitDy=0;entryX=0;entryY=0.196078;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c7" target="classes-dominio-c15">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-dominio-l36" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e35">
@@ -134,7 +143,7 @@
         <mxCell id="classes-dominio-c43" value="Excluir categoria com transações → ProtectedError → HTTP 409&lt;br&gt;&lt;i&gt;CategoriaViewSet.destroy&lt;/i&gt;" style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="1">
           <mxGeometry x="80" y="540" width="440" height="72" as="geometry" />
         </mxCell>
-        <mxCell id="classes-dominio-e44" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.929825;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c41" target="classes-dominio-c7">
+        <mxCell id="classes-dominio-e44" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.821706;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c41" target="classes-dominio-c7">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-dominio-e45" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.105263;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c42" target="classes-dominio-c7">
@@ -144,16 +153,73 @@
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-dominio-c47" value="{valor &amp;gt; 0}&lt;br&gt;&lt;i&gt;CheckConstraint + TransacaoSerializer.validate_valor&lt;/i&gt;" style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="540" width="440" height="72" as="geometry" />
+          <mxGeometry x="1320" y="600" width="440" height="72" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-c48" value="/tipo e /usuario são derivados (@property): vêm da categoria e não são colunas. Assim a transação nunca tem tipo ou dono diferente da categoria (ADR-004)." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="1">
-          <mxGeometry x="1320" y="650" width="500" height="96" as="geometry" />
+          <mxGeometry x="1320" y="700" width="500" height="96" as="geometry" />
         </mxCell>
         <mxCell id="classes-dominio-e49" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.44;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c47" target="classes-dominio-c15">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-dominio-e50" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=0.96;exitY=0;exitDx=0;exitDy=0;entryX=0.96;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c48" target="classes-dominio-c15">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-c54" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«enumeration»&lt;/span&gt;&lt;br&gt;FormaPagamento' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=56;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="620" width="260" height="272" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r55" value="PIX" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="56" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r56" value="CARTAO_CREDITO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="86" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r57" value="CARTAO_DEBITO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="116" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r58" value="DINHEIRO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="146" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r59" value="BOLETO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="176" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r60" value="TRANSFERENCIA" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="206" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r61" value="NAO_INFORMADO" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="236" width="260" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-r62" value="" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-dominio-c54">
+          <mxGeometry y="266" width="260" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-e63" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.95;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c15" target="classes-dominio-c54">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1130" y="528" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-l64" value="«use»" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e63">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="40" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-e65" value="" style="html=1;rounded=0;endArrow=none;strokeColor=#142028;strokeWidth=1.5;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c15" target="classes-dominio-c15">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1870" y="242" /><mxPoint x="1870" y="344" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-l66" value="0..1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e65">
+          <mxGeometry x="-0.85" relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-l67" value="0..*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e65">
+          <mxGeometry x="0.85" relative="1" as="geometry"><mxPoint x="0" y="14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-l68" value="repetida_de&lt;br&gt;SET_NULL" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="classes-dominio-e65">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-c69" value="{limite_mensal &amp;gt; 0 e só em DESPESA; ao mudar para RECEITA, o limite sai no mesmo request}&lt;br&gt;&lt;i&gt;CategoriaSerializer.validate_limite_mensal + validate&lt;/i&gt;" style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="250" width="250" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-e70" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=0;exitY=0.382353;exitDx=0;exitDy=0;entryX=1;entryY=0.678295;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c69" target="classes-dominio-c7">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-dominio-c71" value="{repetir não duplica: a original que já tem cópia no mês (repetida_de) é ignorada; a cópia sai com fixa = True}&lt;br&gt;&lt;i&gt;TransacaoViewSet.repetir_fixas&lt;/i&gt;" style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="830" width="500" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-dominio-e72" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#4A5862;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.9;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-dominio-c71" target="classes-dominio-c15">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1860" y="878" /><mxPoint x="1860" y="507" /></Array></mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
@@ -184,13 +250,13 @@
         <mxCell id="classes-camadas-c7" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«Model»&lt;/span&gt;&lt;br&gt;Categoria' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane3">
           <mxGeometry x="20" y="70" width="380" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r8" value="usuario: FK → User (CASCADE)&lt;br&gt;nome, tipo, cor, criado_em" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c7">
+        <mxCell id="classes-camadas-r8" value="usuario: FK → User (CASCADE)&lt;br&gt;nome, tipo, cor, limite_mensal [0..1], criado_em" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c7">
           <mxGeometry y="50" width="380" height="60" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c9" value="CategoriaSerializer" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane4">
           <mxGeometry x="20" y="70" width="380" height="144" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r10" value="+ transacoes: int (contagem, leitura)&lt;br&gt;+ validate_nome()&lt;br&gt;+ validate_cor()&lt;br&gt;+ validate_tipo()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c9">
+        <mxCell id="classes-camadas-r10" value="+ transacoes: int (contagem, leitura)&lt;br&gt;+ validate_nome() · validate_cor()&lt;br&gt;+ validate_tipo() · validate_limite_mensal()&lt;br&gt;+ validate(): limite só em DESPESA" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c9">
           <mxGeometry y="40" width="380" height="104" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c11" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«ModelViewSet»&lt;/span&gt;&lt;br&gt;CategoriaViewSet' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
@@ -206,49 +272,49 @@
           <mxGeometry y="40" width="380" height="60" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c15" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«Model»&lt;/span&gt;&lt;br&gt;Transacao' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane3">
-          <mxGeometry x="20" y="270" width="380" height="132" as="geometry" />
+          <mxGeometry x="20" y="270" width="380" height="162" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r16" value="categoria: FK → Categoria (PROTECT)&lt;br&gt;descricao, valor, data, observacao&lt;br&gt;@property tipo, usuario" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c15">
-          <mxGeometry y="50" width="380" height="82" as="geometry" />
+        <mxCell id="classes-camadas-r16" value="categoria: FK → Categoria (PROTECT)&lt;br&gt;repetida_de: FK → Transacao (SET_NULL)&lt;br&gt;descricao, valor, data, observacao,&lt;br&gt;forma_pagamento, fixa · @property tipo, usuario" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c15">
+          <mxGeometry y="50" width="380" height="112" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c17" value="TransacaoSerializer" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane4">
           <mxGeometry x="20" y="270" width="380" height="144" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r18" value="+ categoria: só do usuário (outra → 400)&lt;br&gt;+ categoria_nome, categoria_cor, tipo&lt;br&gt;+ validate_descricao()&lt;br&gt;+ validate_valor()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c17">
+        <mxCell id="classes-camadas-r18" value="+ categoria: só do usuário (outra → 400)&lt;br&gt;+ categoria_nome, categoria_cor, tipo,&lt;br&gt;forma_pagamento_rotulo · repetida_de (leitura)&lt;br&gt;+ validate_descricao() · validate_valor()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c17">
           <mxGeometry y="40" width="380" height="104" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c19" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«ModelViewSet»&lt;/span&gt;&lt;br&gt;TransacaoViewSet' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
           <mxGeometry x="20" y="270" width="380" height="132" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r20" value="+ get_queryset(): filtrar_transacoes()&lt;br&gt;pagination_class = TransacaoPagination&lt;br&gt;(20 por página + totais do filtro)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c19">
+        <mxCell id="classes-camadas-r20" value="+ get_queryset(): filtrar_transacoes()&lt;br&gt;TransacaoPagination (20/página + totais)&lt;br&gt;+ fixas_para_repetir() · repetir_fixas()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c19">
           <mxGeometry y="50" width="380" height="82" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c21" value="router: transacoes" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane6">
           <mxGeometry x="20" y="285" width="380" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r22" value="/api/transacoes/&lt;br&gt;/api/transacoes/{id}/" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c21">
+        <mxCell id="classes-camadas-r22" value="/api/transacoes/  ·  {id}/&lt;br&gt;fixas-para-repetir/  ·  repetir-fixas/" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c21">
           <mxGeometry y="40" width="380" height="60" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c23" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«APIView»&lt;/span&gt;&lt;br&gt;ResumoView' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
-          <mxGeometry x="20" y="480" width="380" height="110" as="geometry" />
+          <mxGeometry x="20" y="430" width="380" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="classes-camadas-r24" value="+ get(): totais do mês em Decimal,&lt;br&gt;mês anterior, série diária, por categoria" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c23">
+        <mxCell id="classes-camadas-r24" value="+ get(): totais do mês em Decimal, mês anterior,&lt;br&gt;série diária, por categoria, despesas_por_forma" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c23">
           <mxGeometry y="50" width="380" height="60" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c25" value="path: resumo" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane6">
-          <mxGeometry x="20" y="495" width="380" height="78" as="geometry" />
+          <mxGeometry x="20" y="445" width="380" height="78" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-r26" value="/api/resumo/?mes=AAAA-MM" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c25">
           <mxGeometry y="40" width="380" height="38" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c27" value='&lt;span style="font-size:14px;font-weight:normal"&gt;«APIView»&lt;/span&gt;&lt;br&gt;ResumoAnualView' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
-          <mxGeometry x="20" y="620" width="380" height="88" as="geometry" />
+          <mxGeometry x="20" y="555" width="380" height="88" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-r28" value="+ get(): receitas e despesas dos 12 meses" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c27">
           <mxGeometry y="50" width="380" height="38" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c29" value="path: resumo/anual" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane6">
-          <mxGeometry x="20" y="624" width="380" height="78" as="geometry" />
+          <mxGeometry x="20" y="560" width="380" height="78" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-r30" value="/api/resumo/anual/?ano=AAAA" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c29">
           <mxGeometry y="40" width="380" height="38" as="geometry" />
@@ -260,13 +326,13 @@
           <mxGeometry y="50" width="380" height="38" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c33" value="views_auth.py" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
-          <mxGeometry x="20" y="760" width="380" height="166" as="geometry" />
+          <mxGeometry x="20" y="790" width="380" height="166" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-r34" value="CsrfView.get()&lt;br&gt;LoginView.post() → authenticate, login&lt;br&gt;DemoLoginView.post() → recriar_demo(modo)&lt;br&gt;LogoutView.post()&lt;br&gt;MeView.get()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c33">
           <mxGeometry y="40" width="380" height="126" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c35" value="paths: auth" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane6">
-          <mxGeometry x="20" y="790" width="380" height="100" as="geometry" />
+          <mxGeometry x="20" y="816" width="380" height="100" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-r36" value="/api/auth/csrf/  ·  login/  ·  demo/&lt;br&gt;/api/auth/logout/  ·  me/" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c35">
           <mxGeometry y="40" width="380" height="60" as="geometry" />
@@ -299,19 +365,37 @@
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-camadas-e46" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.789474;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-camadas-c23" target="classes-camadas-c15">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="380" y="625" /></Array></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="380" y="575" /></Array></mxGeometry>
         </mxCell>
         <mxCell id="classes-camadas-e47" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.578947;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-camadas-c27" target="classes-camadas-c15">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="300" y="754" /></Array></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="300" y="689" /></Array></mxGeometry>
         </mxCell>
         <mxCell id="classes-camadas-e48" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.26506;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-camadas-c33" target="classes-camadas-c31">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="classes-camadas-c49" value="Os resumos somam as transações na própria view, em Decimal (ADR-005), sem serializer." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="classes-camadas-lane4">
-          <mxGeometry x="20" y="690" width="380" height="72" as="geometry" />
+          <mxGeometry x="20" y="700" width="380" height="72" as="geometry" />
         </mxCell>
         <mxCell id="classes-camadas-c50" value="Autenticação por sessão: SessaoAuthentication (authentication.py) responde 401 sem login (ADR-008)." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="classes-camadas-lane4">
           <mxGeometry x="20" y="850" width="380" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-camadas-c51" value='&lt;span style=&quot;font-size:14px;font-weight:normal&quot;&gt;«APIView»&lt;/span&gt;&lt;br&gt;OrcamentosView · DicasView' style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane5">
+          <mxGeometry x="20" y="665" width="380" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-camadas-r52" value="+ get(): orcamentos_do_mes() (orcamentos.py)&lt;br&gt;+ get(): gerar_dicas() (dicas.py), no máximo 3" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c51">
+          <mxGeometry y="50" width="380" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-camadas-c53" value="paths: orcamentos, dicas" style="swimlane;html=1;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#157A2E;fontColor=#FFFFFF;swimlaneFillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=18;" vertex="1" parent="classes-camadas-lane6">
+          <mxGeometry x="20" y="675" width="380" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-camadas-r54" value="/api/orcamentos/?mes=AAAA-MM&lt;br&gt;/api/dicas/?mes=AAAA-MM" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=14;fontColor=#142028;whiteSpace=wrap;" vertex="1" parent="classes-camadas-c53">
+          <mxGeometry y="40" width="380" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="classes-camadas-e55" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.490909;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-camadas-c53" target="classes-camadas-c51">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="classes-camadas-e56" value="" style="html=1;rounded=0;endArrow=open;endSize=12;dashed=1;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.2;exitDx=0;exitDy=0;entryX=0.368421;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="classes-camadas-c51" target="classes-camadas-c15">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="220" y="777" /></Array></mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

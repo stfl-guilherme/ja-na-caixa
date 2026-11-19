@@ -10,6 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from financas.dicas import gerar_dicas
 from financas.filters import filtrar_transacoes, intervalo_do_mes, mes_anterior
 from financas.models import Categoria, TipoCategoria, Transacao
 from financas.orcamentos import orcamentos_do_mes, percentual_texto
@@ -211,6 +212,13 @@ class OrcamentosView(APIView):
                 for item in orcamentos_do_mes(request.user, mes)
             ]
         )
+
+
+class DicasView(APIView):
+    """Dicas do Papo do mês, no máximo 3, por regras fixas (spec 17.2; ADR-022)."""
+
+    def get(self, request):
+        return Response(gerar_dicas(request.user, _mes_da_requisicao(request)))
 
 
 class ResumoAnualView(APIView):

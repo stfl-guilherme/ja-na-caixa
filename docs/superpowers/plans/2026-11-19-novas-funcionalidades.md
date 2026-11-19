@@ -45,7 +45,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Funcionalidade 2 — Dicas do Papo (spec 17.2, ADR-022)
 
-### [ ] D1 — Regras de dicas e endpoint
+### [x] D1 — Regras de dicas e endpoint
 - **Arquivos:** `backend/financas/dicas.py`, `backend/financas/views.py`, `backend/financas/urls.py`, `backend/financas/tests/test_dicas.py`.
 - **Teste primeiro:** cada regra isolada com os limites exatos (estourado e maior excesso; vermelho; 80% e 100% em "perto"; crescimento 19,99% × 20% e R$ 49,99 × R$ 50,00; concentração 40% × 40,01%; despesas caíram); regras 4 e 6 ignoradas sem despesas no mês anterior; virada de ano (janeiro compara com dezembro); primeiros passos (sem categorias; sem transações no mês) substituem as demais; ordenação por prioridade; máximo de 3; formato BRL e mês por extenso; tom (sem "demais"/"exagerou"); isolamento; `mes` inválido → 400; sem login → 401.
 - **Pronto quando:** testes verdes.

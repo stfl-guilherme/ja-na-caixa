@@ -123,6 +123,19 @@
   }
 }
 
+/*
+ * Textura de areia das telas internas (decisoes-de-design, "Fundo das telas internas").
+ * Ruído gerado em SVG (feTurbulence) num data URI, sem imagem externa. O alfa de cada
+ * grão vem do ruído e o retângulo inteiro fica com opacidade 0.035 (entre 2% e 4%).
+ * Sem background-attachment: fixed (trava a rolagem no celular): a textura rola com a página.
+ * Cor dos grãos: --jnc-borda-areia (#8F7B55). Não vale para o login.
+ */
+.fundo-areia {
+  background-color: var(--jnc-fundo-app);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.561 0 0 0 0 0.482 0 0 0 0 0.333 1.6 0 0 0 -0.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
 /* Animação só de entrada; nada em loop com movimento reduzido (ADR-013). */
 @media (prefers-reduced-motion: reduce) {
   *,

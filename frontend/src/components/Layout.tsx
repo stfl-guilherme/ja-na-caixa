@@ -59,7 +59,7 @@ export function Layout() {
 
   return (
     <InterfaceContext.Provider value={contexto}>
-      <div className={larga ? 'flex min-h-screen flex-row bg-fundo-app' : 'flex min-h-screen flex-col bg-fundo-app'}>
+      <div className={larga ? 'fundo-areia flex min-h-screen flex-row' : 'fundo-areia flex min-h-screen flex-col'}>
         {larga && (
           <AppSidebar
             usuario={usuario?.username ?? ''}

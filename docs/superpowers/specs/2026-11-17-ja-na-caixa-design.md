@@ -9,7 +9,7 @@
 | Modalidade | Individual (autorizado pela professora) |
 | Data da spec | 17/11/2026 |
 | Apresentação | 24/11/2026 |
-| Status | Revisada na Fase 1 (17/11/2026), ampliada para o novo design (18/11/2026) e para os modos de demonstração e o Painel em seções (18/11/2026). Ver seções 14, 15 e 16 e `docs/ia/registro-uso-ia.md` |
+| Status | Revisada na Fase 1 (17/11/2026), ampliada para o novo design (18/11/2026) para os modos de demonstração e o Painel em seções (18/11/2026) e para orçamento, dicas, forma de pagamento e transações fixas (19/11/2026). Ver seções 14 a 17 e `docs/ia/registro-uso-ia.md` |
 
 ---
 
@@ -38,12 +38,16 @@ Requisitos da avaliação que esta spec atende:
 6. Isolamento por usuário: cada usuário vê e altera apenas os próprios dados.
 7. Dados de demonstração gerados por comando.
 8. Testes automatizados no backend e no frontend.
+9. Orçamento (limite mensal) por categoria de despesa (seção 17.1).
+10. Dicas do Papo: avisos por regras fixas sobre o mês (seção 17.2).
+11. Forma de pagamento da transação (seção 17.3).
+12. Repetir transações fixas do mês anterior (seção 17.4).
 
 ### Fora do escopo
 - Cadastro de usuário pela interface (usuários criados por comando/admin).
 - Recuperação de senha, e-mail, 2FA.
-- Múltiplas contas bancárias, cartões, parcelamento, transações recorrentes.
-- Orçamentos e metas.
+- Múltiplas contas bancárias, cartões, parcelamento e recorrência **automática** (as transações fixas são repetidas por ação do usuário, seção 17.4).
+- Metas de economia e orçamento com histórico por mês (o limite mensal da seção 17.1 vale para todos os meses, ADR-021).
 - Importação/exportação (CSV, OFX).
 - Deploy em servidor (pós-apresentação, para portfólio).
 
@@ -126,6 +130,7 @@ Transacao                │
 | nome | CharField(50) | obrigatório; único por usuário, sem diferenciar maiúsculas |
 | tipo | CharField(7) | `RECEITA` ou `DESPESA` |
 | cor | CharField(7) | hexadecimal `#RRGGBB` (validado por regex); padrão `#64748B` |
+| limite_mensal | DecimalField(12, 2) | opcional (`null`); se preenchido, > 0 e só em `DESPESA` (seção 17.1) |
 | criado_em | DateTimeField | `auto_now_add` |
 
 Restrições:
@@ -142,6 +147,9 @@ Restrições:
 | valor | DecimalField(12, 2) | **sempre > 0**; o sinal vem do tipo da categoria |
 | data | DateField | obrigatório; sem hora (evita problemas de fuso) |
 | observacao | TextField | opcional |
+| forma_pagamento | CharField(14) | escolhas fixas; padrão `NAO_INFORMADO` (seção 17.3) |
+| fixa | BooleanField | padrão `False` (seção 17.4) |
+| repetida_de | FK → Transacao | opcional; `on_delete=SET_NULL`, `related_name="repeticoes"` (seção 17.4) |
 | criado_em | DateTimeField | `auto_now_add` |
 | atualizado_em | DateTimeField | `auto_now` |
 
@@ -429,3 +437,150 @@ O design visual aprovado (`docs/design/`) pede dados que a API da seção 6 não
 | 5 | Como o modal sabe de que tipo é a categoria a criar? | O modal ganha uma escolha de tipo (Despesa/Receita) antes da categoria; o select só lista as categorias desse tipo. O tipo continua vindo da categoria na API (ADR-004): a escolha só filtra a lista. |
 | 6 | O bento sai? | Sim, substituído pelo fluxo vertical (ADR-019); os componentes de gráfico são reaproveitados com mais altura e eixos rotulados. |
 
+
+## 17. Novas funcionalidades (19/11/2026)
+
+Quatro funcionalidades, implementadas **nesta ordem**, cada uma completa (backend + frontend, suíte verde, commit e push) antes da próxima: orçamento por categoria → dicas do Papo → forma de pagamento → repetir transações fixas. Se uma delas não ficar estável, os commits dela são revertidos, o motivo vai para `docs/decisoes.md` e o trabalho para; as anteriores ficam. Decisões: ADR-021 a ADR-027.
+
+### 17.1 Orçamento por categoria
+
+**Modelo.** `Categoria.limite_mensal`: `DecimalField(12, 2, null=True, blank=True)` (ADR-021). Migration reversível (só `AddField`).
+
+**Regras.**
+- Se preenchido, `limite_mensal > 0`; `0` ou negativo → `400 {"limite_mensal": [...]}`.
+- Só categorias `DESPESA` têm limite. Criar ou editar uma `RECEITA` com limite → `400 {"limite_mensal": [...]}`.
+- Mudar de `DESPESA` para `RECEITA` (permitido só sem transações, seção 5.1) exige remover o limite **no mesmo request** (`"limite_mensal": null`). Se o limite continuar (enviado ou já gravado), `400 {"limite_mensal": ["Categorias de receita não têm limite. Remova o limite para mudar o tipo."]}`.
+- O limite vale para todos os meses e não tem histórico (ADR-021).
+
+**API.**
+- O CRUD de categorias aceita e devolve `limite_mensal` (string decimal ou `null`). Sem o campo no corpo, o limite não muda (PATCH) ou fica `null` (POST/PUT).
+- `GET /api/orcamentos/?mes=AAAA-MM` (sem `mes`, mês atual; inválido → `400`; sem login → `401`): categorias de **despesa** do usuário **com limite**, em ordem alfabética:
+
+```json
+[{"categoria_id": 5, "nome": "Lazer", "cor": "#8C6A0C", "limite": "300.00", "gasto": "382.50",
+  "percentual": "127.50", "excesso": "82.50", "situacao": "estourado"}]
+```
+
+- `gasto`: soma das transações da categoria no mês (`"0.00"` sem gastos). `percentual = gasto / limite × 100`, com 2 casas (arredondamento meio para cima). `excesso = gasto − limite` quando positivo, senão `"0.00"`. O campo `excesso` foi acrescentado ao contrato do prompt para o front não subtrair dinheiro (seção 6.5).
+- `situacao` pelo percentual **exato** (antes do arredondamento): `ok` se < 80%; `atencao` de 80% a 100% (inclusive); `estourado` se > 100%.
+
+**Telas.**
+- Modal de categoria: campo "Limite mensal (opcional)" com a mesma máscara de centavos do valor da transação, **visível só quando o tipo é Despesa**. Trocar para Receita esconde o campo e envia `limite_mensal: null`. Campo vazio = sem limite.
+- Painel: seção "Orçamentos de [mês]", logo depois de "Resumo de [mês]", com uma barra por categoria: "R$ 340,00 de R$ 500,00 (68%)" e o estado **também em texto**: "Dentro do limite", "Atenção" ou "Limite ultrapassado em R$ X". O percentual exibido é o inteiro truncado (79,99% → 79%), e a barra fica cheia acima de 100%. Sem categorias com limite → "Nenhuma categoria com limite. Defina limites em Categorias." com link para `/categorias`.
+- Categorias: a mesma barra no cartão de cada categoria com limite, para o mês selecionado.
+
+**Testes.** Limite em receita → 400; limite ≤ 0 → 400; troca de tipo com limite (com e sem remover no mesmo request); limites de situação exatos (79,99% / 80% / 100% / 100,01%); mês sem gastos (`"0.00"`, `ok`); só categorias com limite e só de despesa; isolamento; sem login → 401. Front: formatação da barra, texto do estado nos três casos, campo de limite só para despesa, mensagem sem limites.
+
+### 17.2 Dicas do Papo
+
+**Endpoint.** `GET /api/dicas/?mes=AAAA-MM` (exige login; sem `mes`, mês atual; inválido → `400`). Lista ordenada por prioridade, **no máximo 3**, cada regra gera no máximo uma dica:
+
+```json
+[{"id": "orcamento_estourado", "tipo": "alerta", "texto": "Lazer passou do limite em R$ 82,50.",
+  "link": "/transacoes?categoria=5&mes=2026-11"}]
+```
+
+`tipo`: `alerta` | `info` | `parabens` | `primeiros_passos`. `link` pode ser `null`. Regras **determinísticas**, sem IA (ADR-022).
+
+**Regras, em ordem de prioridade.**
+
+| # | id | tipo | Quando | Texto | link |
+|---|---|---|---|---|---|
+| 1 | `orcamento_estourado` | alerta | categoria acima de 100% do limite (várias → a de maior excesso em R$) | "X passou do limite em R$ Y." | `/transacoes?categoria=ID&mes=M` |
+| 2 | `mes_no_vermelho` | alerta | despesas > receitas no mês | "O mês está no vermelho até agora: as despesas passaram as receitas em R$ X." | `/transacoes?tipo=DESPESA&mes=M` |
+| 3 | `orcamento_perto` | info | categoria de 80% a 100% do limite (várias → a de maior percentual) | "X já usou Y% do limite de [mês]." (Y truncado) | `/transacoes?categoria=ID&mes=M` |
+| 4 | `categoria_cresceu` | info | maior aumento em R$ de uma categoria de despesa em relação ao mês anterior, se o aumento for **≥ 20% e ≥ R$ 50,00** | "X subiu Y% em relação a [mês anterior] (mais R$ Z)." (Y truncado) | `/transacoes?categoria=ID&mes=M` |
+| 5 | `concentracao` | info | uma categoria com **mais de 40%** das despesas do mês (a maior) | "X concentra Y% das despesas de [mês]." (Y truncado) | `/transacoes?categoria=ID&mes=M` |
+| 6 | `despesas_cairam` | parabens | total de despesas menor que no mês anterior | "Suas despesas caíram R$ X em relação a [mês anterior]. Boa!" | `null` |
+| 7a | `primeira_categoria` | primeiros_passos | usuário sem categorias | "Crie sua primeira categoria para começar." | `/categorias` |
+| 7b | `primeira_transacao` | primeiros_passos | nenhuma transação no mês | "Lance sua primeira transação de [mês]." | `null` |
+
+Detalhes:
+- **Primeiros passos substituem as demais** (ADR-022): sem categorias → só a 7a; com categorias e sem transações no mês → só a 7b. Assim nunca aparece "suas despesas caíram" num mês ainda sem lançamentos.
+- Regras 4 e 6 são ignoradas se o mês anterior não tiver despesas. A regra 4 só compara categorias que tiveram gasto no mês anterior (sem gasto anterior o percentual não existe).
+- Virada de ano: o mês anterior de janeiro é dezembro do ano anterior.
+- Valores em BRL (`R$ 1.234,56`, formatados no backend) e meses por extenso em minúsculas ("novembro").
+- Tom informativo: os textos nunca usam "demais", "exagerou" ou julgamento parecido (coberto por teste).
+- Isolamento por usuário; sem login → `401`.
+
+**Telas.**
+- Painel, **desktop**: balão de fala acima dos cartões do Resumo, alinhado à direita e com a ponta apontando para o Papo que espia no cartão Saldo; não cobre números nem o título. **Mobile**: cartão de largura total logo abaixo do Resumo, com o Papo pequeno (48px) à esquerda do texto.
+- Pose do Papo pela dica exibida: `alerta` → `papo-preocupado`; `parabens` → `papo-joinha`; `info` e `primeiros_passos` → `papo-espiando`. Com saldo negativo, o Papo do cartão Saldo continua `papo-preocupado` (regra antiga da seção 6 do design).
+- Uma dica por vez. Com mais de uma, botão "Próxima dica (1/3)" (posição atual / total), que volta para a primeira depois da última. Botão "Ver transações" quando houver `link` (para `/categorias`, "Ver categorias").
+- O texto é conteúdo real dentro de `<section aria-label="Dicas do Papo">`, com `aria-live="polite"`; a imagem continua `alt=""` e `aria-hidden`.
+- Sem dicas ou erro na requisição → o balão não aparece e o painel funciona normalmente.
+- Estado vazio do Painel (mês sem movimento): o balão aparece dentro do cartão vazio, saindo do Papo da cadeira que já está lá, sem acrescentar outra imagem (limite de 2 personagens com o caranguejo).
+
+**Testes.** Cada regra isolada com os limites exatos (19,99% vs 20%; R$ 49,99 vs R$ 50,00; 40% vs 40,01%; 80% / 100%); ordenação; máximo de 3; virada de ano; mês anterior vazio; primeiros passos; isolamento; 401 sem login; tom. Front: alternância (inclusive a volta à primeira), pose por tipo, botão de link, ausência sem dicas e com erro.
+
+### 17.3 Forma de pagamento
+
+**Modelo.** `Transacao.forma_pagamento`: `CharField(max_length=14)` com as escolhas abaixo; padrão `NAO_INFORMADO` (ADR-023). A migration adiciona a coluna com o padrão, o que preenche as transações existentes; é reversível.
+
+| Valor | Rótulo |
+|---|---|
+| `PIX` | Pix |
+| `CARTAO_CREDITO` | Cartão de crédito |
+| `CARTAO_DEBITO` | Cartão de débito |
+| `DINHEIRO` | Dinheiro |
+| `BOLETO` | Boleto |
+| `TRANSFERENCIA` | Transferência |
+| `NAO_INFORMADO` | Não informado |
+
+**API.**
+- CRUD de transações com `forma_pagamento` (opcional na criação, padrão `NAO_INFORMADO`; valor fora da lista → `400 {"forma_pagamento": [...]}`). A resposta traz também `forma_pagamento_rotulo` (somente leitura).
+- Filtro `?forma_pagamento=` na listagem (valor inválido → `400`).
+- `GET /api/resumo/` ganha `despesas_por_forma`: `[{forma, rotulo, total, percentual}]`, só despesas do mês, só formas com total > 0, em ordem decrescente de total, com `NAO_INFORMADO` sempre por último. `percentual` = fatia das despesas do mês, string com 2 casas. Mês sem despesas → `[]`. Os campos antigos não mudam.
+
+**Telas.**
+- Modal de transação: select "Forma de pagamento" (rótulo "Forma de recebimento" quando o tipo escolhido for Receita), com "Não informado" como padrão.
+- Transações: no desktop, coluna "Forma" com ícone + rótulo; no celular, o rótulo junto da categoria. Filtro "Forma de pagamento" ao lado do de categoria (vai para a URL como `forma`).
+- Painel: seção "Como você pagou", depois de "Para onde foi o dinheiro", com barras horizontais por forma (rótulo, valor e percentual). "Não informado" aparece por último. Sem despesas → "Nenhuma despesa em [mês]."
+
+**Testes.** Valor inválido → 400; padrão na criação e nos registros existentes (migration); filtro; totais por forma com precisão decimal e ordem (não informado por último); isolamento. Front: select com o rótulo certo para receita, coluna e filtro na listagem, seção do painel.
+
+### 17.4 Repetir transações fixas
+
+**Modelo** (ADR-024).
+- `Transacao.fixa`: `BooleanField(default=False)`.
+- `Transacao.repetida_de`: `ForeignKey("self", null=True, blank=True, on_delete=SET_NULL, related_name="repeticoes")`. Somente leitura na API de CRUD (só o endpoint de repetir preenche).
+
+**API.**
+- `GET /api/transacoes/fixas-para-repetir/?mes=AAAA-MM` (`mes` obrigatório; inválido → `400`): transações **fixas do mês anterior** ao informado que ainda **não** têm cópia no mês informado (nenhuma transação do mês com `repetida_de` = original), em ordem de data. Cada item traz os campos da transação mais `data_sugerida`.
+- `POST /api/transacoes/repetir-fixas/` com `{"mes": "AAAA-MM", "ids": [..]}`: cria as cópias no mês informado e responde `201` com a lista das criadas.
+- Regras:
+  - Data da cópia: o mesmo dia do mês; se o dia não existir no mês de destino, o último dia (31/01 → 28/02, ou 29/02 em ano bissexto).
+  - Copia descrição, valor, categoria, forma de pagamento e observação; `fixa=True`; `repetida_de` = original.
+  - **Idempotência:** id que já tem cópia no mês de destino é ignorado (não duplica nem dá erro). Repetir duas vezes cria só uma vez.
+  - `ids` deve ser uma lista não vazia de inteiros. Id de outro usuário, inexistente, não fixo ou fora do mês anterior → `400 {"ids": [...]}`, e nada é criado.
+  - Virada de ano: repetir em `2027-01` usa as fixas de `2026-12`.
+  - Excluir a original não apaga a cópia (`SET_NULL`).
+
+**Telas.**
+- Modal de transação: checkbox "Repete todo mês (fixa)".
+- Transações: botão "Repetir fixas de [mês anterior]" (secundário, acima dos filtros) que abre um modal com a lista (descrição, categoria, valor, data sugerida), todas marcadas, com a possibilidade de desmarcar, e o botão "Lançar N transações" (N = marcadas; desabilitado com 0). Lista vazia → "Nenhuma transação fixa de [mês anterior] para repetir."
+- Ao lançar, o modal fecha e aparece o aviso de sucesso com o `papo-joinha` ("N transações lançadas.").
+
+**Testes.** Cópia de todos os campos; ajuste de fim de mês (31/01 → 28/02 e 29/02 em ano bissexto); idempotência (repetir duas vezes); ids de outro usuário → 400; não fixas → 400; fora do mês anterior → 400; virada de ano (dezembro → janeiro); exclusão da original não apaga a cópia; a listagem para repetir some depois de repetir. Front: checkbox no modal, lista marcada, desmarcar muda o "Lançar N", lista vazia, aviso de sucesso.
+
+### 17.5 Seed de demonstração
+
+O modo `exemplo` passa a demonstrar tudo no **mês atual** (ADR-025):
+- Limites em 3 categorias de despesa, calculados sobre o gasto do mês atual: Mercado em ~60%, Restaurantes em ~85% e Lazer estourado.
+- Transporte com aumento ≥ 20% e ≥ R$ 50 em relação ao mês anterior (uma "Revisão do carro" no mês atual).
+- Formas de pagamento variadas, incluindo algumas `NAO_INFORMADO`.
+- Fixas em todos os meses: salário, aluguel, internet e streaming, cada cópia com `repetida_de` apontando para a do mês anterior. No mês atual, salário e aluguel já estão repetidos e **internet e streaming ficam sem repetir**, para o botão "Repetir fixas" ter o que mostrar.
+- Teste: o seed gera ao menos 2 dicas e ao menos 2 fixas para repetir no mês atual. O modo `vazio` continua vazio.
+
+### 17.6 Perguntas e respostas desta revisão
+
+| # | Pergunta | Resposta |
+|---|---|---|
+| 1 | O front calcula "Limite ultrapassado em R$ X"? | Não: o backend devolve `excesso` (seção 6.5, o front não soma dinheiro). |
+| 2 | Qual percentual aparece na tela, 79,99% ou 80%? | O inteiro truncado (79%), coerente com a situação `ok`. A API manda 2 casas. |
+| 3 | Primeiros passos convivem com as outras dicas? | Não: sem dados, só a dica de primeiros passos (ADR-022). |
+| 4 | Categoria sem gasto no mês anterior conta como "a que mais cresceu"? | Não: sem base, não há percentual (ADR-022). |
+| 5 | Repetir um id já repetido dá erro? | Não: é ignorado (idempotência); só ids inválidos dão `400`. |
+| 6 | A cópia também é fixa? | Sim (`fixa=True`), para poder ser repetida no mês seguinte. |
+| 7 | Onde o filtro por forma fica na URL? | `?forma=`, como `tipo` e `categoria`; a API recebe `forma_pagamento`. |
+| 8 | O Papo da dica conta no limite de 2 personagens? | Sim. No desktop é o mesmo Papo do cartão Saldo; no celular, o da dica e o do cabeçalho são os dois da tela. |

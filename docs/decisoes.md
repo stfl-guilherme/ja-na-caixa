@@ -206,3 +206,65 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
   - *`ALLOWED_HOSTS = ["*"]` e confiar em qualquer origem:* afrouxaria o Django em vez de só ajustar o proxy local.
   - *Expor o Django direto na rede:* duas portas abertas e CORS entre origens (descartado no ADR-002).
 - **Consequências:** a proteção CSRF continua ativa (o token ainda é exigido). Os modos `--host` expõem o app a todos da rede: usar só em rede confiável, como o resto do projeto, que é local (seção 2). Em `npm run celular`, mudanças no código só aparecem depois de rodar o script de novo.
+
+## ADR-021 — Orçamento como campo da Categoria
+
+- **Status:** Aceita — 19/11/2026
+- **Contexto:** O usuário quer definir um limite mensal de gastos por categoria e acompanhar quanto já usou. O prazo até a apresentação (24/11/2026) é curto.
+- **Decisão:** campo `limite_mensal` (`DecimalField(12, 2)`, opcional) em `Categoria`, em vez de uma tabela própria. Só categorias de despesa têm limite; se preenchido, deve ser maior que zero. A situação (`ok` < 80%, `atencao` 80%–100%, `estourado` > 100%) é calculada no backend em `GET /api/orcamentos/`, que também devolve o `excesso` em reais, para o front não subtrair dinheiro (ADR-005).
+- **Alternativas descartadas:** tabela `Orcamento(categoria, mes, valor)`: guarda o histórico, mas exige CRUD próprio, tela própria e regra de "copiar o limite do mês anterior", fora do prazo.
+- **Limitação aceita:** o limite não tem histórico. Alterá-lo muda também a visão dos meses anteriores (o mesmo limite vale para todos os meses).
+- **Evolução futura:** tabela `Orcamento(categoria, mes, valor)`, migrando o valor atual de `limite_mensal` como limite de todos os meses passados.
+
+## ADR-022 — Dicas do Papo por regras determinísticas
+
+- **Status:** Aceita — 19/11/2026
+- **Contexto:** O Painel mostra números e gráficos, mas não chama a atenção para o que mudou no mês. O Papo, até aqui decorativo, pode "falar" esses avisos.
+- **Decisão:**
+  - Regras fixas no backend (`GET /api/dicas/`), **sem uso de IA nem de modelo de linguagem**: o mesmo dado sempre gera a mesma dica, testável com limites exatos.
+  - Limiares mínimos para não gerar ruído: crescimento só com ≥ 20% **e** ≥ R$ 50,00; concentração só acima de 40%; perto do limite a partir de 80%.
+  - Tom informativo, nunca de julgamento ("passou do limite", "subiu", nunca "demais" ou "exagerou").
+  - No máximo 3 dicas, uma regra = no máximo uma dica, exibidas uma por vez.
+  - Sem dados, só a dica de primeiros passos (as demais regras não fazem sentido num mês vazio). A regra de crescimento só compara categorias que tiveram gasto no mês anterior (sem base, o percentual não existe).
+  - Os textos já saem formatados do backend (moeda BRL e mês por extenso), para o front só exibir.
+- **Alternativas descartadas:** gerar os textos com um modelo de linguagem (não determinístico, depende de rede e de chave de API, difícil de testar e pode julgar o usuário); mostrar todas as dicas de uma vez (polui o Painel).
+- **Consequências:** é a única informação que o Papo carrega (exceção registrada na seção 6 de `decisoes-de-design.md`); o texto continua acessível e a imagem continua decorativa.
+
+## ADR-023 — Forma de pagamento como enumeração
+
+- **Status:** Aceita — 19/11/2026
+- **Contexto:** O usuário quer saber como pagou as despesas do mês (Pix, cartão, dinheiro...).
+- **Decisão:** campo `forma_pagamento` na `Transacao` com escolhas fixas (`PIX`, `CARTAO_CREDITO`, `CARTAO_DEBITO`, `DINHEIRO`, `BOLETO`, `TRANSFERENCIA`, `NAO_INFORMADO`), padrão `NAO_INFORMADO`, que também preenche as transações existentes na migration. O resumo do mês ganha `despesas_por_forma`.
+- **Alternativas descartadas:** tabela de formas de pagamento cadastráveis pelo usuário (mais um CRUD sem ganho real para o escopo); modelar cartões e contas (fora do escopo, seção 2 da spec).
+- **Consequências:** acrescentar uma forma nova exige migration; "Não informado" aparece sempre por último no Painel, para não parecer uma forma de pagamento como as outras.
+
+## ADR-024 — Repetir transações fixas com autorrelacionamento
+
+- **Status:** Aceita — 19/11/2026
+- **Contexto:** Contas como aluguel, internet e salário se repetem todo mês. Lançá-las de novo é trabalho repetitivo. Recorrência automática (agendador) está fora do escopo.
+- **Decisão:** campo `fixa` (booleano) e autorrelacionamento `repetida_de` (FK para a própria `Transacao`, `on_delete=SET_NULL`, `related_name="repeticoes"`). O usuário escolhe, por ação explícita, quais fixas do mês anterior lançar no mês atual. Uma original que já tem cópia no mês de destino (`repetida_de` = original) é ignorada: repetir duas vezes não duplica (idempotência). A cópia também é fixa, para ser repetida no mês seguinte.
+- **Alternativas descartadas:** recorrência automática com agendador (precisa de processo em segundo plano, fora do escopo); comparar descrição e valor para detectar duplicatas (frágil: o usuário pode editar a cópia).
+- **Consequências:** excluir a original não apaga a cópia (só zera `repetida_de`); nesse caso a cópia deixa de ser reconhecida como repetição dela.
+
+## ADR-025 — Seed de demonstração das novas funcionalidades
+
+- **Status:** Aceita — 19/11/2026. Complementa o ADR-018.
+- **Contexto:** O seed é aleatório (semente fixa) e o mês atual só tem lançamentos até hoje. Limites fixos poderiam cair em situações diferentes dependendo do dia.
+- **Decisão:** os limites das 3 categorias com orçamento são calculados **depois** de gerar as transações, sobre o gasto do mês atual (gasto ÷ 0,60, ÷ 0,85 e ÷ 1,15, arredondados para baixo em reais), para a demonstração mostrar sempre os três estados. Uma despesa extra de Transporte no mês atual garante a dica de crescimento. As 4 fixas existem em todos os meses, encadeadas por `repetida_de`; no mês atual, internet e streaming ficam sem repetir.
+- **Consequências:** o mês atual tem 19 lançamentos (18 dos modelos, sem as duas fixas, mais a revisão do carro), e o total continua perto de 240.
+
+## ADR-026 — Funcionalidades avaliadas e descartadas
+
+- **Status:** Aceita — 19/11/2026
+- **Decisão:** não implementar:
+  - *Simulador de compra parcelada:* não usa os dados do usuário (é uma calculadora genérica) e foge do propósito do app, que é registrar e entender o que já aconteceu.
+  - *Previsão de saldo do mês:* a projeção ingênua (média diária × dias restantes) trataria receitas pontuais, como o salário, como se fossem diárias, e mostraria um saldo futuro enganoso.
+- **Consequências:** as dicas (ADR-022) cobrem a necessidade de "o que fazer com esses números" usando só fatos do mês.
+
+## ADR-027 — Node.js 22 para os testes do frontend
+
+- **Status:** Aceita — 19/11/2026
+- **Contexto:** Ao começar as novas funcionalidades, `npm test` falhou no Node 20 instalado: o `undici` usado pelo `jsdom` 31 exige Node ≥ 22.19 (`createZstdDecompress`). O README dizia "Node.js 20 ou superior".
+- **Decisão:** documentar Node.js **22.19 ou superior** como pré-requisito. Nesta sessão, os testes rodaram com o Node 22 instalado a partir do registry do npm (pacote `node`) numa pasta temporária, sem instalar nada global.
+- **Alternativas descartadas:** rebaixar o `jsdom` (mexe em dependências já aprovadas só por causa do ambiente).
+- **Consequências:** o README passa a pedir Node 22.

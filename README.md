@@ -121,6 +121,7 @@ Navegador ──▶ Vite :5173 ──(proxy /api)──▶ Django + DRF :8000 �
 | [Decisões de design](docs/design/decisoes-de-design.md) | Princípios visuais, mascote, regras dos personagens (fonte da verdade do design) |
 | [Telas do design](docs/design/README.md) | Export do Claude Design (`docs/design/telas/`) e como lê-lo |
 | [Screenshots](docs/screenshots/) | Telas implementadas em 1440 px e 375 px |
+| [Diagramas UML](docs/diagramas/README.md) | Classes (domínio e camadas do backend) e atividades (entrar, registrar transação, excluir categoria) em .drawio |
 | [Registro de uso de IA](docs/ia/registro-uso-ia.md) | Ferramentas, skills e revisão humana em cada etapa |
 | [Prompt inicial](docs/ia/prompt-inicial.md) | Instruções dadas ao Claude Code para a construção autônoma |
 | [Prompt do novo design](docs/ia/prompt-design.md) | Instruções para implementar o novo design |

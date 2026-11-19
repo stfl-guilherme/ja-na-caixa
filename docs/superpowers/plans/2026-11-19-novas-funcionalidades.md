@@ -25,7 +25,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes.
 - **Commit:** `feat(api): adicionar endpoint de orçamentos do mês`
 
-### [ ] O3 — Tipos, API e componente da barra de orçamento
+### [x] O3 — Tipos, API e componente da barra de orçamento
 - **Arquivos:** `frontend/src/api/types.ts`, `frontend/src/api/endpoints.ts`, `frontend/src/hooks/useOrcamentos.ts`, `frontend/src/components/BarraOrcamento.tsx` e teste.
 - **Teste primeiro:** "R$ 340,00 de R$ 500,00 (68%)"; texto "Dentro do limite", "Atenção" e "Limite ultrapassado em R$ 82,50"; 79,99 → "79%"; `role="progressbar"` com `aria-valuenow` limitado a 100.
 - **Pronto quando:** build, lint e testes verdes.

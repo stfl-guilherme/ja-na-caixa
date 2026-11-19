@@ -11,7 +11,7 @@ const extras = { '/login': <p>Tela de login</p> }
 const ME = { caminho: '/api/auth/me/', corpo: { id: 1, username: 'demo' } }
 const CATEGORIAS = {
   caminho: '/api/categorias/',
-  corpo: [{ id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 0, criado_em: '' }],
+  corpo: [{ id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 0, criado_em: '' }],
 }
 
 function Local() {

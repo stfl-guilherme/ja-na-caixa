@@ -9,8 +9,8 @@ import { chamadas, criarQueryClient, mockFetch } from '@/test/utils'
 import { FormularioTransacao } from './TransacaoModal'
 
 const categorias: Categoria[] = [
-  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 0, criado_em: '' },
-  { id: 2, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', transacoes: 0, criado_em: '' },
+  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 0, criado_em: '' },
+  { id: 2, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', limite_mensal: null, transacoes: 0, criado_em: '' },
 ]
 
 function renderForm(props: Partial<Parameters<typeof FormularioTransacao>[0]> = {}) {
@@ -99,7 +99,7 @@ describe('FormularioTransacao', () => {
         metodo: 'POST',
         caminho: '/api/categorias/',
         status: 201,
-        corpo: { id: 7, nome: 'Freelance', tipo: 'RECEITA', cor: '#2F6FB2', transacoes: 0, criado_em: '' },
+        corpo: { id: 7, nome: 'Freelance', tipo: 'RECEITA', cor: '#2F6FB2', limite_mensal: null, transacoes: 0, criado_em: '' },
       },
     ])
     const { onSalvar } = renderForm({ categorias: [categorias[0]] })

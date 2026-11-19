@@ -15,11 +15,14 @@ export interface Categoria {
   nome: string
   tipo: Tipo
   cor: string
+  /** Limite mensal (só despesas); `null` sem limite (spec 17.1). */
+  limite_mensal: string | null
   transacoes: number
   criado_em: string
 }
 
-export type CategoriaInput = Pick<Categoria, 'nome' | 'tipo' | 'cor'>
+/** Sem `limite_mensal`, o limite não muda; `null` remove. */
+export type CategoriaInput = Pick<Categoria, 'nome' | 'tipo' | 'cor'> & { limite_mensal?: string | null }
 
 export interface Transacao {
   id: number
@@ -97,4 +100,20 @@ export interface Resumo extends Totais {
 export interface ResumoAnual extends Totais {
   ano: number
   meses: (Totais & { mes: string })[]
+}
+
+export type SituacaoOrcamento = 'ok' | 'atencao' | 'estourado'
+
+/** Orçamento de uma categoria de despesa no mês (spec 17.1). */
+export interface Orcamento {
+  categoria_id: number
+  nome: string
+  cor: string
+  limite: string
+  gasto: string
+  /** Percentual do limite usado, com 2 casas ("127.50"). */
+  percentual: string
+  /** Quanto passou do limite ("0.00" se não passou), calculado no backend. */
+  excesso: string
+  situacao: SituacaoOrcamento
 }

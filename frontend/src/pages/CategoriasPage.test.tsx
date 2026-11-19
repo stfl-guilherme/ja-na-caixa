@@ -6,9 +6,9 @@ import { resumoNovembro } from '@/test/fixtures'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import CategoriasPage from './CategoriasPage'
 
-const mercado: Categoria = { id: 3, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 4, criado_em: '' }
-const salario: Categoria = { id: 1, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', transacoes: 0, criado_em: '' }
-const viagem: Categoria = { id: 9, nome: 'Viagem', tipo: 'DESPESA', cor: '#123456', transacoes: 0, criado_em: '' }
+const mercado: Categoria = { id: 3, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 4, criado_em: '' }
+const salario: Categoria = { id: 1, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', limite_mensal: null, transacoes: 0, criado_em: '' }
+const viagem: Categoria = { id: 9, nome: 'Viagem', tipo: 'DESPESA', cor: '#123456', limite_mensal: null, transacoes: 0, criado_em: '' }
 const resumo: Resumo = {
   ...resumoNovembro,
   por_categoria: [

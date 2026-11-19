@@ -42,7 +42,7 @@ const vazio: Resumo = {
   serie_diaria: serieNovembro(),
 }
 
-const CATEGORIA_USADA = { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 3, criado_em: '' }
+const CATEGORIA_USADA = { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 3, criado_em: '' }
 
 function rotas(resumo: Resumo = resumoNovembro, transacoes = lista(0), categorias: unknown[] = [CATEGORIA_USADA]) {
   return mockFetch([

@@ -5,6 +5,7 @@ import type {
   FiltrosTransacao,
   ListaTransacoes,
   ModoDemo,
+  Orcamento,
   Resumo,
   ResumoAnual,
   Tipo,
@@ -41,4 +42,8 @@ export const transacoesApi = {
 export const resumoApi = {
   obter: (mes: string) => api<Resumo>('/resumo/', { params: { mes } }),
   anual: (ano: number) => api<ResumoAnual>('/resumo/anual/', { params: { ano } }),
+}
+
+export const orcamentosApi = {
+  listar: (mes: string) => api<Orcamento[]>('/orcamentos/', { params: { mes } }),
 }

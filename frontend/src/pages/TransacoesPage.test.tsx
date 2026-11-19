@@ -6,8 +6,8 @@ import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/u
 import TransacoesPage from './TransacoesPage'
 
 const categorias: Categoria[] = [
-  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', transacoes: 1, criado_em: '' },
-  { id: 2, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', transacoes: 1, criado_em: '' },
+  { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 1, criado_em: '' },
+  { id: 2, nome: 'Salário', tipo: 'RECEITA', cor: '#2F7D35', limite_mensal: null, transacoes: 1, criado_em: '' },
 ]
 const transacao: Transacao = {
   id: 10,

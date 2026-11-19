@@ -9,6 +9,8 @@ import { CategoriaModal } from '@/components/CategoriaModal'
 import { ExcluirTransacaoDialog } from '@/components/ExcluirTransacaoDialog'
 import { AppSidebar } from '@/components/layout/AppSidebar'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { HorizonteHeader } from '@/components/layout/HorizonteHeader'
+import { ALTURA_HORIZONTE } from '@/lib/horizonte'
 import { InterfaceContext, type InterfaceApp } from '@/components/layout/contexto'
 import { TransacaoModal } from '@/components/TransacaoModal'
 import { useTelaLarga } from '@/hooks/useTelaLarga'
@@ -69,7 +71,12 @@ export function Layout() {
             saindo={logout.isPending}
           />
         )}
-        <main className={larga ? 'min-w-0 flex-1 px-10 pt-4 pb-12' : 'min-w-0 flex-1 px-4 pt-1 pb-[104px]'}>
+        <main className={larga ? 'relative min-w-0 flex-1 px-10 pt-4 pb-12' : 'relative min-w-0 flex-1 px-4 pt-1 pb-[104px]'}>
+          {/* Faixa de horizonte: largura da área de conteúdo (não passa sob o menu), rola com a página. */}
+          <HorizonteHeader
+            className="absolute inset-x-0 top-0"
+            style={{ height: larga ? ALTURA_HORIZONTE.desktop : ALTURA_HORIZONTE.mobile }}
+          />
           <Outlet />
         </main>
         {!larga && <BottomNav onNova={nova} onSair={sair} saindo={logout.isPending} />}

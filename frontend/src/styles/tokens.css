@@ -104,4 +104,13 @@
   --jnc-espuma: #7CCBEB;
   --jnc-areia-escura: #EFD9AD;
   --jnc-areia-risco: #EAD6AE;
+
+  /* Faixa de horizonte das telas internas (HorizonteHeader). Cores amostradas da
+     referência aprovada docs/design/referencias/horizonte-referencia.png. */
+  --horizonte-ceu: #D5ECF3;
+  --horizonte-mar-1: #A7D8DB;      /* faixa de mar mais distante, junto ao horizonte */
+  --horizonte-mar-2: #7CCAD0;      /* mar mais perto da areia */
+  --horizonte-mar-crista: #71C1CB; /* crista da onda entre as duas faixas de mar */
+  --horizonte-espuma: #F4FAFB;
+  --horizonte-nuvem: #EEF8FB;
 }

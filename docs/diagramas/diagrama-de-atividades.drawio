@@ -8,7 +8,7 @@
         <mxCell id="atividade-entrar-c1" value="Diagrama de atividades — Entrar no sistema" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#142028;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="40" y="16" width="1500" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c2" value="LoginPage → POST /api/auth/login/ ou /api/auth/demo/ (views_auth.py) → Painel." style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#4A5862;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="atividade-entrar-c2" value="LoginPage → POST /api/auth/login/ ou /api/auth/demo/ (views_auth.py, demo.py) → Painel." style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#4A5862;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="40" y="46" width="1840" height="24" as="geometry" />
         </mxCell>
         <mxCell id="atividade-entrar-lane3" value="Usuário" style="swimlane;horizontal=0;html=1;startSize=50;fillColor=#157A2E;swimlaneFillColor=#FFFFFF;fontColor=#FFFFFF;strokeColor=#142028;fontSize=18;fontStyle=1;collapsible=0;" vertex="1" parent="1">
@@ -35,122 +35,143 @@
         <mxCell id="atividade-entrar-c10" value="Informar usuário e senha" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane3">
           <mxGeometry x="420" y="52" width="200" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c11" value="Clicar em “Entrar como demonstração”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane3">
-          <mxGeometry x="420" y="152" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c11" value="Clicar em demonstração e escolher: dados de exemplo ou começar do zero" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane3">
+          <mxGeometry x="410" y="150" width="220" height="70" as="geometry" />
         </mxCell>
         <mxCell id="atividade-entrar-c12" value="Enviar POST /api/auth/login/" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
-          <mxGeometry x="640" y="42" width="200" height="56" as="geometry" />
+          <mxGeometry x="660" y="42" width="200" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c13" value="Enviar POST /api/auth/demo/" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
-          <mxGeometry x="640" y="162" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c13" value="Enviar POST /api/auth/demo/ com o modo" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
+          <mxGeometry x="660" y="162" width="200" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c14" value="authenticate(): conferir usuário e senha" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="860" y="42" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c14" value="authenticate(): buscar o usuário e conferir a senha" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="875" y="40" width="210" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c15" value="Buscar o usuário “demo” ativo" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="860" y="172" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c15" value="recriar_demo(modo): buscar ou criar o usuário do modo" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="870" y="165" width="220" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c16" value="Ler o usuário e o hash da senha (auth_user)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
-          <mxGeometry x="1070" y="27" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c16" value="Apagar categorias e transações desse usuário" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
+          <mxGeometry x="880" y="30" width="200" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c17" value="Ler o usuário “demo” (auth_user)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
-          <mxGeometry x="1070" y="132" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c17" value="credenciais válidas?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;spacingTop=2;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="1160" y="50" width="40" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c18" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="1352" y="112" width="36" height="36" as="geometry" />
+        <mxCell id="atividade-entrar-c18" value="modo?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="1240" y="180" width="40" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c19" value="credenciais válidas?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;spacingRight=4;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="1350" y="50" width="40" height="40" as="geometry" />
+        <mxCell id="atividade-entrar-c19" value="Inserir 8 categorias e 240 transações (12 meses)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
+          <mxGeometry x="1150" y="130" width="220" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c20" value="Exibir a mensagem de erro" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
-          <mxGeometry x="1270" y="97" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c20" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="1502" y="182" width="36" height="36" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c21" value="login(): criar a sessão" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="1470" y="42" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c21" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="1502" y="52" width="36" height="36" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c22" value="Gravar a sessão (django_session)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
-          <mxGeometry x="1470" y="82" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c22" value="Exibir a mensagem de erro" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
+          <mxGeometry x="1080" y="102" width="200" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c23" value="Guardar o usuário e abrir o Painel (/)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
-          <mxGeometry x="1650" y="97" width="180" height="56" as="geometry" />
+        <mxCell id="atividade-entrar-c23" value="login(): criar a sessão" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="1590" y="42" width="180" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-c24" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-entrar-lane3">
-          <mxGeometry x="1723" y="113" width="34" height="34" as="geometry" />
+        <mxCell id="atividade-entrar-c24" value="Gravar a sessão (django_session)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane6">
+          <mxGeometry x="1590" y="30" width="180" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-entrar-e25" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c7" target="atividade-entrar-c8">
+        <mxCell id="atividade-entrar-c25" value="Guardar o usuário e abrir o Painel (/)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-entrar-lane4">
+          <mxGeometry x="1630" y="102" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-entrar-c26" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-entrar-lane3">
+          <mxGeometry x="1703" y="113" width="34" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-entrar-e27" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c7" target="atividade-entrar-c8">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e26" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c8" target="atividade-entrar-c9">
+        <mxCell id="atividade-entrar-e28" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c8" target="atividade-entrar-c9">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e27" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c9" target="atividade-entrar-c10">
+        <mxCell id="atividade-entrar-e29" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c9" target="atividade-entrar-c10">
           <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="160" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-l28" value="[usuário e senha]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e27">
+        <mxCell id="atividade-entrar-l30" value="[usuário e senha]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e29">
           <mxGeometry relative="1" as="geometry"><mxPoint x="15" y="-14" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e29" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c9" target="atividade-entrar-c11">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="260" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-e31" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c9" target="atividade-entrar-c11">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="310" y="265" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-l30" value="[demonstração]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e29">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="15" y="16" as="offset" /></mxGeometry>
+        <mxCell id="atividade-entrar-l32" value="[demonstração]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e31">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="22.5" y="16" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e31" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c10" target="atividade-entrar-c12">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="780" y="160" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-e33" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c10" target="atividade-entrar-c12">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="800" y="160" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e32" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c11" target="atividade-entrar-c13">
+        <mxCell id="atividade-entrar-e34" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c11" target="atividade-entrar-c13">
           <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="560" y="510" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e33" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c12" target="atividade-entrar-c14">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1000" y="390" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-e35" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c12" target="atividade-entrar-c14">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1020" y="390" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e34" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c13" target="atividade-entrar-c15">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="780" y="770" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-e36" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c13" target="atividade-entrar-c15">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="800" y="770" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e35" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c14" target="atividade-entrar-c16">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1210" y="640" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-entrar-e36" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c15" target="atividade-entrar-c17">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1000" y="990" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-entrar-e37" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c16" target="atividade-entrar-c18">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1410" y="885" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-entrar-e38" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c17" target="atividade-entrar-c18">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1470" y="990" /><mxPoint x="1470" y="700" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-entrar-e39" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c18" target="atividade-entrar-c19">
+        <mxCell id="atividade-entrar-e37" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c14" target="atividade-entrar-c17">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e40" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c19" target="atividade-entrar-c20">
+        <mxCell id="atividade-entrar-e38" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c15" target="atividade-entrar-c16">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e39" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c16" target="atividade-entrar-c18">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1200" y="890" /><mxPoint x="1200" y="770" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e40" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c17" target="atividade-entrar-c22">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-entrar-l41" value="[não]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e40">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="30" y="51.5" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="30" y="51" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e42" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c20" target="atividade-entrar-c8">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1410" y="105" /><mxPoint x="220" y="105" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-e42" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c22" target="atividade-entrar-c8">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1220" y="105" /><mxPoint x="220" y="105" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e43" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c19" target="atividade-entrar-c21">
+        <mxCell id="atividade-entrar-e43" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c17" target="atividade-entrar-c21">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-entrar-l44" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e43">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="5" y="-14" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-91" y="-14" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e45" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c21" target="atividade-entrar-c22">
+        <mxCell id="atividade-entrar-e45" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c18" target="atividade-entrar-c19">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e46" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c22" target="atividade-entrar-c23">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1780" y="940" /></Array></mxGeometry>
+        <mxCell id="atividade-entrar-l46" value="[exemplo]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e45">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="45" y="-15" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-e47" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c23" target="atividade-entrar-c24">
+        <mxCell id="atividade-entrar-e47" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c18" target="atividade-entrar-c20">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-c48" value="Erros: senha incorreta → 400 “Usuário ou senha inválidos”; usuário demo inexistente → 503 (rode seed_demo); DEMO_ENABLED=false → 404." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-entrar-lane5">
-          <mxGeometry x="70" y="40" width="600" height="96" as="geometry" />
+        <mxCell id="atividade-entrar-l48" value="[vazio]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-entrar-e47">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-1" y="-14" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-entrar-c49" value="Modo demonstração: um único botão, sem escolher “com dados” ou “do zero”. Os dados do usuário demo vêm antes do comando python manage.py seed_demo (8 categorias, 240 transações em 12 meses); --reset os recria. Entrar não recria nada." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-entrar-lane6">
-          <mxGeometry x="70" y="30" width="800" height="110" as="geometry" />
+        <mxCell id="atividade-entrar-e49" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c19" target="atividade-entrar-c20">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1560" y="990" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e50" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c20" target="atividade-entrar-c21">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e51" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c21" target="atividade-entrar-c23">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e52" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c23" target="atividade-entrar-c24">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e53" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.944444;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c24" target="atividade-entrar-c25">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1840" y="890" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-e54" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-entrar-c25" target="atividade-entrar-c26">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-entrar-c55" value="Erros: senha incorreta → 400 “Usuário ou senha inválidos”; modo inválido → 400; DEMO_ENABLED=false → 404." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-entrar-lane5">
+          <mxGeometry x="70" y="40" width="600" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="atividade-entrar-c56" value="Demonstração (ADR-018): “exemplo” usa o usuário demo e “vazio” usa demo-vazio. Os dados do modo são recriados a cada entrada (financas/demo.py); sair e entrar de novo apaga o que foi lançado." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-entrar-lane6">
+          <mxGeometry x="70" y="30" width="760" height="100" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -179,115 +200,115 @@
           <mxGeometry x="40" y="830" width="1840" height="220" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c7" value="" style="ellipse;html=1;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="85" y="165" width="30" height="30" as="geometry" />
+          <mxGeometry x="75" y="165" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c8" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="162" y="162" width="36" height="36" as="geometry" />
+        <mxCell id="atividade-transacao-c8" value="Clicar em “Nova transação”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane3">
+          <mxGeometry x="155" y="152" width="170" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c9" value="Clicar em “Nova transação”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="240" y="152" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-transacao-c9" value="Abrir o modal e carregar as categorias (GET /api/categorias/)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="140" y="35" width="200" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c10" value="Abrir o modal e carregar as categorias (GET /api/categorias/)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="230" y="35" width="220" height="70" as="geometry" />
+        <mxCell id="atividade-transacao-c10" value="Escolher o tipo: despesa ou receita" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane3">
+          <mxGeometry x="375" y="152" width="170" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c11" value="a categoria existe?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;spacingRight=4;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="600" y="160" width="40" height="40" as="geometry" />
+        <mxCell id="atividade-transacao-c11" value="existe categoria&lt;br&gt;do tipo?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;spacingRight=4;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="620" y="50" width="40" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c12" value="Criar a categoria na página Categorias" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="520" y="52" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-transacao-c12" value="Criar a categoria pelo botão “Criar categoria”" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="540" y="160" width="200" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c13" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="742" y="162" width="36" height="36" as="geometry" />
+        <mxCell id="atividade-transacao-c13" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="762" y="52" width="36" height="36" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c14" value="Preencher descrição, valor, data e categoria" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="820" y="152" width="200" height="56" as="geometry" />
+          <mxGeometry x="680" y="152" width="200" height="56" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c15" value="Validar no navegador: obrigatórios, valor &amp;gt; 0, data" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="815" y="35" width="210" height="70" as="geometry" />
+          <mxGeometry x="880" y="35" width="180" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c16" value="campos válidos?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="1080" y="50" width="40" height="40" as="geometry" />
+        <mxCell id="atividade-transacao-c16" value="Destacar os erros nos campos" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="880" y="162" width="180" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c17" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="1082" y="172" width="36" height="36" as="geometry" />
+        <mxCell id="atividade-transacao-c17" value="campos válidos?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="1110" y="50" width="40" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="atividade-transacao-c18" value="Destacar os erros nos campos" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="820" y="162" width="200" height="56" as="geometry" />
+        <mxCell id="atividade-transacao-c18" value="" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;" vertex="1" parent="atividade-transacao-lane4">
+          <mxGeometry x="1112" y="172" width="36" height="36" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c19" value="Enviar POST /api/transacoes/" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="1190" y="42" width="180" height="56" as="geometry" />
+          <mxGeometry x="1205" y="42" width="170" height="56" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c20" value="Validar no TransacaoSerializer: valor &amp;gt; 0 e categoria do usuário" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane5">
-          <mxGeometry x="1155" y="35" width="250" height="70" as="geometry" />
+          <mxGeometry x="1165" y="35" width="250" height="70" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c21" value="dados válidos?" style="rhombus;html=1;whiteSpace=nowrap;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingBottom=2;" vertex="1" parent="atividade-transacao-lane5">
-          <mxGeometry x="1440" y="50" width="40" height="40" as="geometry" />
+          <mxGeometry x="1460" y="50" width="40" height="40" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c22" value="serializer.save(): salvar a transação" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane5">
-          <mxGeometry x="1540" y="42" width="200" height="56" as="geometry" />
+          <mxGeometry x="1550" y="42" width="180" height="56" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c23" value="INSERT em financas_transacao (CHECK valor &amp;gt; 0)" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane6">
-          <mxGeometry x="1525" y="75" width="230" height="70" as="geometry" />
+          <mxGeometry x="1530" y="75" width="220" height="70" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c24" value="Fechar o modal e atualizar painel e listas" style="rounded=1;arcSize=24;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;spacing=6;" vertex="1" parent="atividade-transacao-lane4">
-          <mxGeometry x="1650" y="35" width="180" height="70" as="geometry" />
+          <mxGeometry x="1630" y="35" width="180" height="70" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c25" value="" style="ellipse;html=1;shape=endState;fillColor=#142028;strokeColor=#142028;aspect=fixed;" vertex="1" parent="atividade-transacao-lane3">
-          <mxGeometry x="1723" y="163" width="34" height="34" as="geometry" />
+          <mxGeometry x="1703" y="163" width="34" height="34" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-e26" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c7" target="atividade-transacao-c8">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e27" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c8" target="atividade-transacao-c9">
+        <mxCell id="atividade-transacao-e27" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c8" target="atividade-transacao-c9">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e28" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c9" target="atividade-transacao-c10">
-          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        <mxCell id="atividade-transacao-e28" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c9" target="atividade-transacao-c10">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="500" y="390" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e29" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c10" target="atividade-transacao-c11">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="660" y="390" /></Array></mxGeometry>
+        <mxCell id="atividade-transacao-e29" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c10" target="atividade-transacao-c11">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="680" y="260" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e30" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c11" target="atividade-transacao-c12">
+        <mxCell id="atividade-transacao-e30" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c11" target="atividade-transacao-c12">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-l31" value="[não]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e30">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="30" y="0" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="30" y="3" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e32" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c12" target="atividade-transacao-c8">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="220" y="160" /></Array></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-transacao-e33" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c11" target="atividade-transacao-c13">
+        <mxCell id="atividade-transacao-e32" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c11" target="atividade-transacao-c13">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-l34" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e33">
+        <mxCell id="atividade-transacao-l33" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e32">
           <mxGeometry relative="1" as="geometry"><mxPoint x="-1" y="-14" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e35" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c13" target="atividade-transacao-c14">
+        <mxCell id="atividade-transacao-e34" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c12" target="atividade-transacao-c13">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="820" y="510" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-transacao-e35" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c13" target="atividade-transacao-c14">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e36" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c14" target="atividade-transacao-c15">
+        <mxCell id="atividade-transacao-e36" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c14" target="atividade-transacao-c15">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1010" y="260" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="atividade-transacao-e37" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c15" target="atividade-transacao-c17">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e37" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c15" target="atividade-transacao-c16">
-          <mxGeometry relative="1" as="geometry"></mxGeometry>
-        </mxCell>
-        <mxCell id="atividade-transacao-e38" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c16" target="atividade-transacao-c17">
+        <mxCell id="atividade-transacao-e38" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c17" target="atividade-transacao-c18">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-l39" value="[não]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e38">
           <mxGeometry relative="1" as="geometry"><mxPoint x="30" y="-1" as="offset" /></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e40" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c17" target="atividade-transacao-c18">
+        <mxCell id="atividade-transacao-e40" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c18" target="atividade-transacao-c16">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e41" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c18" target="atividade-transacao-c13">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="800" y="510" /></Array></mxGeometry>
+        <mxCell id="atividade-transacao-e41" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c16" target="atividade-transacao-c13">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="880" y="510" /><mxPoint x="880" y="390" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e42" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c16" target="atividade-transacao-c19">
+        <mxCell id="atividade-transacao-e42" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c17" target="atividade-transacao-c19">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-l43" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e42">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="1" y="-14" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0.5" y="-14" as="offset" /></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-e44" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c19" target="atividade-transacao-c20">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
@@ -295,29 +316,29 @@
         <mxCell id="atividade-transacao-e45" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c20" target="atividade-transacao-c21">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e46" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c21" target="atividade-transacao-c17">
-          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1500" y="790" /><mxPoint x="1140" y="790" /></Array></mxGeometry>
+        <mxCell id="atividade-transacao-e46" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c21" target="atividade-transacao-c18">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1520" y="790" /><mxPoint x="1170" y="790" /></Array></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-l47" value="[não] 400 com erros por campo" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e46">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="46" y="0" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="66" y="0" as="offset" /></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-e48" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c21" target="atividade-transacao-c22">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-l49" value="[sim]" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;fontColor=#142028;labelBackgroundColor=#FFFFFF;" vertex="1" connectable="0" parent="atividade-transacao-e48">
-          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-5" y="-14" as="offset" /></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-e50" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c22" target="atividade-transacao-c23">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-e51" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.833333;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c23" target="atividade-transacao-c24">
+        <mxCell id="atividade-transacao-e51" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.944444;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c23" target="atividade-transacao-c24">
           <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1840" y="940" /></Array></mxGeometry>
         </mxCell>
         <mxCell id="atividade-transacao-e52" value="" style="html=1;rounded=0;endArrow=open;endSize=12;strokeColor=#142028;strokeWidth=1.5;fontSize=14;fontColor=#142028;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="atividade-transacao-c24" target="atividade-transacao-c25">
           <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="atividade-transacao-c53" value="O tipo (receita ou despesa) não é escolhido no formulário: vem da categoria (ADR-004). Sem nenhuma categoria, a página Transações avisa “Cadastre uma categoria antes de registrar transações”." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-transacao-lane5">
-          <mxGeometry x="70" y="30" width="640" height="110" as="geometry" />
+        <mxCell id="atividade-transacao-c53" value="O tipo escolhido só filtra a lista de categorias: a transação não guarda o tipo, ele vem da categoria (ADR-004). A categoria criada pelo botão (POST /api/categorias/) já vem com o tipo marcado e fica selecionada." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-transacao-lane5">
+          <mxGeometry x="70" y="30" width="720" height="110" as="geometry" />
         </mxCell>
         <mxCell id="atividade-transacao-c54" value="Categoria de outro usuário → 400 (fica fora do queryset do campo categoria). Mesmo que a validação falhe, o banco recusa valor ≤ 0 pelo CHECK transacao_valor_positivo." style="shape=note;size=16;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#4A5862;fontSize=14;fontColor=#142028;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=12;" vertex="1" parent="atividade-transacao-lane6">
           <mxGeometry x="70" y="40" width="900" height="90" as="geometry" />

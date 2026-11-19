@@ -11,6 +11,6 @@ Arquivos do draw.io (XML sem compressão), desenhados a partir do código. Abra 
 
 Raias: Usuário | Frontend | Backend | Banco de dados.
 
-- **Entrar no sistema**: login com usuário e senha ou pelo botão de demonstração, até abrir o Painel.
-- **Registrar transação**: do botão "Nova transação" ao `INSERT`, com a validação no navegador e no `TransacaoSerializer` e a volta ao formulário quando há erro.
+- **Entrar no sistema**: login com usuário e senha ou demonstração (modo “exemplo” ou “vazio”, com os dados recriados a cada entrada), até abrir o Painel.
+- **Registrar transação**: do botão "Nova transação" ao `INSERT`, com a criação de categoria quando não há nenhuma do tipo escolhido, a validação no navegador e no `TransacaoSerializer` e a volta ao formulário quando há erro.
 - **Excluir categoria**: aviso quando a categoria tem transações (no diálogo e pelo `409` do backend) e exclusão quando não tem.

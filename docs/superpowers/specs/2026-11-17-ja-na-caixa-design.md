@@ -453,7 +453,7 @@ Quatro funcionalidades, implementadas **nesta ordem**, cada uma completa (backen
 - O limite vale para todos os meses e não tem histórico (ADR-021).
 
 **API.**
-- O CRUD de categorias aceita e devolve `limite_mensal` (string decimal ou `null`). Sem o campo no corpo, o limite não muda (PATCH) ou fica `null` (POST/PUT).
+- O CRUD de categorias aceita e devolve `limite_mensal` (string decimal ou `null`). Sem o campo no corpo, o limite não muda (na criação, fica `null`). Para remover, envie `"limite_mensal": null`.
 - `GET /api/orcamentos/?mes=AAAA-MM` (sem `mes`, mês atual; inválido → `400`; sem login → `401`): categorias de **despesa** do usuário **com limite**, em ordem alfabética:
 
 ```json

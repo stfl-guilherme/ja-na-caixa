@@ -69,7 +69,7 @@ describe('CategoriasPage', () => {
     await userEvent.click(within(dialogo).getByRole('button', { name: 'Salvar' }))
     await vi.waitFor(() => expect(chamadas(fetchMock, 'POST', '/api/categorias/')).toHaveLength(1))
     const [[, init]] = chamadas(fetchMock, 'POST', '/api/categorias/')
-    expect(JSON.parse(String(init?.body))).toEqual({ nome: 'Bônus', tipo: 'RECEITA', cor: '#2F7D35' })
+    expect(JSON.parse(String(init?.body))).toEqual({ nome: 'Bônus', tipo: 'RECEITA', cor: '#2F7D35', limite_mensal: null })
     await vi.waitFor(() => expect(interfaceApp.avisar).toHaveBeenCalledWith('Categoria salva.'))
   })
 

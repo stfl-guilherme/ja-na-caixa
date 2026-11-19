@@ -8,6 +8,7 @@ import { botao } from '@/components/ui/botao'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useSalvarCategoria } from '@/hooks/useCategorias'
 import { ariaDoCampo, classeInputLimpo, molduraCampo } from '@/lib/campos'
+import { apiParaCentavos, centavosDeDigitos, centavosParaApi, formatarCentavos } from '@/lib/mascaras'
 import { nomeDaCor, PALETA } from '@/lib/paleta'
 import { cn } from '@/lib/utils'
 
@@ -32,17 +33,28 @@ function Formulario({
   const [nome, setNome] = useState(categoria?.nome ?? '')
   const [tipo, setTipo] = useState<Tipo>(categoria?.tipo ?? tipoInicial ?? 'DESPESA')
   const [cor, setCor] = useState(categoria?.cor ?? PALETA[0].hex)
+  // Limite em centavos; 0 = sem limite (spec 17.1).
+  const [limite, setLimite] = useState(categoria?.limite_mensal ? apiParaCentavos(categoria.limite_mensal) : 0)
   const [tentou, setTentou] = useState(false)
   const bloqueado = (categoria?.transacoes ?? 0) > 0
   const api = salvar.error instanceof ApiError ? salvar.error : null
   const erroNome = (tentou && !nome.trim() ? ERRO_NOME : undefined) ?? api?.fieldErrors.nome?.[0]
-  const erroGeral = api && !api.fieldErrors.nome ? (api.fieldErrors.tipo?.[0] ?? api.fieldErrors.cor?.[0] ?? api.message) : null
+  const erroLimite = tipo === 'DESPESA' ? api?.fieldErrors.limite_mensal?.[0] : undefined
+  const erroGeral =
+    api && !api.fieldErrors.nome && !erroLimite
+      ? (api.fieldErrors.tipo?.[0] ?? api.fieldErrors.cor?.[0] ?? api.fieldErrors.limite_mensal?.[0] ?? api.message)
+      : null
 
   const enviar = (evento: FormEvent) => {
     evento.preventDefault()
     setTentou(true)
     if (!nome.trim()) return
-    salvar.mutate({ id: categoria?.id, dados: { nome: nome.trim(), tipo, cor: cor.toUpperCase() } }, { onSuccess: onSalva })
+    // Só despesa tem limite: em receita, o limite sai no mesmo envio (ADR-021).
+    const limiteMensal = tipo === 'DESPESA' && limite > 0 ? centavosParaApi(limite) : null
+    salvar.mutate(
+      { id: categoria?.id, dados: { nome: nome.trim(), tipo, cor: cor.toUpperCase(), limite_mensal: limiteMensal } },
+      { onSuccess: onSalva },
+    )
   }
 
   return (
@@ -113,6 +125,37 @@ function Formulario({
           </p>
         )}
       </fieldset>
+
+      {tipo === 'DESPESA' && (
+        <CampoFormulario
+          id="c-limite"
+          rotulo={
+            <>
+              Limite mensal <span className="font-medium text-texto-2">(opcional)</span>
+            </>
+          }
+          erro={erroLimite}
+        >
+          <div className={molduraCampo(!!erroLimite)}>
+            <span aria-hidden="true" className="text-[15px] font-bold text-texto-2">
+              R$
+            </span>
+            <input
+              id="c-limite"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="Sem limite"
+              value={limite > 0 ? formatarCentavos(limite) : ''}
+              onChange={(e) => setLimite(centavosDeDigitos(e.target.value))}
+              className={cn(classeInputLimpo, 'text-right font-bold')}
+              {...ariaDoCampo('c-limite', erroLimite, 'c-limite-ajuda')}
+            />
+          </div>
+          <p id="c-limite-ajuda" className="m-0 text-xs font-medium text-texto-2">
+            Quanto você quer gastar por mês nesta categoria. Vale para todos os meses.
+          </p>
+        </CampoFormulario>
+      )}
 
       <fieldset className="m-0 border-0 p-0">
         <legend className="mb-2.5 p-0 text-sm font-semibold">

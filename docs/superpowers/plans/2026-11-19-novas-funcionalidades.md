@@ -31,7 +31,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** build, lint e testes verdes.
 - **Commit:** `feat(frontend): adicionar barra de orçamento`
 
-### [ ] O4 — Limite no modal de categoria
+### [x] O4 — Limite no modal de categoria
 - **Arquivos:** `frontend/src/components/CategoriaModal.tsx`, `frontend/src/components/CategoriaModal.test.tsx`.
 - **Teste primeiro:** campo "Limite mensal (opcional)" visível para despesa e escondido para receita; envia `limite_mensal` em formato da API; vazio envia `null`; trocar para receita envia `null`; erro da API em `limite_mensal` aparece no campo.
 - **Pronto quando:** build, lint e testes verdes.

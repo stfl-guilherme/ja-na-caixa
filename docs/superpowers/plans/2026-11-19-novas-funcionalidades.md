@@ -19,7 +19,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; migration reversível (`migrate financas 0002` e de volta).
 - **Commit:** `feat(api): adicionar limite mensal às categorias de despesa`
 
-### [ ] O2 — Endpoint de orçamentos
+### [x] O2 — Endpoint de orçamentos
 - **Arquivos:** `backend/financas/views.py`, `backend/financas/urls.py`, `backend/financas/tests/test_orcamentos.py`.
 - **Teste primeiro:** só categorias de despesa com limite, em ordem alfabética; `gasto`, `percentual` (2 casas) e `excesso`; situação nos limites exatos 79,99% (`ok`) / 80% (`atencao`) / 100% (`atencao`) / 100,01% (`estourado`); mês sem gastos → `"0.00"` e `ok`; transações de outro mês não entram; isolamento; `mes` inválido → 400; sem login → 401.
 - **Pronto quando:** testes verdes.

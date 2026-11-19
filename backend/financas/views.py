@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from financas.filters import filtrar_transacoes, intervalo_do_mes, mes_anterior
 from financas.models import Categoria, TipoCategoria, Transacao
+from financas.orcamentos import orcamentos_do_mes, percentual_texto
 from financas.serializers import CategoriaSerializer, TransacaoSerializer
 
 
@@ -90,11 +91,15 @@ def _dinheiro(valor: Decimal) -> str:
     return str(valor.quantize(Decimal("0.01")))
 
 
+def _mes_da_requisicao(request) -> str:
+    return request.query_params.get("mes") or timezone.localdate().strftime("%Y-%m")
+
+
 class ResumoView(APIView):
     """Totais do mês. Somas em Decimal no Python: o front não soma dinheiro (ADR-005)."""
 
     def get(self, request):
-        mes = request.query_params.get("mes") or timezone.localdate().strftime("%Y-%m")
+        mes = _mes_da_requisicao(request)
         inicio, fim = intervalo_do_mes(mes)
         transacoes = Transacao.objects.filter(
             categoria__usuario=request.user, data__gte=inicio, data__lt=fim
@@ -184,6 +189,28 @@ def _serie_diaria(transacoes, inicio, fim) -> list[dict]:
         )
         data += timedelta(days=1)
     return serie
+
+
+class OrcamentosView(APIView):
+    """Limite, gasto e situação de cada categoria de despesa com limite (spec 17.1)."""
+
+    def get(self, request):
+        mes = _mes_da_requisicao(request)
+        return Response(
+            [
+                {
+                    "categoria_id": item["categoria"].pk,
+                    "nome": item["categoria"].nome,
+                    "cor": item["categoria"].cor,
+                    "limite": _dinheiro(item["limite"]),
+                    "gasto": _dinheiro(item["gasto"]),
+                    "percentual": percentual_texto(item["percentual"]),
+                    "excesso": _dinheiro(item["excesso"]),
+                    "situacao": item["situacao"],
+                }
+                for item in orcamentos_do_mes(request.user, mes)
+            ]
+        )
 
 
 class ResumoAnualView(APIView):

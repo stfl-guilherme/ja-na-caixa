@@ -268,3 +268,16 @@ Cada decisão registra o contexto, a escolha, as alternativas descartadas e as c
 - **Decisão:** documentar Node.js **22.19 ou superior** como pré-requisito. Nesta sessão, os testes rodaram com o Node 22 instalado a partir do registry do npm (pacote `node`) numa pasta temporária, sem instalar nada global.
 - **Alternativas descartadas:** rebaixar o `jsdom` (mexe em dependências já aprovadas só por causa do ambiente).
 - **Consequências:** o README passa a pedir Node 22.
+
+## ADR-028 — Detalhes do fundo das telas internas e das dicas flutuantes
+
+- **Status:** Aceita — 19/11/2026. Complementa o ADR-022.
+- **Contexto:** A iteração "Fundo das telas internas" e a dica do Papo como "cabeça de chat" (decisoes-de-design, seção 5) deixaram lacunas de implementação.
+- **Decisão:**
+  - *Areia do horizonte:* o SVG não pinta a faixa de areia; ela fica transparente e mostra o próprio fundo da página. Assim a cor é exatamente a da página e a textura continua sem emenda. A referência tinha uma areia mais escura (`#F3D8B6`), que daria emenda com o fundo `#FBF6EC`.
+  - *Tokens extras:* além de `--horizonte-ceu`, `--horizonte-mar-1`, `--horizonte-mar-2` e `--horizonte-espuma`, foram criados `--horizonte-mar-crista` (`#71C1CB`, faixa mais escura entre as duas faixas de mar, presente na referência) e `--horizonte-nuvem` (`#EEF8FB`). As barras de orçamento usam `--jnc-estado-sucesso`, `--jnc-estado-atencao` e `--jnc-estado-erro` (este igual a `--jnc-despesa`), escolhidos com contraste ≥ 3:1 com o trilho.
+  - *Faixa de 720 a 1023px:* menu lateral e cartão de dica na página (o botão flutuante é só a partir de 1024px). O Papo do cartão Saldo foi removido em toda largura ≥ 720px, para respeitar o limite de 2 personagens (menu lateral + Papo da dica).
+  - *Saldo negativo no desktop:* sem o Papo do cartão Saldo, a pose preocupada aparece no botão flutuante quando a primeira dica é um alerta (`mes_no_vermelho` é alerta). O saldo continua em vermelho e com sinal.
+  - *Estado vazio:* sem botão flutuante; a dica continua dentro do cartão vazio (limite de 2 personagens).
+  - *Chave da abertura automática:* `jnc:dicas-auto:<usuário>:<AAAA-MM>` no `localStorage`; o usuário é lido do cache da sessão, sem nova requisição.
+- **Consequências:** a faixa e a barra fixa dependem de alturas fixas (barra de 72px no desktop; título do celular abaixo da faixa de 110px). Mudar essas alturas exige ajustar as constantes em `CabecalhoPagina.tsx` e `lib/horizonte.ts`.

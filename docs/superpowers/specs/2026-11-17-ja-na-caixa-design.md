@@ -300,7 +300,7 @@ O visual segue `docs/design/decisoes-de-design.md` (fonte da verdade do design) 
 Regras de interface:
 - Layout: menu lateral (248px) no desktop e barra inferior + botão flutuante "+" abaixo de 720px. O **seletor de mês é global** (vale para Painel, Transações e Categorias, guardado na URL como `?mes=AAAA-MM`). A ação "+ Nova transação" abre o modal a partir de qualquer tela.
 - Nome "JáNaCaixa" no menu e no login, em Baloo 2. Os personagens são PNGs fornecidos pelo autor (`frontend/src/assets/`); a IA só os posiciona, nunca os redesenha (ADR-013).
-- Somente tema claro (ADR-010). Fundo areia clara nas telas internas; cena de praia só no login.
+- Somente tema claro (ADR-010). Fundo areia clara com textura sutil (ruído SVG, 2–4%) e faixa de horizonte no topo nas telas internas (decisoes-de-design, "Fundo das telas internas"); cena de praia completa só no login.
 - Rotas protegidas: sem sessão (`/auth/me` → 401), redireciona para `/login`.
 - Toda tela tem estados de **carregando** (skeleton estático), **vazio** (mensagem + ação) e **erro**.
 - Erros de validação do backend aparecem no campo correspondente do formulário.
@@ -466,7 +466,7 @@ Quatro funcionalidades, implementadas **nesta ordem**, cada uma completa (backen
 
 **Telas.**
 - Modal de categoria: campo "Limite mensal (opcional)" com a mesma máscara de centavos do valor da transação, **visível só quando o tipo é Despesa**. Trocar para Receita esconde o campo e envia `limite_mensal: null`. Campo vazio = sem limite.
-- Painel: seção "Orçamentos de [mês]", logo depois de "Resumo de [mês]", com uma barra por categoria: "R$ 340,00 de R$ 500,00 (68%)" e o estado **também em texto**: "Dentro do limite", "Atenção" ou "Limite ultrapassado em R$ X". O percentual exibido é o inteiro truncado (79,99% → 79%), e a barra fica cheia acima de 100%. Sem categorias com limite → "Nenhuma categoria com limite. Defina limites em Categorias." com link para `/categorias`.
+- Painel: seção "Orçamentos de [mês]", logo depois de "Resumo de [mês]", com uma barra por categoria: "R$ 340,00 de R$ 500,00 (68%)" e o estado **também em texto**: "Dentro do limite", "Atenção" ou "Limite ultrapassado em R$ X". O percentual exibido é o inteiro truncado (79,99% → 79%), e a barra fica cheia acima de 100%. A cor da barra indica o estado (verde, âmbar, vermelho-coral); a cor da categoria aparece só no marcador redondo ao lado do nome. Sem categorias com limite → "Nenhuma categoria com limite. Defina limites em Categorias." com link para `/categorias`.
 - Categorias: a mesma barra no cartão de cada categoria com limite, para o mês selecionado.
 
 **Testes.** Limite em receita → 400; limite ≤ 0 → 400; troca de tipo com limite (com e sem remover no mesmo request); limites de situação exatos (79,99% / 80% / 100% / 100,01%); mês sem gastos (`"0.00"`, `ok`); só categorias com limite e só de despesa; isolamento; sem login → 401. Front: formatação da barra, texto do estado nos três casos, campo de limite só para despesa, mensagem sem limites.
@@ -504,7 +504,7 @@ Detalhes:
 - Isolamento por usuário; sem login → `401`.
 
 **Telas.**
-- Painel, **desktop**: balão de fala acima dos cartões do Resumo, alinhado à direita e com a ponta apontando para o Papo que espia no cartão Saldo; não cobre números nem o título. **Mobile**: cartão de largura total logo abaixo do Resumo, com o Papo pequeno (48px) à esquerda do texto.
+- Painel, **desktop (≥ 1024px)**: sem balão no topo e sem o Papo espiando no cartão Saldo. Botão flutuante redondo com o Papo no canto inferior direito (24px das bordas), com selo da quantidade de dicas e `aria-label` "Dicas do Papo, N dicas". O clique abre o balão acima do botão (mesmo conteúdo: tipo, texto, link, "Próxima dica") com botão de fechar; fecha também com Esc e clique fora. Ao abrir por clique, o foco vai para o balão; ao fechar, volta ao botão. Abertura automática só se houver dica `alerta`, uma vez por usuário e por mês visualizado (guardado no `localStorage`; se ele falhar, não abre sozinho); ao abrir sozinho não move o foco e o texto é anunciado por `aria-live="polite"`. A pose no botão segue o tipo da primeira dica. Sem dicas, o botão não aparece. O balão nunca cobre o seletor de mês nem "+ Nova transação". **Mobile (< 1024px)**: cartão de largura total logo abaixo do Resumo, com o Papo pequeno (48px) à esquerda do texto; nada flutuante.
 - Pose do Papo pela dica exibida: `alerta` → `papo-preocupado`; `parabens` → `papo-joinha`; `info` e `primeiros_passos` → `papo-espiando`. Com saldo negativo, o Papo do cartão Saldo continua `papo-preocupado` (regra antiga da seção 6 do design).
 - Uma dica por vez. Com mais de uma, botão "Próxima dica (1/3)" (posição atual / total), que volta para a primeira depois da última. Botão "Ver transações" quando houver `link` (para `/categorias`, "Ver categorias").
 - O texto é conteúdo real dentro de `<section aria-label="Dicas do Papo">`, com `aria-live="polite"`; a imagem continua `alt=""` e `aria-hidden`.

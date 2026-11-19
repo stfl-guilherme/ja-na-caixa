@@ -101,9 +101,31 @@ O botão "Entrar como demonstração" deixa de entrar direto: ele expande, **no 
 Abaixo, em texto pequeno: "Os dados de demonstração são recriados a cada entrada." e um botão "Voltar". O foco vai para a primeira opção ao abrir. A cena de praia e o Papo continuam iguais (ADR-018).
 
 ### Novas funcionalidades (19/11/2026)
-- **Orçamentos:** uma barra de progresso por categoria com limite, na cor da categoria até 80%, em âmbar de 80% a 100% e em vermelho-coral acima de 100%, sempre com o **estado também em texto** ("Dentro do limite", "Atenção", "Limite ultrapassado em R$ X") e com "R$ gasto de R$ limite (N%)". A cor nunca é o único sinal. A barra tem `role="progressbar"` com `aria-valuenow` limitado a 100 e `aria-valuetext` com o texto completo. Aparece no Painel (seção "Orçamentos de [mês]", depois do Resumo) e no cartão da categoria em Categorias.
+- **Orçamentos:** uma barra de progresso por categoria com limite, em verde até 80%, em âmbar de 80% a 100% e em vermelho-coral acima de 100% (cor da categoria só no marcador; ver "Barras de orçamento: cor do estado"), sempre com o **estado também em texto** ("Dentro do limite", "Atenção", "Limite ultrapassado em R$ X") e com "R$ gasto de R$ limite (N%)". A cor nunca é o único sinal. A barra tem `role="progressbar"` com `aria-valuenow` limitado a 100 e `aria-valuetext` com o texto completo. Aparece no Painel (seção "Orçamentos de [mês]", depois do Resumo) e no cartão da categoria em Categorias.
 - **Como você pagou:** nova seção do Painel, depois de "Para onde foi o dinheiro": barras horizontais, uma por forma de pagamento, com ícone, rótulo, valor e percentual escritos; "Não informado" por último e em cinza, para não competir com as formas reais.
 - **Repetir fixas:** botão secundário "Repetir fixas de [mês anterior]" no topo de Transações, acima dos filtros, que abre um diálogo com a lista marcada (desmarcável) e o botão "Lançar N transações"; o sucesso usa o aviso com o `papo-joinha`. Na tabela, a coluna "Forma" mostra ícone + rótulo.
+
+### Fundo das telas internas (19/11/2026)
+O fundo de areia liso foi considerado simples demais. Opções avaliadas:
+
+| Opção | Descrição | Decisão |
+|---|---|---|
+| A | Textura de areia (granulado sutil) | **Escolhida** |
+| B | Faixa de horizonte (céu, mar, espuma, areia) no topo | **Escolhida** |
+| C | Padrão repetido de ícones | Descartada: polui os espaços entre os cartões |
+| D | Ilustrações nos cantos | Descartada: conflita com o Papo flutuante no canto |
+| E | Degradê céu → areia | Descartada: clichê visual |
+
+Motivos da escolha **A + B**: preserva a leitura (o conteúdo fica em cartões opacos e a decoração fica fora das áreas de texto), liga as telas internas ao login e deixa os cantos livres para o Papo flutuante.
+- **Textura (A):** ruído gerado em SVG (`feTurbulence`) como `background-image` em CSS, opacidade de 2% a 4%, sem imagem externa; rola com a página (sem `background-attachment: fixed`, que trava a rolagem em celulares). Não se aplica ao login. Títulos e descrições sobre o fundo mantêm contraste ≥ 4,5:1.
+- **Horizonte (B):** componente SVG `HorizonteHeader`, recriado a partir da referência aprovada `docs/design/referencias/horizonte-referencia.png` (gerada em outra ferramenta de IA), com as cores amostradas da imagem como tokens `--horizonte-ceu`, `--horizonte-mar-1`, `--horizonte-mar-2` e `--horizonte-espuma`. Estilo chapado, sem contorno; ~160px de altura no desktop e ~110px no mobile, na largura da área de conteúdo (não fica sob o menu lateral); céu ~55%, mar ~30%, espuma e areia ~15%. As faixas esticam na horizontal e as duas nuvens ficam num grupo ancorado à direita, sem distorção. A areia da base usa exatamente a cor de fundo da página. Decorativo (`aria-hidden="true"`), rola com a página, sem animação. O título sobre o céu tem contraste ≥ 4,5:1 (coberto por teste).
+- **Barra superior fixa:** transparente no topo da página; ao ficar fixa, ganha fundo sólido de areia, sombra suave e borda inferior.
+
+### Dica do Papo como "cabeça de chat" (19/11/2026)
+O balão no topo do painel criava um espaço vazio grande acima dos cartões do Resumo. No desktop (≥ 1024px) ele é trocado pelo padrão "cabeça de chat": botão redondo flutuante com o Papo no canto inferior direito (24px das bordas), com selo da quantidade de dicas; o balão abre acima do botão. O Papo que espiava sobre o cartão Saldo sai e os cartões sobem. No mobile (< 1024px) continua o cartão abaixo do Resumo (o canto inferior direito é do botão "+"). Regras completas na spec, seção 17.2.
+
+### Barras de orçamento: cor do estado (19/11/2026)
+A cor da barra passa a indicar o estado: verde (dentro do limite), âmbar (atenção) e vermelho-coral (ultrapassado). A cor da categoria fica só no marcador redondo ao lado do nome. O estado continua em texto abaixo da barra. Vale no Painel e em Categorias. Motivo: com a cor da categoria na barra, uma categoria vermelha "dentro do limite" parecia estourada.
 
 ### Telas
 - **Layout:** menu lateral (desktop) / barra inferior (mobile), seletor de mês global, ação "+ Nova transação" sempre acessível.
@@ -122,7 +144,7 @@ Abaixo, em texto pequeno: "Os dados de demonstração são recriados a cada entr
 - Mobile: só em estados vazios, diálogos e topo do Painel.
 - Única exceção informativa: com saldo negativo, o Papo do Painel troca para a pose preocupada. O saldo continua em vermelho e com sinal de menos, então a informação não depende do personagem.
 - **Exceção das Dicas do Papo (19/11/2026, ADR-022):** o balão de dica é **informação real**. O texto fica numa região rotulada "Dicas do Papo" (`<section aria-label>`, `aria-live="polite"`), é lido pelo leitor de tela e **não** é `aria-hidden`. A imagem do Papo continua decorativa (`alt=""`, `aria-hidden`), e em todo o resto o Papo continua só decorando. A pose acompanha o tipo da dica (alerta → preocupado; parabéns → joinha; informação e primeiros passos → espiando), mas o tipo também está no texto, nunca só na pose. Com saldo negativo, o Papo do cartão Saldo fica preocupado em qualquer dica.
-  - *Desktop:* balão acima dos cartões do Resumo, alinhado à direita, com a ponta voltada para o Papo que espia no cartão Saldo; nunca sobre os números nem sobre o título.
+  - *Desktop (≥ 1024px, desde 19/11/2026):* botão flutuante "cabeça de chat" no canto inferior direito, com o balão abrindo acima dele (ver seção 5). A versão anterior (balão acima dos cartões, ligado ao Papo do cartão Saldo) foi substituída.
   - *Mobile:* cartão de largura total abaixo do Resumo, com o Papo pequeno (48px) à esquerda. Conta no limite de 2 personagens com o Papo do cabeçalho.
   - *Estado vazio do Painel:* o balão sai do Papo da cadeira que já está no cartão; nenhuma imagem nova (o caranguejo é o segundo personagem).
 

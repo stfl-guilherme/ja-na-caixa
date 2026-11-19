@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Categoria, Resumo } from '@/api/types'
+import type { Categoria, Orcamento, Resumo } from '@/api/types'
 import { resumoNovembro } from '@/test/fixtures'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import CategoriasPage from './CategoriasPage'
@@ -17,10 +17,11 @@ const resumo: Resumo = {
 }
 const semNbsp = (t: string | null) => (t ?? '').replace(/ /g, ' ')
 
-function rotas(categorias: Categoria[], extras: Parameters<typeof mockFetch>[0] = []) {
+function rotas(categorias: Categoria[], extras: Parameters<typeof mockFetch>[0] = [], orcamentos: Orcamento[] = []) {
   return mockFetch([
     { caminho: '/api/categorias/', corpo: categorias },
     { caminho: '/api/resumo/', corpo: resumo },
+    { caminho: '/api/orcamentos/', corpo: orcamentos },
     ...extras,
   ])
 }
@@ -146,5 +147,19 @@ describe('CategoriasPage', () => {
     expect(await screen.findByRole('alertdialog', { name: 'Não dá para excluir “Salário” ainda' })).toHaveTextContent(
       'Esta categoria tem 2 transações.',
     )
+  })
+
+  it('mostra a barra de orçamento só no cartão da categoria com limite', async () => {
+    const comLimite = { ...mercado, limite_mensal: '1000.00' }
+    rotas([comLimite, viagem], [], [
+      { categoria_id: 3, nome: 'Mercado', cor: '#B5541A', limite: '1000.00', gasto: '844.55', percentual: '84.46', excesso: '0.00', situacao: 'atencao' },
+    ])
+    renderComRotas(<CategoriasPage />)
+    const cartaoMercado = (await screen.findByText('Mercado')).closest('li') as HTMLElement
+    const barra = await within(cartaoMercado).findByTestId('barra-orcamento')
+    expect(semNbsp(barra.textContent)).toContain('R$ 844,55 de R$ 1.000,00 (84%)')
+    expect(within(barra).getByText('Atenção')).toBeInTheDocument()
+    const cartaoViagem = screen.getByText('Viagem').closest('li') as HTMLElement
+    expect(within(cartaoViagem).queryByTestId('barra-orcamento')).not.toBeInTheDocument()
   })
 })

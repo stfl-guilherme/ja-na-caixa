@@ -37,7 +37,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** build, lint e testes verdes.
 - **Commit:** `feat(frontend): editar limite mensal no modal de categoria`
 
-### [ ] O5 — Orçamentos no Painel e em Categorias
+### [x] O5 — Orçamentos no Painel e em Categorias
 - **Arquivos:** `frontend/src/pages/DashboardPage.tsx`, `frontend/src/pages/CategoriasPage.tsx` e testes.
 - **Teste primeiro:** Painel mostra a seção "Orçamentos de novembro" depois do Resumo, com uma barra por categoria; sem limites → mensagem com link para Categorias; Categorias mostra a barra só nos cartões com limite.
 - **Pronto quando:** build, lint e testes verdes; push.

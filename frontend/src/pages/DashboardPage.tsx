@@ -8,6 +8,7 @@ import { AnoBarChart } from '@/components/painel/AnoBarChart'
 import { CategoriasTreemap } from '@/components/painel/CategoriasTreemap'
 import { FluxoEspelhadoChart } from '@/components/painel/FluxoEspelhadoChart'
 import { MetricCard } from '@/components/painel/MetricCard'
+import { OrcamentosDoMes } from '@/components/painel/OrcamentosDoMes'
 import { SecaoPainel } from '@/components/painel/partes'
 import { SaldoLineChart } from '@/components/painel/SaldoLineChart'
 import { Personagem } from '@/components/Personagem'
@@ -210,6 +211,10 @@ export default function DashboardPage() {
                 )
               })}
             </div>
+          </SecaoPainel>
+
+          <SecaoPainel id="s-orcamentos" titulo={`Orçamentos de ${nomeDoMes(mes)}`} descricao="Quanto você já usou do limite de cada categoria.">
+            <OrcamentosDoMes mes={mes} />
           </SecaoPainel>
 
           <SecaoPainel id="s-saldo" titulo="Como seu saldo evoluiu" descricao="Saldo acumulado dia a dia ao longo do mês.">

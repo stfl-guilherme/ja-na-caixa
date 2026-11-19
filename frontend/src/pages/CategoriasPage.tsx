@@ -2,6 +2,7 @@
 import { ArrowDownLeft, ArrowUpRight, Pencil, Plus, Tag, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import type { Categoria, Tipo } from '@/api/types'
+import { BarraOrcamento } from '@/components/BarraOrcamento'
 import { CategoriaModal } from '@/components/CategoriaModal'
 import { EstadoErro, EstadoVazio } from '@/components/Estados'
 import { ExcluirCategoriaDialog } from '@/components/ExcluirCategoriaDialog'
@@ -12,6 +13,7 @@ import { botao, botaoIcone } from '@/components/ui/botao'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCategorias } from '@/hooks/useCategorias'
 import { useMesSelecionado } from '@/hooks/useMesSelecionado'
+import { useOrcamentos } from '@/hooks/useOrcamentos'
 import { useResumo } from '@/hooks/useResumo'
 import { useTelaLarga } from '@/hooks/useTelaLarga'
 import { formatarComSinal, formatarMoeda, nomeDoMes } from '@/lib/format'
@@ -31,6 +33,7 @@ export default function CategoriasPage() {
   const { avisar, avisoAberto } = useInterface()
   const { data: categorias, isPending, error, refetch } = useCategorias()
   const resumo = useResumo(mes)
+  const orcamentos = useOrcamentos(mes)
   const [modal, setModal] = useState<{ aberto: boolean; categoria?: Categoria }>({ aberto: false })
   const [excluindo, setExcluindo] = useState<Categoria | null>(null)
   const nomeMes = nomeDoMes(mes)
@@ -95,6 +98,7 @@ export default function CategoriasPage() {
                   <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 largo:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
                     {itens.map((c) => {
                       const mesCat = doMes(c.id)
+                      const orcamento = orcamentos.data?.find((o) => o.categoria_id === c.id)
                       const quantidade = mesCat?.quantidade ?? 0
                       const Seta = c.tipo === 'RECEITA' ? ArrowDownLeft : ArrowUpRight
                       return (
@@ -127,6 +131,7 @@ export default function CategoriasPage() {
                               <span className="text-[15px] font-extrabold text-texto-2">{formatarMoeda('0')}</span>
                             )}
                           </div>
+                          {orcamento && <BarraOrcamento orcamento={orcamento} />}
                         </li>
                       )
                     })}

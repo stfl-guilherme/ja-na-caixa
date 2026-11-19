@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Resumo, Transacao } from '@/api/types'
+import type { Orcamento, Resumo, Transacao } from '@/api/types'
 import { resumoAnual2026, resumoNovembro, serieNovembro } from '@/test/fixtures'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import DashboardPage from './DashboardPage'
@@ -44,9 +44,20 @@ const vazio: Resumo = {
 
 const CATEGORIA_USADA = { id: 1, nome: 'Mercado', tipo: 'DESPESA', cor: '#B5541A', limite_mensal: null, transacoes: 3, criado_em: '' }
 
-function rotas(resumo: Resumo = resumoNovembro, transacoes = lista(0), categorias: unknown[] = [CATEGORIA_USADA]) {
+const ORCAMENTOS: Orcamento[] = [
+  { categoria_id: 4, nome: 'Lazer', cor: '#8C6A0C', limite: '300.00', gasto: '382.50', percentual: '127.50', excesso: '82.50', situacao: 'estourado' },
+  { categoria_id: 3, nome: 'Mercado', cor: '#B5541A', limite: '500.00', gasto: '340.00', percentual: '68.00', excesso: '0.00', situacao: 'ok' },
+]
+
+function rotas(
+  resumo: Resumo = resumoNovembro,
+  transacoes = lista(0),
+  categorias: unknown[] = [CATEGORIA_USADA],
+  orcamentos: Orcamento[] = ORCAMENTOS,
+) {
   return mockFetch([
     { caminho: '/api/categorias/', corpo: categorias },
+    { caminho: '/api/orcamentos/', corpo: orcamentos },
     { caminho: '/api/resumo/', corpo: resumo },
     { caminho: '/api/resumo/anual/', corpo: resumoAnual2026 },
     { caminho: '/api/transacoes/', corpo: transacoes },
@@ -163,6 +174,7 @@ describe('DashboardPage', () => {
     const titulos = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
     expect(titulos).toEqual([
       'Resumo de novembro',
+      'Orçamentos de novembro',
       'Como seu saldo evoluiu',
       'Entradas e saídas por dia',
       'Para onde foi o dinheiro',
@@ -171,6 +183,7 @@ describe('DashboardPage', () => {
     ])
     for (const descricao of [
       'Quanto entrou, quanto saiu e quanto sobrou.',
+      'Quanto você já usou do limite de cada categoria.',
       'Saldo acumulado dia a dia ao longo do mês.',
       'Cada barra é um dia: para cima o que entrou, para baixo o que saiu.',
       'Suas despesas do mês divididas por categoria.',
@@ -193,5 +206,24 @@ describe('DashboardPage', () => {
     expect(screen.getAllByText('Valor (R$)', { selector: 'span' })).toHaveLength(2)
     expect(screen.getAllByText('Dia do mês')).toHaveLength(2)
     expect(screen.getByText('Mês de 2026')).toBeInTheDocument()
+  })
+
+  it('mostra uma barra de orçamento por categoria com limite', async () => {
+    rotas()
+    renderComRotas(<DashboardPage />)
+    const secao = await screen.findByRole('region', { name: 'Orçamentos de novembro' })
+    const barras = await within(secao).findAllByTestId('barra-orcamento')
+    expect(barras).toHaveLength(2)
+    expect(semNbsp(barras[0].textContent)).toContain('R$ 382,50 de R$ 300,00 (127%)')
+    expect(semNbsp(barras[0].textContent)).toContain('Limite ultrapassado em R$ 82,50')
+    expect(within(barras[1]).getByText('Dentro do limite')).toBeInTheDocument()
+  })
+
+  it('sem categorias com limite, convida a definir em Categorias', async () => {
+    rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], [])
+    renderComRotas(<DashboardPage />)
+    const secao = await screen.findByRole('region', { name: 'Orçamentos de novembro' })
+    expect(await within(secao).findByText(/Nenhuma categoria com limite/)).toBeInTheDocument()
+    expect(within(secao).getByRole('link', { name: 'Defina limites em Categorias' })).toHaveAttribute('href', '/categorias?mes=2026-11')
   })
 })

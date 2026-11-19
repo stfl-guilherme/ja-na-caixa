@@ -17,6 +17,23 @@ export function useTelaLarga(): boolean {
   )
 }
 
+/** Desktop amplo: a partir de 1024px as Dicas do Papo viram botão flutuante (spec 17.2). */
+export const LARGURA_DESKTOP = '(min-width: 1024px)'
+
+function assinarDesktop(avisar: () => void) {
+  if (typeof window.matchMedia !== 'function') return () => {}
+  const consulta = window.matchMedia(LARGURA_DESKTOP)
+  consulta.addEventListener('change', avisar)
+  return () => consulta.removeEventListener('change', avisar)
+}
+
+/** true a partir de 1024px. Sem `matchMedia` (jsdom), assume desktop. */
+export function useTelaDesktop(): boolean {
+  return useSyncExternalStore(assinarDesktop, () =>
+    typeof window.matchMedia === 'function' ? window.matchMedia(LARGURA_DESKTOP).matches : true,
+  )
+}
+
 /** Usuário pediu menos movimento. */
 export function prefereMenosMovimento(): boolean {
   return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches

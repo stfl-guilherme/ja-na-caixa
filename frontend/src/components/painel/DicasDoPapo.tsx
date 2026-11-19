@@ -12,11 +12,11 @@ interface DicasDoPapoProps {
   indice: number
   onProxima: () => void
   /**
-   * `balao`: desktop, acima dos cartões, com a ponta para o Papo do cartão Saldo.
    * `cartao`: mobile, cartão de largura total com o Papo pequeno à esquerda.
    * `vazio`: dentro do estado vazio, saindo do Papo da cadeira (sem imagem nova).
+   * `flutuante`: desktop ≥ 1024px, balão acima do botão "cabeça de chat" (sem imagem própria).
    */
-  variante: 'balao' | 'cartao' | 'vazio'
+  variante: 'cartao' | 'vazio' | 'flutuante'
 }
 
 export function DicasDoPapo({ dicas, indice, onProxima, variante }: DicasDoPapoProps) {
@@ -30,9 +30,9 @@ export function DicasDoPapo({ dicas, indice, onProxima, variante }: DicasDoPapoP
       data-tipo={dica.tipo}
       className={cn(
         'relative flex gap-3 bg-branco text-left',
-        variante === 'balao' && 'max-w-[480px] rounded-[18px] border-2 border-tinta px-[18px] py-3.5 shadow-cartao',
         variante === 'cartao' && 'items-start rounded-cartao px-4 py-3.5 shadow-cartao',
         variante === 'vazio' && 'w-full max-w-[460px] rounded-[18px] border-2 border-tinta px-[18px] py-3.5',
+        variante === 'flutuante' && 'rounded-[18px] border-2 border-tinta py-3.5 pr-12 pl-[18px] shadow-modal',
       )}
     >
       {variante === 'cartao' && <Personagem pose={POSE_DA_DICA[dica.tipo]} altura={48} className="mt-0.5 max-w-12 shrink-0 object-contain" />}
@@ -60,13 +60,13 @@ export function DicasDoPapo({ dicas, indice, onProxima, variante }: DicasDoPapoP
           </div>
         )}
       </div>
-      {/* Ponta do balão: aponta para o Papo (abaixo à direita no desktop; abaixo à esquerda no estado vazio). */}
+      {/* Ponta do balão: aponta para o Papo (abaixo à direita, para o botão flutuante; abaixo à esquerda no estado vazio). */}
       {variante !== 'cartao' && (
         <span
           aria-hidden="true"
           className={cn(
             'absolute -bottom-[11px] size-5 rotate-45 border-r-2 border-b-2 border-tinta bg-branco',
-            variante === 'balao' ? 'right-[118px]' : 'left-[72px]',
+            variante === 'flutuante' ? 'right-[26px]' : 'left-[72px]',
           )}
         />
       )}

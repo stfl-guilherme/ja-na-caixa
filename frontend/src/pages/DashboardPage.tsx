@@ -1,5 +1,6 @@
-// Painel (docs/design/telas/app/painel/Painel.dc.html): bento de 12 colunas no desktop, uma coluna no celular.
+// Painel (docs/design/telas/app/painel/Painel.dc.html): seções verticais (ADR-019).
 import { ChevronRight, Plus } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EstadoErro } from '@/components/Estados'
@@ -8,6 +9,7 @@ import { useInterface, useOcultarPapoDoMenu } from '@/components/layout/contexto
 import { AnoBarChart } from '@/components/painel/AnoBarChart'
 import { CategoriasTreemap } from '@/components/painel/CategoriasTreemap'
 import { DicasDoPapo } from '@/components/painel/DicasDoPapo'
+import { DicasFlutuantes } from '@/components/painel/DicasFlutuantes'
 import { FluxoEspelhadoChart } from '@/components/painel/FluxoEspelhadoChart'
 import { FormasPagamento } from '@/components/painel/FormasPagamento'
 import { MetricCard } from '@/components/painel/MetricCard'
@@ -23,10 +25,10 @@ import { useDicas } from '@/hooks/useDicas'
 import { useEntrada } from '@/hooks/useEntrada'
 import { useMesSelecionado } from '@/hooks/useMesSelecionado'
 import { useResumo, useResumoAnual } from '@/hooks/useResumo'
-import { useTelaLarga } from '@/hooks/useTelaLarga'
+import { useTelaDesktop, useTelaLarga } from '@/hooks/useTelaLarga'
 import { useTransacoes } from '@/hooks/useTransacoes'
-import type { Dica, Resumo } from '@/api/types'
-import { POSE_DA_DICA } from '@/lib/dicas'
+import type { Dica, Resumo, Usuario } from '@/api/types'
+import { CHAVE_USUARIO } from '@/auth/useAuth'
 import { formatarData, hojeISO, mesAtual, nomeDoMes } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -166,6 +168,9 @@ function EstadoVazioPainel({ mes, larga, passoAtual, dicas }: { mes: string; lar
 
 export default function DashboardPage() {
   const larga = useTelaLarga()
+  const desktop = useTelaDesktop()
+  // O usuário já foi carregado pela rota protegida; aqui só se lê do cache (sem nova requisição).
+  const usuario = useQueryClient().getQueryData<Usuario | null>(CHAVE_USUARIO)?.username ?? ''
   const { mes, comMes } = useMesSelecionado()
   const resumo = useResumo(mes)
   const categorias = useCategorias()
@@ -182,7 +187,6 @@ export default function DashboardPage() {
   const dicas = useDicas(mes).data ?? []
   const [dicaPorMes, setDicaPorMes] = useState({ mes, indice: 0 })
   const indiceDica = dicaPorMes.mes === mes ? dicaPorMes.indice : 0
-  const dicaAtual = dicas.length > 0 ? dicas[indiceDica % dicas.length] : undefined
   const propsDicas: DicasProps = {
     dicas,
     indice: indiceDica,
@@ -194,8 +198,6 @@ export default function DashboardPage() {
   useOcultarPapoDoMenu(vazio)
 
   const negativo = resumo.data?.saldo.trim().startsWith('-') ?? false
-  // Saldo negativo mantém o Papo preocupado; senão, a pose acompanha a dica exibida.
-  const papoSaldo = negativo ? 'papo-preocupado' : dicaAtual ? POSE_DA_DICA[dicaAtual.tipo] : 'papo-espiando'
   const compacto = !larga
 
   return (
@@ -219,14 +221,8 @@ export default function DashboardPage() {
       ) : (
         <div className="flex flex-col gap-12">
           <SecaoPainel id="s-resumo" titulo={`Resumo de ${nomeDoMes(mes)}`} descricao="Quanto entrou, quanto saiu e quanto sobrou.">
-            {/* Desktop: balão acima dos cartões, com a ponta para o Papo do cartão Saldo (spec 17.2). */}
-            {larga && dicaAtual && (
-              <div className="-mb-2 flex justify-end pr-[22px]">
-                <DicasDoPapo {...propsDicas} variante="balao" />
-              </div>
-            )}
-            {/* Espaço acima dos cartões para o Papo espiar sem cobrir o título (decisoes-de-design, seção 6). */}
-            <div className={cn('grid gap-4', larga && 'grid-cols-3 gap-6 pt-14')}>
+            {/* Sem Papo espiando no cartão Saldo: as dicas têm o próprio Papo (spec 17.2). */}
+            <div className={cn('grid gap-4', larga && 'grid-cols-3 gap-6')}>
               {(['receita', 'despesa', 'saldo'] as const).map((metrica) => {
                 const campo = metrica === 'receita' ? 'receitas' : metrica === 'despesa' ? 'despesas' : 'saldo'
                 return (
@@ -237,13 +233,12 @@ export default function DashboardPage() {
                     anterior={resumo.data.mes_anterior[campo]}
                     mes={mes}
                     mesAnterior={resumo.data.mes_anterior.mes}
-                    papo={metrica === 'saldo' && larga ? papoSaldo : null}
                   />
                 )
               })}
             </div>
-            {/* Mobile: cartão de largura total abaixo do Resumo, com o Papo pequeno. */}
-            {!larga && <DicasDoPapo {...propsDicas} variante="cartao" />}
+            {/* Abaixo de 1024px: cartão de largura total abaixo do Resumo, com o Papo pequeno. */}
+            {!desktop && <DicasDoPapo {...propsDicas} variante="cartao" />}
           </SecaoPainel>
 
           <SecaoPainel id="s-orcamentos" titulo={`Orçamentos de ${nomeDoMes(mes)}`} descricao="Quanto você já usou do limite de cada categoria.">
@@ -291,6 +286,10 @@ export default function DashboardPage() {
               <Skeleton className="h-80 rounded-cartao bg-esqueleto-1" aria-label="Carregando" />
             )}
           </SecaoPainel>
+
+          {/* Desktop ≥ 1024px: "cabeça de chat" no canto inferior direito; montado com as dicas
+              carregadas e reiniciado a cada mês. Sem dicas, o botão não aparece. */}
+          {desktop && dicas.length > 0 && <DicasFlutuantes key={mes} {...propsDicas} usuario={usuario} mes={mes} />}
 
           <SecaoPainel
             id="s-ultimas"

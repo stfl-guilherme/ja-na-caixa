@@ -4,9 +4,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Dica, Orcamento, Resumo, Transacao } from '@/api/types'
 import { resumoAnual2026, resumoNovembro, serieNovembro } from '@/test/fixtures'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
+import { chaveDicaAuto } from '@/lib/dicasAuto'
 import DashboardPage from './DashboardPage'
 
 const semNbsp = (texto: string | null) => (texto ?? '').replace(/ /g, ' ')
+
+/** matchMedia falso: `largo` decide as consultas de largura mínima (720px e 1024px). */
+const mediaFalsa = (largo: boolean) => (q: string) => ({
+  matches: q.includes('min-width') ? largo : q.includes('reduce'),
+  addEventListener() {},
+  removeEventListener() {},
+})
 
 function transacao(id: number): Transacao {
   return {
@@ -78,6 +86,7 @@ describe('DashboardPage', () => {
   afterEach(() => {
     vi.useRealTimers()
     vi.unstubAllGlobals()
+    localStorage.clear()
   })
 
   it('mostra receitas, despesas e saldo vindos do resumo, com comparação', async () => {
@@ -124,13 +133,14 @@ describe('DashboardPage', () => {
     })
   })
 
-  it('o Papo espia o cartão Saldo e troca para preocupado com saldo negativo', async () => {
+  it('desktop: nenhum Papo no cartão Saldo; no celular, o Papo do topo fica preocupado com saldo negativo', async () => {
     rotas()
     const { unmount } = renderComRotas(<DashboardPage />)
     await screen.findByRole('link', { name: /^Saldo de novembro/ })
-    expect(personagensNaTela()).toEqual(['papo-espiando'])
+    expect(personagensNaTela()).toEqual([])
     unmount()
 
+    vi.stubGlobal('matchMedia', mediaFalsa(false))
     rotas({ ...resumoNovembro, saldo: '-625.39' })
     renderComRotas(<DashboardPage />)
     const saldo = await screen.findByRole('link', { name: /^Saldo de novembro/ })
@@ -240,31 +250,44 @@ describe('DashboardPage', () => {
     { id: 'despesas_cairam', tipo: 'parabens', texto: 'Suas despesas caíram R$ 393,79 em relação a outubro. Boa!', link: null },
   ]
 
-  it('mostra a dica do Papo no balão, com o Papo do cartão Saldo na pose do tipo', async () => {
+  it('desktop: dicas no botão flutuante, com a pose da primeira dica e sem cartão na página', async () => {
+    localStorage.setItem(chaveDicaAuto('', '2026-11'), '1') // o alerta já abriu sozinho neste mês
+    rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: [DICAS[1], DICAS[0]] })
+    renderComRotas(<DashboardPage />)
+    const botao = await screen.findByRole('button', { name: 'Dicas do Papo, 2 dicas' })
+    expect(personagensNaTela()).toEqual(['papo-joinha'])
+    expect(screen.queryByRole('region', { name: 'Dicas do Papo' })).not.toBeInTheDocument()
+    await userEvent.click(botao)
+    const regiao = screen.getByRole('region', { name: 'Dicas do Papo' })
+    expect(regiao).toHaveTextContent('Suas despesas caíram')
+    await userEvent.click(within(regiao).getByRole('button', { name: 'Próxima dica (1/2)' }))
+    expect(regiao).toHaveTextContent('Lazer passou do limite')
+  })
+
+  it('desktop: com alerta, o balão abre sozinho na primeira visita do mês', async () => {
+    rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: DICAS })
+    renderComRotas(<DashboardPage />)
+    expect(await screen.findByRole('region', { name: 'Dicas do Papo' })).toHaveTextContent('Lazer passou do limite')
+    expect(screen.getByRole('button', { name: 'Dicas do Papo, 2 dicas' })).toHaveAttribute('aria-expanded', 'true')
+  })
+
+  it('celular: cartão de dica abaixo do Resumo e nada flutuante', async () => {
+    vi.stubGlobal('matchMedia', mediaFalsa(false))
     rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: DICAS })
     renderComRotas(<DashboardPage />)
     const regiao = await screen.findByRole('region', { name: 'Dicas do Papo' })
     expect(regiao).toHaveTextContent('Lazer passou do limite em R$ 82,50.')
-    expect(personagensNaTela()).toEqual(['papo-preocupado'])
-    await userEvent.click(within(regiao).getByRole('button', { name: 'Próxima dica (1/2)' }))
-    expect(regiao).toHaveTextContent('Suas despesas caíram')
-    expect(personagensNaTela()).toEqual(['papo-joinha'])
+    expect(screen.queryByRole('button', { name: /^Dicas do Papo,/ })).not.toBeInTheDocument()
   })
 
-  it('com saldo negativo, o Papo continua preocupado em qualquer dica', async () => {
-    rotas({ ...resumoNovembro, saldo: '-10.00' }, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: [DICAS[1]] })
-    renderComRotas(<DashboardPage />)
-    await screen.findByRole('region', { name: 'Dicas do Papo' })
-    expect(personagensNaTela()).toEqual(['papo-preocupado'])
-  })
-
-  it('erro nas dicas: o balão não aparece e o painel funciona', async () => {
+  it('erro nas dicas: nem botão nem balão, e o painel funciona', async () => {
     rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { status: 500, corpo: { detail: 'Erro' } })
     renderComRotas(<DashboardPage />)
     expect(await screen.findByRole('link', { name: /^Saldo de novembro/ })).toBeInTheDocument()
     expect(await screen.findAllByTestId('barra-orcamento')).toHaveLength(2)
     expect(screen.queryByRole('region', { name: 'Dicas do Papo' })).not.toBeInTheDocument()
-    expect(personagensNaTela()).toEqual(['papo-espiando'])
+    expect(screen.queryByRole('button', { name: /^Dicas do Papo,/ })).not.toBeInTheDocument()
+    expect(personagensNaTela()).toEqual([])
   })
 
   it('estado vazio: dica de primeiros passos sem acrescentar personagem', async () => {

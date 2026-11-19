@@ -13,7 +13,7 @@ const DICAS: Dica[] = [
   { id: 'despesas_cairam', tipo: 'parabens', texto: 'Suas despesas caíram R$ 250,00 em relação a outubro. Boa!', link: null },
 ]
 
-function Controlado({ dicas, variante = 'cartao' }: { dicas: Dica[]; variante?: 'balao' | 'cartao' | 'vazio' }) {
+function Controlado({ dicas, variante = 'cartao' }: { dicas: Dica[]; variante?: 'cartao' | 'vazio' | 'flutuante' }) {
   const [indice, setIndice] = useState(0)
   return (
     <MemoryRouter>
@@ -72,8 +72,8 @@ describe('DicasDoPapo', () => {
     expect(screen.queryByRole('button', { name: /Próxima dica/ })).not.toBeInTheDocument()
   })
 
-  it('balão do desktop e do estado vazio não trazem imagem própria', () => {
-    const { unmount } = render(<Controlado dicas={DICAS} variante="balao" />)
+  it('balão flutuante e do estado vazio não trazem imagem própria', () => {
+    const { unmount } = render(<Controlado dicas={DICAS} variante="flutuante" />)
     expect(personagensNaTela()).toEqual([])
     unmount()
     render(<Controlado dicas={DICAS} variante="vazio" />)

@@ -1,11 +1,12 @@
 // Dicas do Papo no desktop (≥ 1024px) como "cabeça de chat" (spec 17.2; decisoes-de-design, seção 5):
-// botão redondo no canto inferior direito; o balão abre acima dele.
+// botão redondo no canto superior direito, na barra fixa do título; o balão abre abaixo dele.
 import { X } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import type { Dica } from '@/api/types'
 import { Personagem } from '@/components/Personagem'
 import { botaoIcone } from '@/components/ui/botao'
 import { POSE_DA_DICA } from '@/lib/dicas'
+import type { Pose } from '@/lib/personagens'
 import { marcarAbertoSozinho, podeAbrirSozinho } from '@/lib/dicasAuto'
 import { cn } from '@/lib/utils'
 import { DicasDoPapo } from './DicasDoPapo'
@@ -23,6 +24,13 @@ interface DicasFlutuantesProps {
 // tomada uma vez, na montagem.
 
 type Abertura = 'fechado' | 'clique' | 'auto'
+
+/** Recorte de cada pose no círculo: o rosto do Papo fica centralizado. */
+const ENQUADRAMENTO: Partial<Record<Pose, string>> = {
+  'papo-espiando': '46% 100%',
+  'papo-preocupado': '50% 0%',
+  'papo-joinha': '50% 0%',
+}
 
 export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: DicasFlutuantesProps) {
   // Abre sozinho só com alerta, uma vez por usuário e mês; não move o foco e anuncia o texto.
@@ -74,7 +82,8 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
   }, [aberto, abertura])
 
   if (dicas.length === 0) return null
-  const pose = POSE_DA_DICA[dicas[0].tipo]
+  // A pose acompanha o tipo da dica exibida (troca com "Próxima dica").
+  const pose = POSE_DA_DICA[dicas[indice % dicas.length].tipo]
   const total = dicas.length
 
   const fecharPeloBotao = () => {
@@ -88,15 +97,15 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
       <div ref={regiaoViva} aria-live="polite" className="sr-only" data-testid="anuncio-dica" />
 
       {aberto && (
-        // Acima do botão, alinhado à direita, preso ao rodapé da tela: fica longe da barra do
-        // seletor de mês (topo) e do "+ Nova transação" (menu lateral, à esquerda). A largura
-        // nunca passa da área de conteúdo (100vw − menu de 248px − margens).
+        // Abaixo do botão e da barra fixa do título (72px), alinhado à direita: não cobre o seletor
+        // de mês (na barra, à esquerda) nem o "+ Nova transação" (menu lateral). A largura nunca
+        // passa da área de conteúdo (100vw − menu de 248px − margens).
         <div
           ref={balaoRef}
           id={idBalao}
           tabIndex={-1}
           data-testid="balao-dicas"
-          className="fixed right-6 bottom-[112px] z-40 w-[400px] max-w-[calc(100vw-248px-48px)] rounded-[18px] focus:outline-none"
+          className="fixed top-[86px] right-10 z-40 w-[400px] max-w-[calc(100vw-248px-80px)] rounded-[18px] focus:outline-none"
         >
           <div className="relative">
             <DicasDoPapo dicas={dicas} indice={indice} onProxima={onProxima} variante="flutuante" />
@@ -119,16 +128,16 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
         aria-expanded={aberto}
         aria-controls={aberto ? idBalao : undefined}
         onClick={() => setAbertura(aberto ? 'fechado' : 'clique')}
-        className="fixed right-6 bottom-6 z-40 size-[72px] cursor-pointer rounded-full border-2 border-tinta bg-branco p-0 shadow-modal hover:brightness-105"
+        className="fixed top-[6px] right-10 z-40 size-[60px] cursor-pointer rounded-full border-2 border-tinta bg-branco p-0 shadow-cartao hover:brightness-105"
       >
-        <span className="flex size-full items-end justify-center overflow-hidden rounded-full">
-          <Personagem pose={pose} altura={64} className="max-w-[64px] object-contain object-bottom" />
+        <span className="block size-full overflow-hidden rounded-full">
+          <Personagem pose={pose} className="size-full object-cover" style={{ objectPosition: ENQUADRAMENTO[pose] }} />
         </span>
         <span
           aria-hidden="true"
-          className="absolute -top-0.5 -right-0.5 flex size-6 items-center justify-center rounded-full border-2 border-branco bg-tinta text-xs font-extrabold text-branco"
+          className="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full border-2 border-branco bg-tinta text-xs font-extrabold text-branco"
         >
-          {total}
+          ?
         </span>
       </button>
     </>

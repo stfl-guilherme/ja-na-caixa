@@ -31,10 +31,10 @@ describe('DicasFlutuantes', () => {
     vi.restoreAllMocks()
   })
 
-  it('botão com selo e rótulo da quantidade; fechado por padrão sem alerta', () => {
+  it('selo com "?" e a quantidade só no rótulo; fechado por padrão sem alerta', () => {
     render(<Controlado dicas={[INFO, PARABENS]} />)
     expect(botao()).toHaveAccessibleName('Dicas do Papo, 2 dicas')
-    expect(botao()).toHaveTextContent('2')
+    expect(botao()).toHaveTextContent(/^\?$/)
     expect(botao()).toHaveAttribute('aria-expanded', 'false')
     expect(balao()).not.toBeInTheDocument()
   })
@@ -112,7 +112,20 @@ describe('DicasFlutuantes', () => {
     expect(botao()).toBeInTheDocument()
   })
 
-  it('pose do botão pela primeira dica', () => {
+  it('a pose do botão troca com o tipo da dica exibida', async () => {
+    localStorage.setItem(chaveDicaAuto('demo', '2026-11'), '1')
+    render(<Controlado dicas={[ALERTA, PARABENS, INFO]} />)
+    expect(personagensNaTela(botao())).toEqual(['papo-preocupado'])
+    await userEvent.click(botao())
+    await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (1/3)' }))
+    expect(personagensNaTela(botao())).toEqual(['papo-joinha'])
+    await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (2/3)' }))
+    expect(personagensNaTela(botao())).toEqual(['papo-espiando'])
+    await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (3/3)' }))
+    expect(personagensNaTela(botao())).toEqual(['papo-preocupado'])
+  })
+
+  it('pose inicial do botão pela primeira dica', () => {
     const casos: [Dica[], string][] = [
       [[ALERTA], 'papo-preocupado'],
       [[PARABENS, ALERTA], 'papo-joinha'],

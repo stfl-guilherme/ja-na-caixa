@@ -14,7 +14,7 @@ interface DicasDoPapoProps {
   /**
    * `cartao`: mobile, cartão de largura total com o Papo pequeno à esquerda.
    * `vazio`: dentro do estado vazio, saindo do Papo da cadeira (sem imagem nova).
-   * `flutuante`: desktop ≥ 1024px, balão acima do botão "cabeça de chat" (sem imagem própria).
+   * `flutuante`: desktop ≥ 1024px, balão abaixo do botão "cabeça de chat" (sem imagem própria).
    */
   variante: 'cartao' | 'vazio' | 'flutuante'
 }
@@ -60,13 +60,13 @@ export function DicasDoPapo({ dicas, indice, onProxima, variante }: DicasDoPapoP
           </div>
         )}
       </div>
-      {/* Ponta do balão: aponta para o Papo (abaixo à direita, para o botão flutuante; abaixo à esquerda no estado vazio). */}
+      {/* Ponta do balão: aponta para o Papo (acima à direita, para o botão flutuante; abaixo à esquerda no estado vazio). */}
       {variante !== 'cartao' && (
         <span
           aria-hidden="true"
           className={cn(
-            'absolute -bottom-[11px] size-5 rotate-45 border-r-2 border-b-2 border-tinta bg-branco',
-            variante === 'flutuante' ? 'right-[26px]' : 'left-[72px]',
+            'absolute size-5 rotate-45 border-tinta bg-branco',
+            variante === 'flutuante' ? '-top-[11px] right-[20px] border-t-2 border-l-2' : '-bottom-[11px] left-[72px] border-r-2 border-b-2',
           )}
         />
       )}

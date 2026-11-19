@@ -28,6 +28,11 @@ export const resumoNovembro: Resumo = {
     2: ['0.00', '380.00', '3370.00'],
     17: ['0.00', '81.60', '2974.61'],
   }),
+  despesas_por_forma: [
+    { forma: 'CARTAO_CREDITO', rotulo: 'Cartão de crédito', total: '1830.00', percentual: '49.30' },
+    { forma: 'PIX', rotulo: 'Pix', total: '1500.00', percentual: '40.41' },
+    { forma: 'NAO_INFORMADO', rotulo: 'Não informado', total: '381.81', percentual: '10.29' },
+  ],
 }
 
 export const resumoAnual2026: ResumoAnual = {

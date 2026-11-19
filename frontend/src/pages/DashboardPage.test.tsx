@@ -19,6 +19,8 @@ function transacao(id: number): Transacao {
     valor: '10.00',
     data: '2026-11-10',
     observacao: '',
+    forma_pagamento: 'NAO_INFORMADO',
+    forma_pagamento_rotulo: 'Não informado',
     criado_em: '',
     atualizado_em: '',
   }
@@ -180,6 +182,7 @@ describe('DashboardPage', () => {
       'Como seu saldo evoluiu',
       'Entradas e saídas por dia',
       'Para onde foi o dinheiro',
+      'Como você pagou',
       'Seu ano até agora',
       'Últimas transações',
     ])
@@ -189,6 +192,7 @@ describe('DashboardPage', () => {
       'Saldo acumulado dia a dia ao longo do mês.',
       'Cada barra é um dia: para cima o que entrou, para baixo o que saiu.',
       'Suas despesas do mês divididas por categoria.',
+      'Suas despesas do mês por forma de pagamento.',
       'Compare os meses do ano.',
     ]) {
       expect(screen.getByText(descricao)).toBeInTheDocument()
@@ -268,5 +272,24 @@ describe('DashboardPage', () => {
     const regiao = await screen.findByRole('region', { name: 'Dicas do Papo' })
     expect(regiao).toHaveTextContent('Lance sua primeira transação de novembro.')
     expect(personagensNaTela()).toEqual(['papo-cadeira-acenando', 'caranguejo'])
+  })
+
+  it('mostra como as despesas foram pagas, com não informado por último', async () => {
+    rotas()
+    renderComRotas(<DashboardPage />)
+    const secao = await screen.findByRole('region', { name: 'Como você pagou' })
+    const itens = within(secao).getAllByRole('listitem')
+    expect(itens.map((i) => semNbsp(i.textContent))).toEqual([
+      'Cartão de créditoR$ 1.830,00 · 49%',
+      'PixR$ 1.500,00 · 40%',
+      'Não informadoR$ 381,81 · 10%',
+    ])
+  })
+
+  it('sem despesas por forma, avisa em texto', async () => {
+    rotas({ ...resumoNovembro, despesas_por_forma: [] })
+    renderComRotas(<DashboardPage />)
+    const secao = await screen.findByRole('region', { name: 'Como você pagou' })
+    expect(within(secao).getByText('Nenhuma despesa em novembro.')).toBeInTheDocument()
   })
 })

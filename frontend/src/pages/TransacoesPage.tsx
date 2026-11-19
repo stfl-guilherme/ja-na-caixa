@@ -15,6 +15,7 @@ import { useMesSelecionado } from '@/hooks/useMesSelecionado'
 import { useTelaLarga } from '@/hooks/useTelaLarga'
 import { useTransacoes } from '@/hooks/useTransacoes'
 import { formatarComSinal, formatarData, nomeDoMes } from '@/lib/format'
+import { ehFormaPagamento, FORMAS_PAGAMENTO, formaPagamento } from '@/lib/formasPagamento'
 import { cn } from '@/lib/utils'
 
 const POR_PAGINA = 20
@@ -24,7 +25,7 @@ const TIPOS: { valor: Tipo | ''; rotulo: string }[] = [
   { valor: 'DESPESA', rotulo: 'Despesas' },
 ]
 const DIAS_DA_SEMANA = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
-const COLUNAS = 'grid-cols-[112px_minmax(0,1.6fr)_minmax(0,1fr)_160px_96px]'
+const COLUNAS = 'grid-cols-[96px_minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_128px_88px]'
 
 function rotuloDoDia(iso: string) {
   const [ano, mes, dia] = iso.split('-').map(Number)
@@ -42,6 +43,16 @@ function paginasVisiveis(atual: number, total: number) {
   return Array.from({ length: 5 }, (_, i) => inicio + i)
 }
 
+function FormaNaLinha({ transacao }: { transacao: Transacao }) {
+  const { Icone } = formaPagamento(transacao.forma_pagamento)
+  return (
+    <span role="cell" className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-texto-3">
+      <Icone className="size-4 shrink-0" strokeWidth={2.2} aria-hidden="true" />
+      <span className="leading-tight">{transacao.forma_pagamento_rotulo}</span>
+    </span>
+  )
+}
+
 export default function TransacoesPage() {
   const larga = useTelaLarga()
   const { mes } = useMesSelecionado()
@@ -50,6 +61,8 @@ export default function TransacoesPage() {
   const tipoUrl = params.get('tipo')
   const tipo: Tipo | '' = tipoUrl === 'RECEITA' || tipoUrl === 'DESPESA' ? tipoUrl : ''
   const categoria = params.get('categoria') ?? ''
+  const formaUrl = params.get('forma')
+  const forma = ehFormaPagamento(formaUrl) ? formaUrl : ''
   const pagina = Math.max(1, Number(params.get('page')) || 1)
   const [busca, setBusca] = useState('')
   const buscaAtrasada = useDebounce(busca.trim())
@@ -67,6 +80,7 @@ export default function TransacoesPage() {
     tipo: tipo || undefined,
     categoria: categoria ? Number(categoria) : undefined,
     busca: buscaAtrasada || undefined,
+    forma_pagamento: forma || undefined,
     page: pagina,
   })
   const categorias = useCategorias()
@@ -80,10 +94,10 @@ export default function TransacoesPage() {
     if (data && data.results.length === 0 && data.count > 0 && pagina > 1) atualizarFiltros({ page: String(pagina - 1) })
   }, [data, pagina]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filtroAtivo = tipo !== '' || categoria !== '' || busca.trim() !== ''
+  const filtroAtivo = tipo !== '' || categoria !== '' || forma !== '' || busca.trim() !== ''
   const limpar = () => {
     setBusca('')
-    atualizarFiltros({ tipo: '', categoria: '' })
+    atualizarFiltros({ tipo: '', categoria: '', forma: '' })
   }
   const vazio = !isPending && !error && data?.count === 0
   useOcultarPapoDoMenu(vazio)
@@ -152,6 +166,24 @@ export default function TransacoesPage() {
                     ))}
                   </optgroup>
                 )}
+              </select>
+            </div>
+            <div className={cn('flex min-w-0 flex-col gap-1.5', larga ? 'flex-[0_1_200px]' : 'basis-full')}>
+              <label htmlFor="f-forma" className="text-sm font-semibold">
+                Forma de pagamento
+              </label>
+              <select
+                id="f-forma"
+                value={forma}
+                onChange={(e) => atualizarFiltros({ forma: e.target.value })}
+                className="h-12 cursor-pointer rounded-campo border-[1.5px] border-borda-campo bg-branco px-3 text-[15px] font-medium text-tinta"
+              >
+                <option value="">Todas as formas</option>
+                {FORMAS_PAGAMENTO.map(({ valor, rotulo }) => (
+                  <option key={valor} value={valor}>
+                    {rotulo}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex min-w-0 flex-[1_1_240px] flex-col gap-1.5">
@@ -246,6 +278,7 @@ export default function TransacoesPage() {
                 <span role="columnheader">Data</span>
                 <span role="columnheader">Descrição</span>
                 <span role="columnheader">Categoria</span>
+                <span role="columnheader">Forma</span>
                 <span role="columnheader" className="text-right">
                   Valor
                 </span>
@@ -268,6 +301,7 @@ export default function TransacoesPage() {
                     <span aria-hidden="true" className="size-2.5 shrink-0 rounded-full" style={{ background: t.categoria_cor }} />
                     <span className="truncate">{t.categoria_nome}</span>
                   </span>
+                  <FormaNaLinha transacao={t} />
                   <span role="cell" className="flex justify-end">
                     <ValorTransacao valor={t.valor} tipo={t.tipo} className="gap-[5px] text-[15px]" />
                   </span>
@@ -311,7 +345,9 @@ export default function TransacoesPage() {
                         <span aria-hidden="true" className="size-2.5 shrink-0 rounded-full" style={{ background: t.categoria_cor }} />
                         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                           <span className="truncate text-[15px] font-bold">{t.descricao}</span>
-                          <span className="text-xs font-medium text-texto-2">{t.categoria_nome}</span>
+                          <span className="text-xs font-medium text-texto-2">
+                            {t.categoria_nome} · {t.forma_pagamento_rotulo}
+                          </span>
                         </span>
                         <ValorTransacao valor={t.valor} tipo={t.tipo} className="text-[15px]" />
                       </button>

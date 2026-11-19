@@ -15,6 +15,8 @@ const transacao: Transacao = {
   valor: '123.45',
   data: '2026-11-10',
   observacao: '',
+  forma_pagamento: 'NAO_INFORMADO',
+  forma_pagamento_rotulo: 'Não informado',
   criado_em: '',
   atualizado_em: '',
 }

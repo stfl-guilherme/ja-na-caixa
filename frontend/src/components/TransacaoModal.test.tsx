@@ -53,7 +53,20 @@ describe('FormularioTransacao', () => {
       data: '2026-11-10',
       categoria: 1,
       observacao: '',
+      forma_pagamento: 'NAO_INFORMADO',
     })
+  })
+
+  it('envia a forma de pagamento escolhida; em receita, o rótulo vira "Forma de recebimento"', async () => {
+    const { onSalvar } = renderForm()
+    await preencher()
+    expect(campo(/^Forma de pagamento/)).toHaveValue('NAO_INFORMADO')
+    await userEvent.selectOptions(campo(/^Forma de pagamento/), 'PIX')
+    await userEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+    expect(onSalvar).toHaveBeenCalledWith(expect.objectContaining({ forma_pagamento: 'PIX' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Receita' }))
+    expect(campo(/^Forma de recebimento/)).toHaveValue('PIX')
+    expect(screen.queryByLabelText(/^Forma de pagamento/)).not.toBeInTheDocument()
   })
 
   it('começa com a data de hoje', () => {
@@ -147,6 +160,8 @@ describe('FormularioTransacao', () => {
       valor: '4500.00',
       data: '2026-11-05',
       observacao: 'Novembro',
+      forma_pagamento: 'NAO_INFORMADO',
+      forma_pagamento_rotulo: 'Não informado',
       criado_em: '',
       atualizado_em: '',
     }

@@ -24,6 +24,16 @@ export interface Categoria {
 /** Sem `limite_mensal`, o limite não muda; `null` remove. */
 export type CategoriaInput = Pick<Categoria, 'nome' | 'tipo' | 'cor'> & { limite_mensal?: string | null }
 
+/** Formas de pagamento (spec 17.3; ADR-023). */
+export type FormaPagamento =
+  | 'PIX'
+  | 'CARTAO_CREDITO'
+  | 'CARTAO_DEBITO'
+  | 'DINHEIRO'
+  | 'BOLETO'
+  | 'TRANSFERENCIA'
+  | 'NAO_INFORMADO'
+
 export interface Transacao {
   id: number
   categoria: number
@@ -34,6 +44,8 @@ export interface Transacao {
   valor: string
   data: string
   observacao: string
+  forma_pagamento: FormaPagamento
+  forma_pagamento_rotulo: string
   criado_em: string
   atualizado_em: string
 }
@@ -44,6 +56,7 @@ export interface TransacaoInput {
   valor: string
   data: string
   observacao: string
+  forma_pagamento: FormaPagamento
 }
 
 export interface Paginado<T> {
@@ -70,6 +83,7 @@ export interface FiltrosTransacao {
   categoria?: number | ''
   tipo?: Tipo | ''
   busca?: string
+  forma_pagamento?: FormaPagamento | ''
   page?: number
 }
 
@@ -95,6 +109,8 @@ export interface Resumo extends Totais {
   por_categoria: ResumoCategoria[]
   mes_anterior: Totais & { mes: string }
   serie_diaria: DiaDoMes[]
+  /** Despesas do mês por forma; "Não informado" por último (spec 17.3). */
+  despesas_por_forma: { forma: FormaPagamento; rotulo: string; total: string; percentual: string }[]
 }
 
 export interface ResumoAnual extends Totais {

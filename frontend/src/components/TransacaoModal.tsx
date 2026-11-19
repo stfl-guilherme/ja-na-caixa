@@ -2,7 +2,7 @@
 import { ArrowDownLeft, ArrowUpRight, Plus, Tag, Trash2 } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { ApiError } from '@/api/client'
-import type { Categoria, Tipo, Transacao, TransacaoInput } from '@/api/types'
+import type { Categoria, FormaPagamento, Tipo, Transacao, TransacaoInput } from '@/api/types'
 import { CategoriaModal } from '@/components/CategoriaModal'
 import { CampoFormulario } from '@/components/CampoFormulario'
 import { ariaDoCampo, classeInputLimpo, molduraCampo } from '@/lib/campos'
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useCategorias } from '@/hooks/useCategorias'
 import { useSalvarTransacao } from '@/hooks/useTransacoes'
 import { hojeISO } from '@/lib/format'
+import { FORMAS_PAGAMENTO } from '@/lib/formasPagamento'
 import {
   apiParaCentavos,
   centavosDeDigitos,
@@ -29,6 +30,7 @@ interface Formulario {
   data: string
   categoria: string
   observacao: string
+  forma: FormaPagamento
 }
 
 type Campo = 'descricao' | 'valor' | 'data' | 'categoria' | 'observacao'
@@ -85,6 +87,7 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
     data: isoParaDataBR(transacao?.data ?? hojeISO()),
     categoria: transacao ? String(transacao.categoria) : '',
     observacao: transacao?.observacao ?? '',
+    forma: transacao?.forma_pagamento ?? 'NAO_INFORMADO',
   }))
   const [tentou, setTentou] = useState(false)
   const [tipo, setTipo] = useState<Tipo>(transacao?.tipo ?? 'DESPESA')
@@ -108,6 +111,7 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
       data: iso,
       categoria: Number(f.categoria),
       observacao: f.observacao.trim(),
+      forma_pagamento: f.forma,
     })
   }
 
@@ -226,6 +230,21 @@ export function FormularioTransacao({ transacao, categorias, salvando, erroApi, 
           </select>
         </CampoFormulario>
       )}
+
+      <CampoFormulario id="m-forma" rotulo={tipo === 'RECEITA' ? 'Forma de recebimento' : 'Forma de pagamento'}>
+        <select
+          id="m-forma"
+          value={f.forma}
+          onChange={(e) => atualizar('forma', e.target.value as FormaPagamento)}
+          className="h-12 cursor-pointer rounded-campo border-[1.5px] border-borda-campo bg-branco px-3 text-base font-medium text-tinta"
+        >
+          {FORMAS_PAGAMENTO.map(({ valor, rotulo }) => (
+            <option key={valor} value={valor}>
+              {rotulo}
+            </option>
+          ))}
+        </select>
+      </CampoFormulario>
 
       <CategoriaModal
         aberto={criandoCategoria}

@@ -9,6 +9,7 @@ import { AnoBarChart } from '@/components/painel/AnoBarChart'
 import { CategoriasTreemap } from '@/components/painel/CategoriasTreemap'
 import { DicasDoPapo } from '@/components/painel/DicasDoPapo'
 import { FluxoEspelhadoChart } from '@/components/painel/FluxoEspelhadoChart'
+import { FormasPagamento } from '@/components/painel/FormasPagamento'
 import { MetricCard } from '@/components/painel/MetricCard'
 import { OrcamentosDoMes } from '@/components/painel/OrcamentosDoMes'
 import { SecaoPainel } from '@/components/painel/partes'
@@ -275,6 +276,10 @@ export default function DashboardPage() {
               progresso={progresso}
               compacto={compacto}
             />
+          </SecaoPainel>
+
+          <SecaoPainel id="s-formas" titulo="Como você pagou" descricao="Suas despesas do mês por forma de pagamento.">
+            <FormasPagamento formas={resumo.data.despesas_por_forma} mes={mes} />
           </SecaoPainel>
 
           <SecaoPainel id="s-ano" titulo="Seu ano até agora" descricao="Compare os meses do ano.">

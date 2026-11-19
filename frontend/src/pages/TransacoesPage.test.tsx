@@ -19,6 +19,8 @@ const transacao: Transacao = {
   valor: '123.45',
   data: '2026-11-10',
   observacao: 'Compra do mês',
+  forma_pagamento: 'NAO_INFORMADO',
+  forma_pagamento_rotulo: 'Não informado',
   criado_em: '',
   atualizado_em: '',
 }
@@ -137,5 +139,15 @@ describe('TransacoesPage', () => {
     expect(screen.getByRole('button', { name: 'Página 1' })).toHaveAttribute('aria-current', 'page')
     await userEvent.click(screen.getByRole('button', { name: 'Próxima página' }))
     await vi.waitFor(() => expect(parametros(fetchMock, 'page')).toContain('2'))
+  })
+
+  it('mostra a forma de pagamento na tabela e filtra por ela', async () => {
+    const fetchMock = rotas(pagina([{ ...transacao, forma_pagamento: 'PIX', forma_pagamento_rotulo: 'Pix' }]))
+    renderComRotas(<TransacoesPage />)
+    const linha = (await screen.findByText('Supermercado')).closest('[role="row"]') as HTMLElement
+    expect(within(linha).getByText('Pix')).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Forma' })).toBeInTheDocument()
+    await userEvent.selectOptions(screen.getByLabelText('Forma de pagamento'), 'CARTAO_CREDITO')
+    await vi.waitFor(() => expect(parametros(fetchMock, 'forma_pagamento')).toContain('CARTAO_CREDITO'))
   })
 })

@@ -65,7 +65,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes; migration reversível.
 - **Commit:** `feat(api): adicionar forma de pagamento às transações`
 
-### [ ] F2 — Forma de pagamento na interface
+### [x] F2 — Forma de pagamento na interface
 - **Arquivos:** `frontend/src/lib/formasPagamento.ts`, `TransacaoModal.tsx`, `TransacoesPage.tsx`, `components/painel/FormasPagamento.tsx`, `DashboardPage.tsx` e testes.
 - **Teste primeiro:** select "Forma de pagamento" no modal (rótulo "Forma de recebimento" para receita) enviando o valor; coluna "Forma" com rótulo na tabela; filtro por forma envia `forma_pagamento`; seção "Como você pagou" com rótulo, valor e percentual e não informado por último.
 - **Pronto quando:** build, lint e testes verdes; push.

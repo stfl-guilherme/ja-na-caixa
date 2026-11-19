@@ -9,6 +9,18 @@ class TipoCategoria(models.TextChoices):
     DESPESA = "DESPESA", "Despesa"
 
 
+class FormaPagamento(models.TextChoices):
+    """Forma de pagamento da transação (spec 17.3; ADR-023)."""
+
+    PIX = "PIX", "Pix"
+    CARTAO_CREDITO = "CARTAO_CREDITO", "Cartão de crédito"
+    CARTAO_DEBITO = "CARTAO_DEBITO", "Cartão de débito"
+    DINHEIRO = "DINHEIRO", "Dinheiro"
+    BOLETO = "BOLETO", "Boleto"
+    TRANSFERENCIA = "TRANSFERENCIA", "Transferência"
+    NAO_INFORMADO = "NAO_INFORMADO", "Não informado"
+
+
 validar_cor_hex = RegexValidator(
     regex=r"^#[0-9A-Fa-f]{6}$",
     message="Informe a cor no formato hexadecimal #RRGGBB.",
@@ -48,6 +60,9 @@ class Transacao(models.Model):
     valor = models.DecimalField(max_digits=12, decimal_places=2)
     data = models.DateField()
     observacao = models.TextField(blank=True, default="")
+    forma_pagamento = models.CharField(
+        max_length=14, choices=FormaPagamento.choices, default=FormaPagamento.NAO_INFORMADO
+    )
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 

@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from financas.dicas import gerar_dicas
 from financas.filters import filtrar_transacoes, intervalo_do_mes, mes_anterior
-from financas.models import Categoria, TipoCategoria, Transacao
+from financas.models import Categoria, FormaPagamento, TipoCategoria, Transacao
 from financas.orcamentos import orcamentos_do_mes, percentual_texto
 from financas.serializers import CategoriaSerializer, TransacaoSerializer
 
@@ -137,6 +137,7 @@ class ResumoView(APIView):
                 "por_categoria": [{**i, "total": _dinheiro(i["total"])} for i in itens],
                 "mes_anterior": _totais_do_mes(request.user, mes_anterior(mes)),
                 "serie_diaria": _serie_diaria(transacoes, inicio, fim),
+                "despesas_por_forma": _despesas_por_forma(transacoes, despesas),
             }
         )
 
@@ -164,6 +165,28 @@ def _totais_do_mes(usuario, mes: str) -> dict:
     inicio, fim = intervalo_do_mes(mes)
     transacoes = Transacao.objects.filter(categoria__usuario=usuario, data__gte=inicio, data__lt=fim)
     return {"mes": mes, **_totais(*_somar_por_tipo(transacoes))}
+
+
+def _despesas_por_forma(transacoes, despesas: Decimal) -> list[dict]:
+    """Despesas do mês por forma de pagamento; "Não informado" sempre por último (spec 17.3)."""
+    por_forma: dict[str, Decimal] = {}
+    for transacao in transacoes:
+        if transacao.categoria.tipo == TipoCategoria.DESPESA:
+            forma = transacao.forma_pagamento
+            por_forma[forma] = por_forma.get(forma, Decimal("0")) + transacao.valor
+    ordem = sorted(
+        por_forma.items(),
+        key=lambda item: (item[0] == FormaPagamento.NAO_INFORMADO, -item[1], item[0]),
+    )
+    return [
+        {
+            "forma": forma,
+            "rotulo": FormaPagamento(forma).label,
+            "total": _dinheiro(total),
+            "percentual": percentual_texto(total * 100 / despesas),
+        }
+        for forma, total in ordem
+    ]
 
 
 def _serie_diaria(transacoes, inicio, fim) -> list[dict]:

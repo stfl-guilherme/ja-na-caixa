@@ -3,6 +3,8 @@ from datetime import date
 
 from rest_framework.exceptions import ValidationError
 
+from financas.models import FormaPagamento
+
 _MES_RE = re.compile(r"^(\d{4})-(\d{2})$")
 
 
@@ -41,6 +43,11 @@ def filtrar_transacoes(queryset, params):
         if tipo not in ("RECEITA", "DESPESA"):
             raise ValidationError({"tipo": ["Use RECEITA ou DESPESA."]})
         queryset = queryset.filter(categoria__tipo=tipo)
+    forma = params.get("forma_pagamento")
+    if forma:
+        if forma not in FormaPagamento.values:
+            raise ValidationError({"forma_pagamento": ["Forma de pagamento inválida."]})
+        queryset = queryset.filter(forma_pagamento=forma)
     busca = (params.get("busca") or "").strip()
     if busca:
         queryset = queryset.filter(descricao__icontains=busca)

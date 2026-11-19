@@ -59,7 +59,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Funcionalidade 3 — Forma de pagamento (spec 17.3, ADR-023)
 
-### [ ] F1 — Campo, filtro e resumo por forma
+### [x] F1 — Campo, filtro e resumo por forma
 - **Arquivos:** `backend/financas/models.py`, migration `0004_transacao_forma_pagamento.py`, `serializers.py`, `filters.py`, `views.py`, `backend/financas/tests/test_forma_pagamento.py`.
 - **Teste primeiro:** padrão `NAO_INFORMADO` na criação; valor inválido → 400; rótulo na resposta; filtro `forma_pagamento` (inválido → 400); migration preenche os registros existentes (teste com `MigrationExecutor`); `despesas_por_forma` com totais, percentuais e precisão decimal, sem receitas, ordem decrescente com não informado por último; isolamento.
 - **Pronto quando:** testes verdes; migration reversível.

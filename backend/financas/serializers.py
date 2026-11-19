@@ -67,6 +67,7 @@ class TransacaoSerializer(serializers.ModelSerializer):
     categoria_nome = serializers.CharField(source="categoria.nome", read_only=True)
     categoria_cor = serializers.CharField(source="categoria.cor", read_only=True)
     tipo = serializers.CharField(source="categoria.tipo", read_only=True)
+    forma_pagamento_rotulo = serializers.CharField(source="get_forma_pagamento_display", read_only=True)
 
     class Meta:
         model = Transacao
@@ -80,6 +81,8 @@ class TransacaoSerializer(serializers.ModelSerializer):
             "valor",
             "data",
             "observacao",
+            "forma_pagamento",
+            "forma_pagamento_rotulo",
             "criado_em",
             "atualizado_em",
         ]

@@ -2,6 +2,7 @@ import { api } from './client'
 import type {
   Categoria,
   CategoriaInput,
+  Dica,
   FiltrosTransacao,
   ListaTransacoes,
   ModoDemo,
@@ -46,4 +47,8 @@ export const resumoApi = {
 
 export const orcamentosApi = {
   listar: (mes: string) => api<Orcamento[]>('/orcamentos/', { params: { mes } }),
+}
+
+export const dicasApi = {
+  listar: (mes: string) => api<Dica[]>('/dicas/', { params: { mes } }),
 }

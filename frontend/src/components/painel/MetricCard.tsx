@@ -10,6 +10,8 @@ import type { Pose } from '@/lib/personagens'
 import { cn } from '@/lib/utils'
 
 const ROTULO: Record<Metrica, string> = { receita: 'Receitas', despesa: 'Despesas', saldo: 'Saldo' }
+/** Altura de cada pose atrás do cartão: só cabeça e ombros aparecem (até 72px). */
+const ALTURA_DA_POSE: Partial<Record<Pose, number>> = { 'papo-preocupado': 170, 'papo-joinha': 140 }
 const TIPO_NA_URL: Record<Metrica, string | undefined> = { receita: 'RECEITA', despesa: 'DESPESA', saldo: undefined }
 
 function formatar(metrica: Metrica, valor: string) {
@@ -47,10 +49,9 @@ export function MetricCard({ metrica, valor, anterior, mes, mesAnterior, papo = 
   if (tipo) busca.set('tipo', tipo)
 
   const Icone = metrica === 'receita' ? ArrowDownLeft : metrica === 'despesa' ? ArrowUpRight : Wallet
-  const preocupado = papo === 'papo-preocupado'
 
   return (
-    <Espiando pose={papo} altura={preocupado ? 170 : 80} className="h-full">
+    <Espiando pose={papo} altura={papo ? ALTURA_DA_POSE[papo] ?? 80 : 80} className="h-full">
       <Link
         to={`/transacoes?${busca.toString()}`}
         aria-label={`${ROTULO[metrica]} de ${nomeDoMes(mes)}: ${formatar(metrica, valor)}. ${textoComparacao}. Abrir transações filtradas.`}

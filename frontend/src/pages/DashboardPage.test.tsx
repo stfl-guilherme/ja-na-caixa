@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Orcamento, Resumo, Transacao } from '@/api/types'
+import type { Dica, Orcamento, Resumo, Transacao } from '@/api/types'
 import { resumoAnual2026, resumoNovembro, serieNovembro } from '@/test/fixtures'
 import { chamadas, mockFetch, personagensNaTela, renderComRotas } from '@/test/utils'
 import DashboardPage from './DashboardPage'
@@ -54,9 +54,11 @@ function rotas(
   transacoes = lista(0),
   categorias: unknown[] = [CATEGORIA_USADA],
   orcamentos: Orcamento[] = ORCAMENTOS,
+  dicas: { status?: number; corpo: unknown } = { corpo: [] },
 ) {
   return mockFetch([
     { caminho: '/api/categorias/', corpo: categorias },
+    { caminho: '/api/dicas/', ...dicas },
     { caminho: '/api/orcamentos/', corpo: orcamentos },
     { caminho: '/api/resumo/', corpo: resumo },
     { caminho: '/api/resumo/anual/', corpo: resumoAnual2026 },
@@ -225,5 +227,46 @@ describe('DashboardPage', () => {
     const secao = await screen.findByRole('region', { name: 'Orçamentos de novembro' })
     expect(await within(secao).findByText(/Nenhuma categoria com limite/)).toBeInTheDocument()
     expect(within(secao).getByRole('link', { name: 'Defina limites em Categorias' })).toHaveAttribute('href', '/categorias?mes=2026-11')
+  })
+
+  const DICAS: Dica[] = [
+    { id: 'orcamento_estourado', tipo: 'alerta', texto: 'Lazer passou do limite em R$ 82,50.', link: '/transacoes?categoria=4&mes=2026-11' },
+    { id: 'despesas_cairam', tipo: 'parabens', texto: 'Suas despesas caíram R$ 393,79 em relação a outubro. Boa!', link: null },
+  ]
+
+  it('mostra a dica do Papo no balão, com o Papo do cartão Saldo na pose do tipo', async () => {
+    rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: DICAS })
+    renderComRotas(<DashboardPage />)
+    const regiao = await screen.findByRole('region', { name: 'Dicas do Papo' })
+    expect(regiao).toHaveTextContent('Lazer passou do limite em R$ 82,50.')
+    expect(personagensNaTela()).toEqual(['papo-preocupado'])
+    await userEvent.click(within(regiao).getByRole('button', { name: 'Próxima dica (1/2)' }))
+    expect(regiao).toHaveTextContent('Suas despesas caíram')
+    expect(personagensNaTela()).toEqual(['papo-joinha'])
+  })
+
+  it('com saldo negativo, o Papo continua preocupado em qualquer dica', async () => {
+    rotas({ ...resumoNovembro, saldo: '-10.00' }, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { corpo: [DICAS[1]] })
+    renderComRotas(<DashboardPage />)
+    await screen.findByRole('region', { name: 'Dicas do Papo' })
+    expect(personagensNaTela()).toEqual(['papo-preocupado'])
+  })
+
+  it('erro nas dicas: o balão não aparece e o painel funciona', async () => {
+    rotas(resumoNovembro, lista(0), [CATEGORIA_USADA], ORCAMENTOS, { status: 500, corpo: { detail: 'Erro' } })
+    renderComRotas(<DashboardPage />)
+    expect(await screen.findByRole('link', { name: /^Saldo de novembro/ })).toBeInTheDocument()
+    expect(await screen.findAllByTestId('barra-orcamento')).toHaveLength(2)
+    expect(screen.queryByRole('region', { name: 'Dicas do Papo' })).not.toBeInTheDocument()
+    expect(personagensNaTela()).toEqual(['papo-espiando'])
+  })
+
+  it('estado vazio: dica de primeiros passos sem acrescentar personagem', async () => {
+    const primeira: Dica = { id: 'primeira_transacao', tipo: 'primeiros_passos', texto: 'Lance sua primeira transação de novembro.', link: null }
+    rotas(vazio, lista(0), [CATEGORIA_USADA], [], { corpo: [primeira] })
+    renderComRotas(<DashboardPage />)
+    const regiao = await screen.findByRole('region', { name: 'Dicas do Papo' })
+    expect(regiao).toHaveTextContent('Lance sua primeira transação de novembro.')
+    expect(personagensNaTela()).toEqual(['papo-cadeira-acenando', 'caranguejo'])
   })
 })

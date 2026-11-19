@@ -51,7 +51,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 - **Pronto quando:** testes verdes.
 - **Commit:** `feat(api): adicionar dicas do Papo por regras`
 
-### [ ] D2 — Balão de dicas no Painel
+### [x] D2 — Balão de dicas no Painel
 - **Arquivos:** `frontend/src/api/*`, `frontend/src/hooks/useDicas.ts`, `frontend/src/components/painel/DicasDoPapo.tsx` e teste, `frontend/src/pages/DashboardPage.tsx` e teste.
 - **Teste primeiro:** região "Dicas do Papo" com o texto da primeira dica; "Próxima dica (1/3)" avança e volta para a primeira depois da última; pose por tipo (alerta → preocupado, parabéns → joinha, info → espiando); "Ver transações" com o link; sem dicas e com erro → nada aparece e o painel continua; imagem com `alt=""`; no estado vazio, dica de primeiros passos sem imagem extra (máximo de 2 personagens).
 - **Pronto quando:** build, lint e testes verdes; push.

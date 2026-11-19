@@ -1,11 +1,13 @@
 // Painel (docs/design/telas/app/painel/Painel.dc.html): bento de 12 colunas no desktop, uma coluna no celular.
 import { ChevronRight, Plus } from 'lucide-react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { EstadoErro } from '@/components/Estados'
 import { CabecalhoPagina } from '@/components/layout/CabecalhoPagina'
 import { useInterface, useOcultarPapoDoMenu } from '@/components/layout/contexto'
 import { AnoBarChart } from '@/components/painel/AnoBarChart'
 import { CategoriasTreemap } from '@/components/painel/CategoriasTreemap'
+import { DicasDoPapo } from '@/components/painel/DicasDoPapo'
 import { FluxoEspelhadoChart } from '@/components/painel/FluxoEspelhadoChart'
 import { MetricCard } from '@/components/painel/MetricCard'
 import { OrcamentosDoMes } from '@/components/painel/OrcamentosDoMes'
@@ -16,12 +18,14 @@ import { ValorTransacao } from '@/components/ValorTransacao'
 import { botao } from '@/components/ui/botao'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCategorias } from '@/hooks/useCategorias'
+import { useDicas } from '@/hooks/useDicas'
 import { useEntrada } from '@/hooks/useEntrada'
 import { useMesSelecionado } from '@/hooks/useMesSelecionado'
 import { useResumo, useResumoAnual } from '@/hooks/useResumo'
 import { useTelaLarga } from '@/hooks/useTelaLarga'
 import { useTransacoes } from '@/hooks/useTransacoes'
-import type { Resumo } from '@/api/types'
+import type { Dica, Resumo } from '@/api/types'
+import { POSE_DA_DICA } from '@/lib/dicas'
 import { formatarData, hojeISO, mesAtual, nomeDoMes } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -112,13 +116,21 @@ function PrimeirosPassos({ passoAtual }: { passoAtual: 0 | 1 }) {
   )
 }
 
-function EstadoVazioPainel({ mes, larga, passoAtual }: { mes: string; larga: boolean; passoAtual: 0 | 1 | null }) {
+interface DicasProps {
+  dicas: Dica[]
+  indice: number
+  onProxima: () => void
+}
+
+function EstadoVazioPainel({ mes, larga, passoAtual, dicas }: { mes: string; larga: boolean; passoAtual: 0 | 1 | null; dicas: DicasProps }) {
   const { abrirTransacao } = useInterface()
   return (
     <section
       aria-labelledby="vazio-titulo"
       className={cn('flex flex-col items-center gap-[18px] rounded-cartao bg-branco text-center shadow-cartao', larga ? 'px-8 py-14' : 'px-5 py-7')}
     >
+      {/* O balão sai do Papo da cadeira: nenhuma imagem nova (limite de 2 personagens). */}
+      <DicasDoPapo {...dicas} variante="vazio" />
       <div className="flex items-end gap-1">
         <Personagem pose="papo-cadeira-acenando" altura={larga ? 220 : 150} />
         <Personagem pose="caranguejo" altura={larga ? 84 : 58} />
@@ -165,20 +177,32 @@ export default function DashboardPage() {
         ? 1
         : null
   const anual = useResumoAnual(Number(mes.slice(0, 4)))
+  // Erro nas dicas: o balão some e o painel segue normal (spec 17.2).
+  const dicas = useDicas(mes).data ?? []
+  const [dicaPorMes, setDicaPorMes] = useState({ mes, indice: 0 })
+  const indiceDica = dicaPorMes.mes === mes ? dicaPorMes.indice : 0
+  const dicaAtual = dicas.length > 0 ? dicas[indiceDica % dicas.length] : undefined
+  const propsDicas: DicasProps = {
+    dicas,
+    indice: indiceDica,
+    onProxima: () => setDicaPorMes({ mes, indice: (indiceDica + 1) % dicas.length }),
+  }
   const progresso = useEntrada()
 
   const vazio = resumo.data ? semMovimento(resumo.data) : false
   useOcultarPapoDoMenu(vazio)
 
   const negativo = resumo.data?.saldo.trim().startsWith('-') ?? false
-  const papoSaldo = negativo ? 'papo-preocupado' : 'papo-espiando'
+  // Saldo negativo mantém o Papo preocupado; senão, a pose acompanha a dica exibida.
+  const papoSaldo = negativo ? 'papo-preocupado' : dicaAtual ? POSE_DA_DICA[dicaAtual.tipo] : 'papo-espiando'
   const compacto = !larga
 
   return (
     <>
       <CabecalhoPagina
         titulo="Painel"
-        extraMobile={!vazio && <Personagem pose={papoSaldo} altura={negativo ? 60 : 35} className="mb-px shrink-0" />}
+        // No celular, o Papo do cabeçalho segue só o saldo: a dica tem o próprio Papo no cartão.
+        extraMobile={!vazio && <Personagem pose={negativo ? 'papo-preocupado' : 'papo-espiando'} altura={negativo ? 60 : 35} className="mb-px shrink-0" />}
       />
 
       {resumo.isPending ? (
@@ -190,10 +214,16 @@ export default function DashboardPage() {
       ) : resumo.error ? (
         <EstadoErro erro={resumo.error} onTentarNovamente={() => resumo.refetch()} />
       ) : vazio ? (
-        <EstadoVazioPainel mes={mes} larga={larga} passoAtual={passoAtual} />
+        <EstadoVazioPainel mes={mes} larga={larga} passoAtual={passoAtual} dicas={propsDicas} />
       ) : (
         <div className="flex flex-col gap-12">
           <SecaoPainel id="s-resumo" titulo={`Resumo de ${nomeDoMes(mes)}`} descricao="Quanto entrou, quanto saiu e quanto sobrou.">
+            {/* Desktop: balão acima dos cartões, com a ponta para o Papo do cartão Saldo (spec 17.2). */}
+            {larga && dicaAtual && (
+              <div className="-mb-2 flex justify-end pr-[22px]">
+                <DicasDoPapo {...propsDicas} variante="balao" />
+              </div>
+            )}
             {/* Espaço acima dos cartões para o Papo espiar sem cobrir o título (decisoes-de-design, seção 6). */}
             <div className={cn('grid gap-4', larga && 'grid-cols-3 gap-6 pt-14')}>
               {(['receita', 'despesa', 'saldo'] as const).map((metrica) => {
@@ -211,6 +241,8 @@ export default function DashboardPage() {
                 )
               })}
             </div>
+            {/* Mobile: cartão de largura total abaixo do Resumo, com o Papo pequeno. */}
+            {!larga && <DicasDoPapo {...propsDicas} variante="cartao" />}
           </SecaoPainel>
 
           <SecaoPainel id="s-orcamentos" titulo={`Orçamentos de ${nomeDoMes(mes)}`} descricao="Quanto você já usou do limite de cada categoria.">

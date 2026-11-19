@@ -117,3 +117,13 @@ export interface Orcamento {
   excesso: string
   situacao: SituacaoOrcamento
 }
+
+export type TipoDica = 'alerta' | 'info' | 'parabens' | 'primeiros_passos'
+
+/** Dica do Papo, gerada por regras fixas no backend (spec 17.2). */
+export interface Dica {
+  id: string
+  tipo: TipoDica
+  texto: string
+  link: string | null
+}

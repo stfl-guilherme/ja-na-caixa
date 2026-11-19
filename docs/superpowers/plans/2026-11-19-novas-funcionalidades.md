@@ -13,7 +13,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Funcionalidade 1 — Orçamento por categoria (spec 17.1, ADR-021)
 
-### [ ] O1 — Campo `limite_mensal` e validações
+### [x] O1 — Campo `limite_mensal` e validações
 - **Arquivos:** `backend/financas/models.py`, nova migration `0003_categoria_limite_mensal.py`, `backend/financas/serializers.py`, `backend/financas/tests/test_orcamentos.py`.
 - **Teste primeiro:** criar despesa com limite → 201 e limite devolvido; sem limite → `null`; receita com limite → 400 `limite_mensal`; limite `0` e negativo → 400; trocar despesa sem transações para receita mantendo o limite → 400 com mensagem clara; trocar enviando `limite_mensal: null` → 200 e limite removido; PATCH só do nome mantém o limite.
 - **Pronto quando:** testes verdes; migration reversível (`migrate financas 0002` e de volta).

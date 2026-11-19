@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from financas.models import Categoria, Transacao
+from financas.models import Categoria, TipoCategoria, Transacao
 
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -8,8 +8,9 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categoria
-        fields = ["id", "nome", "tipo", "cor", "transacoes", "criado_em"]
+        fields = ["id", "nome", "tipo", "cor", "limite_mensal", "transacoes", "criado_em"]
         read_only_fields = ["id", "criado_em"]
+        extra_kwargs = {"limite_mensal": {"required": False}}
 
     def _usuario(self):
         return self.context["request"].user
@@ -39,6 +40,26 @@ class CategoriaSerializer(serializers.ModelSerializer):
                 "Não é possível alterar o tipo de uma categoria que já tem transações."
             )
         return valor
+
+    def validate_limite_mensal(self, valor):
+        if valor is not None and valor <= 0:
+            raise serializers.ValidationError("O limite deve ser maior que zero.")
+        return valor
+
+    def validate(self, dados):
+        # ADR-021: só despesas têm limite. Na troca para receita, o limite sai no mesmo request.
+        tipo = dados.get("tipo", getattr(self.instance, "tipo", None))
+        if "limite_mensal" in dados:
+            limite = dados["limite_mensal"]
+        else:
+            limite = getattr(self.instance, "limite_mensal", None)
+        if tipo == TipoCategoria.RECEITA and limite is not None:
+            if self.instance is not None and self.instance.tipo == TipoCategoria.DESPESA:
+                mensagem = "Categorias de receita não têm limite. Remova o limite para mudar o tipo."
+            else:
+                mensagem = "Só categorias de despesa podem ter limite mensal."
+            raise serializers.ValidationError({"limite_mensal": [mensagem]})
+        return dados
 
 
 class TransacaoSerializer(serializers.ModelSerializer):

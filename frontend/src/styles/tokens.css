@@ -27,6 +27,11 @@
   --jnc-erro: #B42318;
   --jnc-erro-bg: #FEF1F0;
 
+  /* Estado das barras de orçamento (preenchimento; ≥ 3:1 com o trilho --jnc-segmentado-bg) */
+  --jnc-estado-sucesso: #2A8F52;  /* dentro do limite (3,5:1) */
+  --jnc-estado-atencao: #B7791F;  /* atenção, âmbar (3,2:1) */
+  --jnc-estado-erro: #C2412D;     /* ultrapassado, vermelho-coral = --jnc-despesa (4,4:1) */
+
   /* Cena de praia (somente login) */
   --jnc-ceu: #CDEFFC;
   --jnc-mar-1: #6CC6EA;

@@ -51,6 +51,9 @@
   --color-despesa-grafico: var(--jnc-despesa-grafico);
   --color-erro: var(--jnc-erro);
   --color-erro-bg: var(--jnc-erro-bg);
+  --color-estado-sucesso: var(--jnc-estado-sucesso);
+  --color-estado-atencao: var(--jnc-estado-atencao);
+  --color-estado-erro: var(--jnc-estado-erro);
   --color-ceu: var(--jnc-ceu);
   --color-mar-1: var(--jnc-mar-1);
   --color-mar-2: var(--jnc-mar-2);

@@ -4,10 +4,11 @@ import { formatarMoeda } from '@/lib/format'
 import { percentualExibido, textoSituacao } from '@/lib/orcamento'
 import { cn } from '@/lib/utils'
 
-const COR_DA_SITUACAO: Record<SituacaoOrcamento, string | null> = {
-  ok: null,
-  atencao: 'var(--jnc-cat-mostarda)',
-  estourado: 'var(--jnc-despesa)',
+/** A cor da barra indica o estado; a cor da categoria fica só no marcador (decisoes-de-design, seção 5). */
+const CLASSE_DA_SITUACAO: Record<SituacaoOrcamento, string> = {
+  ok: 'bg-estado-sucesso',
+  atencao: 'bg-estado-atencao',
+  estourado: 'bg-estado-erro',
 }
 
 interface BarraOrcamentoProps {
@@ -21,7 +22,6 @@ export function BarraOrcamento({ orcamento, comNome = false, className }: BarraO
   const percentual = percentualExibido(orcamento.percentual)
   const valores = `${formatarMoeda(orcamento.gasto)} de ${formatarMoeda(orcamento.limite)} (${percentual}%)`
   const estado = textoSituacao(orcamento)
-  const cor = COR_DA_SITUACAO[orcamento.situacao] ?? orcamento.cor
   return (
     <div data-testid="barra-orcamento" className={cn('flex min-w-0 flex-col gap-1.5', className)}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -42,7 +42,11 @@ export function BarraOrcamento({ orcamento, comNome = false, className }: BarraO
         aria-valuetext={`${valores}. ${estado}.`}
         className="h-2.5 overflow-hidden rounded-full bg-segmentado-bg"
       >
-        <div className="h-full rounded-full" style={{ width: `${Math.min(100, percentual)}%`, background: cor }} />
+        <div
+          data-testid="preenchimento"
+          className={cn('h-full rounded-full', CLASSE_DA_SITUACAO[orcamento.situacao])}
+          style={{ width: `${Math.min(100, percentual)}%` }}
+        />
       </div>
       <span
         data-situacao={orcamento.situacao}

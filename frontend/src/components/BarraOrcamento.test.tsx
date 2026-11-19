@@ -61,4 +61,24 @@ describe('BarraOrcamento', () => {
     render(<BarraOrcamento orcamento={base} comNome />)
     expect(screen.getByText('Mercado')).toBeInTheDocument()
   })
+
+  it('a cor da barra depende do estado, não da categoria; a categoria fica só no marcador', () => {
+    const casos = [
+      { situacao: 'ok', percentual: '68.00', classe: 'bg-estado-sucesso' },
+      { situacao: 'atencao', percentual: '85.00', classe: 'bg-estado-atencao' },
+      { situacao: 'estourado', percentual: '116.50', classe: 'bg-estado-erro' },
+    ] as const
+    for (const cor of ['#B5541A', '#2F7D35', '#C2416A']) {
+      for (const { situacao, percentual, classe } of casos) {
+        const { unmount } = render(<BarraOrcamento orcamento={{ ...base, cor, situacao, percentual }} comNome />)
+        const preenchimento = screen.getByTestId('preenchimento')
+        expect(preenchimento).toHaveClass(classe)
+        expect(preenchimento.style.background).toBe('')
+        expect(preenchimento.style.backgroundColor).toBe('')
+        const marcador = screen.getByTestId('barra-orcamento').querySelector('[aria-hidden="true"].rounded-full') as HTMLElement
+        expect(marcador.style.background).not.toBe('')
+        unmount()
+      }
+    }
+  })
 })

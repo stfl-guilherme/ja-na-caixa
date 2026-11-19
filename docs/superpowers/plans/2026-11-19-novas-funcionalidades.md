@@ -73,7 +73,7 @@ Legenda: `[ ]` pendente · `[x]` concluída · `[~]` pulada (pendência registra
 
 ## Funcionalidade 4 — Repetir transações fixas (spec 17.4, ADR-024)
 
-### [ ] R1 — Campos `fixa` e `repetida_de` e endpoints de repetição
+### [x] R1 — Campos `fixa` e `repetida_de` e endpoints de repetição
 - **Arquivos:** `backend/financas/models.py`, migration `0005_transacao_fixa_repetida_de.py`, `serializers.py`, `views.py`, `backend/financas/tests/test_fixas.py`.
 - **Teste primeiro:** CRUD aceita `fixa`, `repetida_de` é somente leitura; lista de fixas para repetir (só do mês anterior, só fixas, some depois de repetir, data sugerida); cópia de todos os campos; 31/01 → 28/02 e 29/02 (bissexto); idempotência; ids de outro usuário, não fixos e fora do mês anterior → 400 sem criar nada; `ids` vazio → 400; virada de ano; excluir a original não apaga a cópia.
 - **Pronto quando:** testes verdes; migration reversível.

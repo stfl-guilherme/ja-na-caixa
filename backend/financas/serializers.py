@@ -83,10 +83,12 @@ class TransacaoSerializer(serializers.ModelSerializer):
             "observacao",
             "forma_pagamento",
             "forma_pagamento_rotulo",
+            "fixa",
+            "repetida_de",
             "criado_em",
             "atualizado_em",
         ]
-        read_only_fields = ["id", "criado_em", "atualizado_em"]
+        read_only_fields = ["id", "repetida_de", "criado_em", "atualizado_em"]
         extra_kwargs = {"observacao": {"required": False, "allow_blank": True}}
 
     def __init__(self, *args, **kwargs):
@@ -106,3 +108,17 @@ class TransacaoSerializer(serializers.ModelSerializer):
         if valor <= 0:
             raise serializers.ValidationError("O valor deve ser maior que zero.")
         return valor
+
+
+class RepetirFixasSerializer(serializers.Serializer):
+    """Corpo de POST /api/transacoes/repetir-fixas/ (spec 17.4)."""
+
+    mes = serializers.CharField()
+    ids = serializers.ListField(child=serializers.IntegerField(min_value=1), allow_empty=False)
+
+    def to_internal_value(self, dados):
+        ids = dados.get("ids") if hasattr(dados, "get") else None
+        # O IntegerField do DRF aceita true/"1"; aqui só valem números inteiros.
+        if isinstance(ids, list) and any(isinstance(i, bool) or not isinstance(i, int) for i in ids):
+            raise serializers.ValidationError({"ids": ["Informe uma lista de ids numéricos."]})
+        return super().to_internal_value(dados)

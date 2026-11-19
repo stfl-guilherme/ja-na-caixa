@@ -63,6 +63,11 @@ class Transacao(models.Model):
     forma_pagamento = models.CharField(
         max_length=14, choices=FormaPagamento.choices, default=FormaPagamento.NAO_INFORMADO
     )
+    # Transações fixas (spec 17.4; ADR-024): a cópia aponta para a original.
+    fixa = models.BooleanField(default=False)
+    repetida_de = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="repeticoes"
+    )
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 

@@ -1,10 +1,13 @@
+import calendar
 import re
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 
+from django.db import transaction
 from django.db.models import Count, ProtectedError
 from django.utils import timezone
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -14,7 +17,7 @@ from financas.dicas import gerar_dicas
 from financas.filters import filtrar_transacoes, intervalo_do_mes, mes_anterior
 from financas.models import Categoria, FormaPagamento, TipoCategoria, Transacao
 from financas.orcamentos import orcamentos_do_mes, percentual_texto
-from financas.serializers import CategoriaSerializer, TransacaoSerializer
+from financas.serializers import CategoriaSerializer, RepetirFixasSerializer, TransacaoSerializer
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -86,6 +89,75 @@ class TransacaoViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             queryset = filtrar_transacoes(queryset, self.request.query_params)
         return queryset
+
+    def _fixas_para_repetir(self, mes: str):
+        """Fixas do mês anterior a `mes` que ainda não têm cópia em `mes` (spec 17.4)."""
+        inicio, fim = intervalo_do_mes(mes)
+        inicio_anterior, _ = intervalo_do_mes(mes_anterior(mes))
+        ja_repetidas = Transacao.objects.filter(
+            categoria__usuario=self.request.user,
+            data__gte=inicio,
+            data__lt=fim,
+            repetida_de__isnull=False,
+        ).values("repetida_de")
+        return (
+            Transacao.objects.filter(
+                categoria__usuario=self.request.user, fixa=True, data__gte=inicio_anterior, data__lt=inicio
+            )
+            .exclude(pk__in=ja_repetidas)
+            .select_related("categoria")
+            .order_by("data", "id")
+        )
+
+    @action(detail=False, methods=["get"], url_path="fixas-para-repetir", pagination_class=None)
+    def fixas_para_repetir(self, request):
+        mes = request.query_params.get("mes", "")
+        fixas = self._fixas_para_repetir(mes)
+        inicio, _ = intervalo_do_mes(mes)
+        return Response(
+            [
+                {**dados, "data_sugerida": _mesmo_dia_no_mes(t.data, inicio).isoformat()}
+                for t, dados in zip(fixas, TransacaoSerializer(fixas, many=True).data)
+            ]
+        )
+
+    @action(detail=False, methods=["post"], url_path="repetir-fixas")
+    def repetir_fixas(self, request):
+        entrada = RepetirFixasSerializer(data=request.data)
+        entrada.is_valid(raise_exception=True)
+        mes, ids = entrada.validated_data["mes"], set(entrada.validated_data["ids"])
+        inicio, fim = intervalo_do_mes(mes)
+        inicio_anterior, _ = intervalo_do_mes(mes_anterior(mes))
+        validas = Transacao.objects.filter(
+            pk__in=ids, categoria__usuario=request.user, fixa=True, data__gte=inicio_anterior, data__lt=inicio
+        )
+        if validas.count() != len(ids):
+            raise ValidationError(
+                {"ids": ["Escolha só transações fixas suas do mês anterior."]}
+            )
+        # Idempotência: original que já tem cópia no mês é ignorada (ADR-024).
+        pendentes = self._fixas_para_repetir(mes).filter(pk__in=ids)
+        with transaction.atomic():
+            criadas = [
+                Transacao.objects.create(
+                    categoria=original.categoria,
+                    descricao=original.descricao,
+                    valor=original.valor,
+                    data=_mesmo_dia_no_mes(original.data, inicio),
+                    observacao=original.observacao,
+                    forma_pagamento=original.forma_pagamento,
+                    fixa=True,
+                    repetida_de=original,
+                )
+                for original in pendentes
+            ]
+        return Response(TransacaoSerializer(criadas, many=True).data, status=status.HTTP_201_CREATED)
+
+
+def _mesmo_dia_no_mes(data_original: date, inicio_do_mes: date) -> date:
+    """Mesmo dia no mês de destino; se não existir, o último dia (31/01 → 28/02 ou 29/02)."""
+    ultimo = calendar.monthrange(inicio_do_mes.year, inicio_do_mes.month)[1]
+    return inicio_do_mes.replace(day=min(data_original.day, ultimo))
 
 
 def _dinheiro(valor: Decimal) -> str:

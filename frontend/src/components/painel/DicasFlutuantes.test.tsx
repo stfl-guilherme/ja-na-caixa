@@ -31,10 +31,10 @@ describe('DicasFlutuantes', () => {
     vi.restoreAllMocks()
   })
 
-  it('selo com "?" e a quantidade só no rótulo; fechado por padrão sem alerta', () => {
+  it('selo com "!" e a quantidade só no rótulo; fechado por padrão sem alerta', () => {
     render(<Controlado dicas={[INFO, PARABENS]} />)
     expect(botao()).toHaveAccessibleName('Dicas do Papo, 2 dicas')
-    expect(botao()).toHaveTextContent(/^\?$/)
+    expect(botao()).toHaveTextContent(/^!$/)
     expect(botao()).toHaveAttribute('aria-expanded', 'false')
     expect(balao()).not.toBeInTheDocument()
   })
@@ -120,7 +120,7 @@ describe('DicasFlutuantes', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (1/3)' }))
     expect(personagensNaTela(botao())).toEqual(['papo-joinha'])
     await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (2/3)' }))
-    expect(personagensNaTela(botao())).toEqual(['papo-espiando'])
+    expect(personagensNaTela(botao())).toEqual(['papo-sentado-moeda'])
     await userEvent.click(screen.getByRole('button', { name: 'Próxima dica (3/3)' }))
     expect(personagensNaTela(botao())).toEqual(['papo-preocupado'])
   })
@@ -129,7 +129,7 @@ describe('DicasFlutuantes', () => {
     const casos: [Dica[], string][] = [
       [[ALERTA], 'papo-preocupado'],
       [[PARABENS, ALERTA], 'papo-joinha'],
-      [[INFO], 'papo-espiando'],
+      [[INFO], 'papo-sentado-moeda'],
     ]
     for (const [dicas, pose] of casos) {
       localStorage.setItem(chaveDicaAuto('demo', '2026-11'), '1')
@@ -137,6 +137,19 @@ describe('DicasFlutuantes', () => {
       expect(personagensNaTela(botao())).toEqual([pose])
       unmount()
     }
+  })
+
+  it('três dicas, três fotos diferentes, mesmo com tipos repetidos', async () => {
+    localStorage.setItem(chaveDicaAuto('demo', '2026-11'), '1')
+    const INFO_2: Dica = { ...INFO, id: 'concentracao', texto: 'Moradia concentra 45% das despesas de novembro.' }
+    render(<Controlado dicas={[ALERTA, INFO, INFO_2]} />)
+    const fotos = [personagensNaTela(botao())[0]]
+    await userEvent.click(botao())
+    for (const n of [1, 2]) {
+      await userEvent.click(screen.getByRole('button', { name: `Próxima dica (${n}/3)` }))
+      fotos.push(personagensNaTela(botao())[0])
+    }
+    expect(fotos).toEqual(['papo-preocupado', 'papo-sentado-moeda', 'papo-animado'])
   })
 
   it('sem dicas, nada renderiza', () => {

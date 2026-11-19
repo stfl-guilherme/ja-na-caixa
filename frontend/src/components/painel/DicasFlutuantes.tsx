@@ -1,11 +1,11 @@
 // Dicas do Papo no desktop (≥ 1024px) como "cabeça de chat" (spec 17.2; decisoes-de-design, seção 5):
 // botão redondo no canto superior direito, na barra fixa do título; o balão abre abaixo dele.
 import { X } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import type { Dica } from '@/api/types'
 import { Personagem } from '@/components/Personagem'
 import { botaoIcone } from '@/components/ui/botao'
-import { POSE_DA_DICA } from '@/lib/dicas'
+import { fotosDoBotao } from '@/lib/dicas'
 import type { Pose } from '@/lib/personagens'
 import { marcarAbertoSozinho, podeAbrirSozinho } from '@/lib/dicasAuto'
 import { cn } from '@/lib/utils'
@@ -25,11 +25,33 @@ interface DicasFlutuantesProps {
 
 type Abertura = 'fechado' | 'clique' | 'auto'
 
-/** Recorte de cada pose no círculo: o rosto do Papo fica centralizado. */
-const ENQUADRAMENTO: Partial<Record<Pose, string>> = {
-  'papo-espiando': '46% 100%',
-  'papo-preocupado': '50% 0%',
-  'papo-joinha': '50% 0%',
+/** Diâmetro interno do botão (60px − borda de 2px). */
+const DIAMETRO = 56
+
+/**
+ * Recorte do rosto no círculo: `fx`/`fy` = centro do rosto na imagem (0–1), `largura` = largura
+ * da imagem em px. A imagem é posicionada para o rosto cair no centro do círculo.
+ */
+const ROSTO: Partial<Record<Pose, { fx: number; fy: number; largura: number; proporcao: number }>> = {
+  'papo-preocupado': { fx: 0.5, fy: 0.2, largura: 82, proporcao: 618 / 491 },
+  'papo-joinha': { fx: 0.43, fy: 0.21, largura: 92, proporcao: 617 / 513 },
+  'papo-animado': { fx: 0.57, fy: 0.21, largura: 92, proporcao: 570 / 511 },
+  'papo-sentado-moeda': { fx: 0.52, fy: 0.2, largura: 96, proporcao: 732 / 690 },
+  'papo-espiando-lado': { fx: 0.58, fy: 0.17, largura: 52, proporcao: 732 / 379 },
+}
+
+function estiloDoRosto(pose: Pose): CSSProperties {
+  const r = ROSTO[pose]
+  if (!r) return { width: '100%', height: '100%', objectFit: 'cover' }
+  const altura = r.largura * r.proporcao
+  return {
+    position: 'absolute',
+    width: r.largura,
+    height: altura,
+    maxWidth: 'none',
+    left: DIAMETRO / 2 - r.fx * r.largura,
+    top: DIAMETRO / 2 - r.fy * altura,
+  }
 }
 
 export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: DicasFlutuantesProps) {
@@ -82,8 +104,8 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
   }, [aberto, abertura])
 
   if (dicas.length === 0) return null
-  // A pose acompanha o tipo da dica exibida (troca com "Próxima dica").
-  const pose = POSE_DA_DICA[dicas[indice % dicas.length].tipo]
+  // A foto acompanha a dica exibida (troca com "Próxima dica"), uma diferente para cada dica.
+  const pose = fotosDoBotao(dicas.map((d) => d.tipo))[indice % dicas.length]
   const total = dicas.length
 
   const fecharPeloBotao = () => {
@@ -105,7 +127,7 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
           id={idBalao}
           tabIndex={-1}
           data-testid="balao-dicas"
-          className="fixed top-[86px] right-10 z-40 w-[400px] max-w-[calc(100vw-248px-80px)] rounded-[18px] focus:outline-none"
+          className="fixed top-24 right-10 z-40 w-[400px] max-w-[calc(100vw-248px-80px)] rounded-[18px] focus:outline-none"
         >
           <div className="relative">
             <DicasDoPapo dicas={dicas} indice={indice} onProxima={onProxima} variante="flutuante" />
@@ -128,16 +150,16 @@ export function DicasFlutuantes({ dicas, indice, onProxima, usuario, mes }: Dica
         aria-expanded={aberto}
         aria-controls={aberto ? idBalao : undefined}
         onClick={() => setAbertura(aberto ? 'fechado' : 'clique')}
-        className="fixed top-[6px] right-10 z-40 size-[60px] cursor-pointer rounded-full border-2 border-tinta bg-branco p-0 shadow-cartao hover:brightness-105"
+        className="fixed top-4 right-10 z-40 size-[60px] cursor-pointer rounded-full border-2 border-tinta bg-branco p-0 shadow-cartao hover:brightness-105"
       >
-        <span className="block size-full overflow-hidden rounded-full">
-          <Personagem pose={pose} className="size-full object-cover" style={{ objectPosition: ENQUADRAMENTO[pose] }} />
+        <span className="relative block size-full overflow-hidden rounded-full">
+          <Personagem pose={pose} style={estiloDoRosto(pose)} />
         </span>
         <span
           aria-hidden="true"
-          className="absolute -top-1 -right-1 flex size-6 items-center justify-center rounded-full border-2 border-branco bg-tinta text-xs font-extrabold text-branco"
+          className="absolute -top-[13px] -right-[13px] flex size-5 items-center justify-center rounded-full bg-tinta text-xs leading-none font-extrabold text-branco"
         >
-          ?
+          !
         </span>
       </button>
     </>
